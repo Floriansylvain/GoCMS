@@ -1,6 +1,4 @@
 # GohCMS
-Made with Java, Maven, bson, dotenv-java, Java-WebSocket, json, mongodb-driver-sync, slf4j-api, slf4j-log4j12.
-
 ## Setup
 ### Use with Docker
 To **build** the app, run the command
