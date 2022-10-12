@@ -1,0 +1,25 @@
+services:
+  backend:
+    build: .
+    ports:
+      - "8080:8080"
+    networks:
+      - back-net
+  frontend:
+    build: web/admin-gui/.
+    ports:
+      - "8081:80"
+    networks:
+      - front-net
+  db:
+    image: mongo:6.0.2
+    # ports:
+    #   - "27017:27017"
+    volumes:
+      - ./mongodbdata:/data/db
+    networks:
+      - back-net
+
+networks:
+  front-net:
+  back-net:
