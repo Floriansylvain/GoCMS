@@ -19,6 +19,7 @@ func initGin() {
 	r.SetTrustedProxies([]string{"localhost"})
 
 	r.GET("/ping", internal.Ping)
+	r.GET("/get-all-articles", internal.GetAllArticles)
 	r.POST("/add-article", internal.AddArticle)
 
 	r.Run(":" + os.Getenv("API_PORT"))
