@@ -23,14 +23,11 @@ func getNewClient() *mongo.Client {
 	return client
 }
 
-func getCollection(location Location) *mongo.Collection {
-	client := getNewClient()
-	defer client.Disconnect(context.TODO())
-	return client.Database(location.Database).Collection(location.Collection)
-}
-
 func pushDocument(location Location, document interface{}) error {
-	collection := getCollection(location)
+	client := getNewClient()
+	collection := client.Database(location.Database).Collection(location.Collection)
+	defer client.Disconnect(context.TODO())
+
 	_, err := collection.InsertOne(context.TODO(), document)
 	if err != nil {
 		return err
@@ -39,7 +36,10 @@ func pushDocument(location Location, document interface{}) error {
 }
 
 func getDocuments(location Location, filter interface{}) ([][]byte, error) {
-	collection := getCollection(location)
+	client := getNewClient()
+	collection := client.Database(location.Database).Collection(location.Collection)
+	defer client.Disconnect(context.TODO())
+
 	var results [][]byte
 
 	cursor, err := collection.Find(context.TODO(), filter)

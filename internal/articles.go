@@ -22,16 +22,19 @@ func AddArticle(c *gin.Context) {
 	var article Article
 	if c.BindJSON(&article) != nil {
 		SendErrorMessageToClient(c, "Could not correctly parse the article.")
+		return
 	}
 
 	document, err := bson.Marshal(article)
 	if err != nil {
 		SendErrorMessageToClient(c, "could not correctly marshal the article")
+		return
 	}
 
 	err = pushDocument(ARTICLES_LOCATION, document)
 	if err != nil {
 		SendErrorMessageToClient(c, "could not insert document into DB")
+		return
 	}
 
 	SendOkMessageToClient(c, "Article successfully added!")
@@ -43,6 +46,7 @@ func GetAllArticles(c *gin.Context) {
 	documents, err := getDocuments(ARTICLES_LOCATION, bson.D{})
 	if err != nil {
 		SendErrorMessageToClient(c, err.Error())
+		return
 	}
 
 	for i := 0; i < len(documents); i++ {
