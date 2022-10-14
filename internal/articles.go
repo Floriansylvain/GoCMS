@@ -37,6 +37,7 @@ func AddArticle(c *gin.Context) {
 	SendOkMessageToClient(c, "Article successfully added!")
 }
 
+// TODO Change to GetArticleList that will find filter json context
 func GetAllArticles(c *gin.Context) {
 	var articles []Article
 	documents, err := getDocuments(ARTICLES_LOCATION, bson.D{})
