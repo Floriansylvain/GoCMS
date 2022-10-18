@@ -1,7 +1,9 @@
 <script setup lang="ts">
 // import EditorJS from '@editorjs/editorjs';
 import { pingApi } from '@/utils/ping';
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
+
+const inputArticleID = ref('')
 
 onMounted(async function() {
     console.log('ping...')
@@ -27,12 +29,26 @@ function logArticles() {
         .then(response => response.json())
         .then(result => console.log(result))
 }
+
+function deleteArticle(articleID: String) {
+    fetch("http://localhost:8080/delete-article", {
+        method: "DELETE",
+        body: JSON.stringify({
+            id_name: articleID
+        })
+    })
+        .then(response => response.json())
+        .then(result => console.log(result))
+}
 </script>
 
 <template>
     <p>Salut à tous</p>
     <button @click="addArticle">add rand article</button>
-    <button @click="logArticles">display articles in console</button>
+    <button @click="logArticles">display articles in console</button> <br>
+    <label for="articleIDinput"></label>
+    <input id="articleIDinput" name="articleIDinput" type="text" v-model="inputArticleID">
+    <button @click="deleteArticle(inputArticleID)">delete this article</button>
 </template>
 
 <style scoped>

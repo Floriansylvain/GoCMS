@@ -21,6 +21,7 @@ func initGin() {
 	r.GET("/ping", internal.Ping)
 	r.GET("/get-all-articles", internal.GetAllArticles)
 	r.POST("/add-article", internal.AddArticle)
+	r.DELETE("/delete-article", internal.DeleteArticle)
 
 	r.Run(":" + os.Getenv("API_PORT"))
 }

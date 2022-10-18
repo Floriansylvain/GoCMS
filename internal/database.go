@@ -44,10 +44,23 @@ func getDocuments(location Location, filter interface{}) ([][]byte, error) {
 
 	cursor, err := collection.Find(context.TODO(), filter)
 	if err != nil {
-		return results, errors.New("something is wrong with filter to find document")
+		return results, errors.New("something is wrong with filter to find the document")
 	}
 	for cursor.TryNext(context.TODO()) {
 		results = append(results, cursor.Current)
 	}
 	return results, nil
+}
+
+func deleteDocument(location Location, filter interface{}) (int64, error) {
+	client := getNewClient()
+	collection := client.Database(location.Database).Collection(location.Collection)
+	defer client.Disconnect(context.TODO())
+
+	result, err := collection.DeleteOne(context.TODO(), filter)
+	if err != nil {
+		return 0, errors.New("something is wrong with filter to delete the document")
+	}
+
+	return result.DeletedCount, nil
 }
