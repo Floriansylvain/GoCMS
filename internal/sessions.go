@@ -45,7 +45,7 @@ func removeSession(user User) {
 	}
 	fmt.Println(SESSIONS)
 	SESSIONS[index] = SESSIONS[sessLen-1]
-	SESSIONS[sessLen-1] = Session{} //TODO PAS SUR QUE ÇA FONCTIONNE
+	SESSIONS[sessLen-1] = Session{}
 	SESSIONS = SESSIONS[:sessLen-1]
 	fmt.Println(SESSIONS)
 }
