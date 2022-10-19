@@ -1,5 +1,5 @@
-conn = new Mongo()
-db = conn.getDB("gohcms")
+const conn = new Mongo()
+const db = conn.getDB("gohcms")
 
 db.createCollection('articles', {
 	validator: {
@@ -18,6 +18,25 @@ db.createCollection('articles', {
 				id_name: {
 					bsonType: 'string',
 					pattern: '^.+$'
+				}
+			}
+		}
+	}
+})
+
+db.createCollection('users', {
+	validator: {
+		$jsonSchema: {
+			required: ['email', 'password'],
+			properties: {
+				_id: {
+					bsonType: 'objectId'
+				},
+				email: {
+					bsonType: 'string'
+				},
+				password: {
+					bsonType: 'string'
 				}
 			}
 		}
