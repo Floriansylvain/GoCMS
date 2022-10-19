@@ -41,7 +41,6 @@ func isUserReal(user User) bool {
 func parseUserFromContext(c *gin.Context) (User, error) {
 	var user User
 	if c.BindJSON(&user) != nil {
-		SendErrorMessageToClient(c, "Could not correctly parse user crendentials.")
 		return User{}, errors.New("could not correctly parse user crendentials")
 	}
 	user.Password = getUserHashedPassword(user)
@@ -51,6 +50,7 @@ func parseUserFromContext(c *gin.Context) (User, error) {
 func LoginUser(c *gin.Context) {
 	user, err := parseUserFromContext(c)
 	if err != nil {
+		SendErrorMessageToClient(c, err.Error())
 		return
 	}
 	if isUserLoggedIn(user) {
@@ -68,6 +68,7 @@ func LoginUser(c *gin.Context) {
 func LogoutUser(c *gin.Context) {
 	user, err := parseUserFromContext(c)
 	if err != nil {
+		SendErrorMessageToClient(c, err.Error())
 		return
 	}
 	if !isUserLoggedIn(user) {
