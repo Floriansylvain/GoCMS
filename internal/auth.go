@@ -78,3 +78,23 @@ func LogoutUser(c *gin.Context) {
 	removeSession(user)
 	SendOkMessageToClient(c, "User successfully logged out.")
 }
+
+func AuthCheck(c *gin.Context) {
+	var user User
+	username, password, isOk := c.Request.BasicAuth()
+	if !isOk {
+		SendErrorMessageToClient(c, "Incorrect or missing user credentials.")
+		c.Abort()
+		return
+	}
+
+	user.Email = username
+	user.Password = password
+	user.Password = getUserHashedPassword(user)
+
+	if !isUserLoggedIn(user) {
+		SendErrorMessageToClient(c, "Authentification failed, credentials could be wrong, user may not be logged in, session may have expired.")
+		c.Abort()
+		return
+	}
+}

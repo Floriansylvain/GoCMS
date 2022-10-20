@@ -20,9 +20,9 @@ func initGin() {
 
 	r.GET("/ping", internal.Ping)
 
-	r.GET("/get-all-articles", internal.GetAllArticles)
-	r.POST("/add-article", internal.AddArticle)
-	r.DELETE("/delete-article", internal.DeleteArticle)
+	r.GET("/get-all-articles", internal.AuthCheck, internal.GetAllArticles)
+	r.POST("/add-article", internal.AuthCheck, internal.AddArticle)
+	r.DELETE("/delete-article", internal.AuthCheck, internal.DeleteArticle)
 
 	r.POST("/login", internal.LoginUser)
 	r.POST("/logout", internal.LogoutUser)

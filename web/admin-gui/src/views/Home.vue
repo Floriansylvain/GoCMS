@@ -16,6 +16,7 @@ onMounted(async function() {
 function addArticle() {
     fetch("http://localhost:8080/add-article", {
         method: "POST",
+        headers: {"Authorization" : `Basic ${btoa(`${username.value}:${password.value}`)}`},
         body: JSON.stringify({
             id_name: `${Math.random() * 100}`,
             content: {},
@@ -27,7 +28,7 @@ function addArticle() {
 }
 
 function logArticles() {
-    fetch("http://localhost:8080/get-all-articles")
+    fetch("http://localhost:8080/get-all-articles", {headers: {"Authorization" : `Basic ${btoa(`${username.value}:${password.value}`)}`}})
         .then(response => response.json())
         .then(result => console.log(result))
 }
@@ -35,6 +36,7 @@ function logArticles() {
 function deleteArticle(articleID: String) {
     fetch("http://localhost:8080/delete-article", {
         method: "DELETE",
+        headers: {"Authorization" : `Basic ${btoa(`${username.value}:${password.value}`)}`},
         body: JSON.stringify({
             id_name: articleID
         })
