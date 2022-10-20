@@ -38,6 +38,19 @@ func GetAllArticles(c *gin.Context) {
 	c.JSON(http.StatusOK, articles)
 }
 
+func GetArticle(c *gin.Context) {
+	articleID := c.Params.ByName("id")
+	articles, err := getDocuments(ARTICLES_LOCATION,
+		bson.D{{Key: "id_name", Value: articleID}})
+	if err != nil {
+		SendErrorMessageToClient(c, err.Error())
+		return
+	}
+	var parsedArticle Article
+	bson.Unmarshal(articles[0], &parsedArticle)
+	c.JSON(http.StatusOK, parsedArticle)
+}
+
 func IsArticleIdAlreadyUsed(id string) bool {
 	documents, _ := getDocuments(ARTICLES_LOCATION, bson.D{})
 	for i := 0; i < len(documents); i++ {
@@ -96,5 +109,6 @@ func DeleteArticle(c *gin.Context) {
 		return
 	}
 
-	SendOkMessageToClient(c, fmt.Sprintf("%d articles were successfully deleted!", deleteCount))
+	SendOkMessageToClient(c,
+		fmt.Sprintf("%d articles were successfully deleted!", deleteCount))
 }

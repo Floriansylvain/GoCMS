@@ -45,6 +45,14 @@ function deleteArticle(articleID: String) {
         .then(result => console.log(result))
 }
 
+function getArticle(articleID: String) {
+    fetch(`http://localhost:8080/articles/${articleID}`, {
+        headers: {"Authorization" : `Basic ${btoa(`${username.value}:${password.value}`)}`},
+    })
+        .then(response => response.json())
+        .then(result => console.log(result))
+}
+
 function auth(type: string, username: string, password: string) {
     fetch(`http://localhost:8080/${type}`, {
         method: "POST",
@@ -63,8 +71,9 @@ function auth(type: string, username: string, password: string) {
     <button @click="addArticle">add rand article</button>
     <button @click="logArticles">display articles in console</button> <br>
     <label for="articleIDinput"></label>
-    <input id="articleIDinput" name="articleIDinput" type="text" placeholder="article ID to delete" v-model="inputArticleID">
-    <button @click="deleteArticle(inputArticleID)">delete this article</button> <br>
+    <input id="articleIDinput" name="articleIDinput" type="text" placeholder="article ID" v-model="inputArticleID">
+    <button @click="deleteArticle(inputArticleID)">delete this article</button>
+    <button @click="getArticle(inputArticleID)">get this article</button> <br>
 
     <input type="text" name="username" id="username" v-model="username" placeholder="username">
     <input type="text" name="password" id="password" v-model="password" placeholder="password">
