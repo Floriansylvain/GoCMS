@@ -54,40 +54,40 @@ func parseUserFromContext(c *gin.Context) (User, error) {
 func LoginUser(c *gin.Context) {
 	user, err := parseUserFromContext(c)
 	if err != nil {
-		SendErrorMessageToClient(c, err.Error())
+		SendBadRequest(c, err.Error())
 		return
 	}
 	if isUserLoggedIn(user) {
-		SendErrorMessageToClient(c, "User is already logged in!")
+		SendBadRequest(c, "User is already logged in!")
 		return
 	}
 	if !isUserReal(user) {
-		SendErrorMessageToClient(c, "Unknown email or wrong password.")
+		SendBadRequest(c, "Unknown email or wrong password.")
 		return
 	}
 	addSession(user)
-	SendOkMessageToClient(c, "User successfully logged in.")
+	SendOk(c, "User successfully logged in.")
 }
 
 func LogoutUser(c *gin.Context) {
 	user, err := parseUserFromContext(c)
 	if err != nil {
-		SendErrorMessageToClient(c, err.Error())
+		SendBadRequest(c, err.Error())
 		return
 	}
 	if !isUserLoggedIn(user) {
-		SendErrorMessageToClient(c, "User is not logged in!")
+		SendBadRequest(c, "User is not logged in!")
 		return
 	}
 	removeSession(user)
-	SendOkMessageToClient(c, "User successfully logged out.")
+	SendOk(c, "User successfully logged out.")
 }
 
 func AuthCheck(c *gin.Context) {
 	var user User
 	username, password, isOk := c.Request.BasicAuth()
 	if !isOk {
-		SendErrorMessageToClient(c, "Incorrect or missing user credentials.")
+		SendBadRequest(c, "Incorrect or missing user credentials.")
 		c.Abort()
 		return
 	}
@@ -97,7 +97,7 @@ func AuthCheck(c *gin.Context) {
 	user.Password = getUserHashedPassword(user)
 
 	if !isUserLoggedIn(user) {
-		SendErrorMessageToClient(c, "Authentification failed, credentials could be wrong, user may not be logged in, session may have expired.")
+		SendForbidden(c, "Authentification failed, credentials could be wrong, user may not be logged in, session may have expired.")
 		c.Abort()
 		return
 	}

@@ -25,7 +25,7 @@ func GetAllArticles(c *gin.Context) {
 	var articles []Article
 	documents, err := getDocuments(ARTICLES_LOCATION, bson.D{})
 	if err != nil {
-		SendErrorMessageToClient(c, err.Error())
+		SendBadRequest(c, err.Error())
 		return
 	}
 
@@ -43,11 +43,11 @@ func GetArticle(c *gin.Context) {
 	articles, err := getDocuments(ARTICLES_LOCATION,
 		bson.D{{Key: "id_name", Value: articleID}})
 	if err != nil {
-		SendErrorMessageToClient(c, err.Error())
+		SendBadRequest(c, err.Error())
 		return
 	}
 	if len(articles) == 0 {
-		SendErrorMessageToClient(c, "The ID provided doesn't match any article.")
+		SendBadRequest(c, "The ID provided doesn't match any article.")
 		return
 	}
 	var parsedArticle Article
@@ -71,50 +71,49 @@ func AddArticle(c *gin.Context) {
 	var article Article
 	article.Id_name = c.Params.ByName("id")
 	if c.BindJSON(&article) != nil {
-		SendErrorMessageToClient(c, "Could not correctly parse the article.")
+		SendBadRequest(c, "Could not correctly parse the article.")
 		return
 	}
 
 	document, err := bson.Marshal(article)
 	if err != nil {
-		SendErrorMessageToClient(c, "Could not correctly marshal the article.")
+		SendBadRequest(c, "Could not correctly marshal the article.")
 		return
 	}
 
 	if IsArticleIdAlreadyUsed(article.Id_name) {
-		SendErrorMessageToClient(c, "Article ID already used.")
+		SendBadRequest(c, "Article ID already used.")
 		return
 	}
 
 	err = pushDocument(ARTICLES_LOCATION, document)
 	if err != nil {
-		SendErrorMessageToClient(c, "Could not insert document into DB.")
+		SendBadRequest(c, "Could not insert document into DB.")
 		return
 	}
 
-	SendOkMessageToClient(c, "Article successfully added!")
+	SendOk(c, "Article successfully added!")
 }
 
 func DeleteArticle(c *gin.Context) {
 	var delArticle DelArticle
 	delArticle.Id_name = c.Params.ByName("id")
 	if c.BindJSON(&delArticle) != nil {
-		SendErrorMessageToClient(c, "Could not correctly parse the article ID.")
+		SendBadRequest(c, "Could not correctly parse the article ID.")
 		return
 	}
 
 	document, err := bson.Marshal(delArticle)
 	if err != nil {
-		SendErrorMessageToClient(c, "Could not correctly marshal the article ID.")
+		SendBadRequest(c, "Could not correctly marshal the article ID.")
 		return
 	}
 
 	deleteCount, err := deleteDocument(ARTICLES_LOCATION, document)
 	if err != nil {
-		SendErrorMessageToClient(c, "Could not insert document into DB.")
+		SendBadRequest(c, "Could not insert document into DB.")
 		return
 	}
 
-	SendOkMessageToClient(c,
-		fmt.Sprintf("%d articles were successfully deleted!", deleteCount))
+	SendOk(c, fmt.Sprintf("%d articles were successfully deleted!", deleteCount))
 }
