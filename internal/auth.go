@@ -28,7 +28,11 @@ func isUserLoggedIn(user User) bool {
 		if hash1 != hash2 {
 			continue
 		}
-		return !isSessionExpired(SESSIONS[i])
+		sessionExpired := isSessionExpired(SESSIONS[i])
+		if sessionExpired {
+			removeSession(user)
+		}
+		return !sessionExpired
 	}
 	return false
 }

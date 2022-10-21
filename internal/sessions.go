@@ -43,9 +43,7 @@ func removeSession(user User) {
 			break
 		}
 	}
-	fmt.Println(SESSIONS)
 	SESSIONS[index] = SESSIONS[sessLen-1]
 	SESSIONS[sessLen-1] = Session{}
 	SESSIONS = SESSIONS[:sessLen-1]
-	fmt.Println(SESSIONS)
 }
