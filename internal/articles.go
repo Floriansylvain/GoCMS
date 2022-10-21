@@ -46,6 +46,10 @@ func GetArticle(c *gin.Context) {
 		SendErrorMessageToClient(c, err.Error())
 		return
 	}
+	if len(articles) == 0 {
+		SendErrorMessageToClient(c, "The ID provided doesn't match any article.")
+		return
+	}
 	var parsedArticle Article
 	bson.Unmarshal(articles[0], &parsedArticle)
 	c.JSON(http.StatusOK, parsedArticle)
@@ -65,6 +69,7 @@ func IsArticleIdAlreadyUsed(id string) bool {
 
 func AddArticle(c *gin.Context) {
 	var article Article
+	article.Id_name = c.Params.ByName("id")
 	if c.BindJSON(&article) != nil {
 		SendErrorMessageToClient(c, "Could not correctly parse the article.")
 		return
@@ -92,6 +97,7 @@ func AddArticle(c *gin.Context) {
 
 func DeleteArticle(c *gin.Context) {
 	var delArticle DelArticle
+	delArticle.Id_name = c.Params.ByName("id")
 	if c.BindJSON(&delArticle) != nil {
 		SendErrorMessageToClient(c, "Could not correctly parse the article ID.")
 		return

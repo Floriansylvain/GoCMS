@@ -14,11 +14,10 @@ onMounted(async function() {
 })
 
 function addArticle() {
-    fetch("http://localhost:8080/add-article", {
+    fetch(`http://localhost:8080/articles/${Math.random() * 100}`, {
         method: "POST",
         headers: {"Authorization" : `Basic ${btoa(`${username.value}:${password.value}`)}`},
         body: JSON.stringify({
-            id_name: `${Math.random() * 100}`,
             content: {},
             date: new Date().getTime()
         })
@@ -27,14 +26,8 @@ function addArticle() {
         .then(result => console.log(result))
 }
 
-function logArticles() {
-    fetch("http://localhost:8080/get-all-articles", {headers: {"Authorization" : `Basic ${btoa(`${username.value}:${password.value}`)}`}})
-        .then(response => response.json())
-        .then(result => console.log(result))
-}
-
 function deleteArticle(articleID: String) {
-    fetch("http://localhost:8080/delete-article", {
+    fetch(`http://localhost:8080/articles/${articleID}`, {
         method: "DELETE",
         headers: {"Authorization" : `Basic ${btoa(`${username.value}:${password.value}`)}`},
         body: JSON.stringify({
@@ -69,7 +62,7 @@ function auth(type: string, username: string, password: string) {
 <template>
     <p>Salut à tous</p>
     <button @click="addArticle">add rand article</button>
-    <button @click="logArticles">display articles in console</button> <br>
+    <button @click="getArticle('')">display articles in console</button> <br>
     <label for="articleIDinput"></label>
     <input id="articleIDinput" name="articleIDinput" type="text" placeholder="article ID" v-model="inputArticleID">
     <button @click="deleteArticle(inputArticleID)">delete this article</button>
