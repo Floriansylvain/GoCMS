@@ -31,10 +31,10 @@ func initArticlesRoutes(r *gin.Engine) {
 	articlesRouter := r.Group("/articles/")
 	articlesRouter.Use(internal.AuthMiddleware.MiddlewareFunc())
 
-	articlesRouter.GET("/", internal.GetAllArticles)
-	articlesRouter.GET("/:id", internal.GetArticle)
-	articlesRouter.POST("/:id", internal.AddArticle)
-	articlesRouter.DELETE("/:id", internal.DeleteArticle)
+	articlesRouter.GET("/", internal.GetAllArticlesHandler)
+	articlesRouter.GET("/:id", internal.GetArticleHandler)
+	articlesRouter.POST("/:id", internal.AddArticleHandler)
+	articlesRouter.DELETE("/:id", internal.DeleteArticleHandler)
 }
 
 func initGin() {
