@@ -56,7 +56,7 @@ func AddArticleHandler(c *gin.Context) {
 
 	err = pushDocument(articlesLocation, document)
 	if err != nil {
-		SendBadRequest(c, "Could not insert document into DB.")
+		SendBadRequest(c, fmt.Sprintf(`Could not insert document into DB: %v`, err.Error()))
 		return
 	}
 
