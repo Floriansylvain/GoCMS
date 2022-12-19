@@ -14,5 +14,6 @@ TODO
 - ./env
     - API_PORT
     - FRONT_PORT
+    - JWT_SECRET
 ## Demo
 TODO
