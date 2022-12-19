@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -14,24 +15,33 @@ func initEnvVariables() {
 	}
 }
 
+func initJWT() {
+	errInit := internal.AuthMiddleware.MiddlewareInit()
+	if errInit != nil {
+		fmt.Printf(errInit.Error())
+	}
+}
+
 func initGin() {
 	r := gin.Default()
 	r.SetTrustedProxies([]string{"localhost"})
 
+	r.POST("/login", internal.AuthMiddleware.LoginHandler)
 	r.GET("/ping", internal.Ping)
 
-	r.GET("/articles/", internal.AuthCheck, internal.GetAllArticles)
-	r.GET("/articles/:id", internal.AuthCheck, internal.GetArticle)
-	r.POST("/articles/:id", internal.AuthCheck, internal.AddArticle)
-	r.DELETE("/articles/:id", internal.AuthCheck, internal.DeleteArticle)
+	articlesRouter := r.Group("/articles/")
+	articlesRouter.Use(internal.AuthMiddleware.MiddlewareFunc())
 
-	r.POST("/login", internal.LoginUser)
-	r.POST("/logout", internal.LogoutUser)
+	articlesRouter.GET("/", internal.GetAllArticles)
+	articlesRouter.GET("/:id", internal.GetArticle)
+	articlesRouter.POST("/:id", internal.AddArticle)
+	articlesRouter.DELETE("/:id", internal.DeleteArticle)
 
 	r.Run(":" + os.Getenv("API_PORT"))
 }
 
 func main() {
 	initEnvVariables()
+	initJWT()
 	initGin()
 }
