@@ -9,21 +9,21 @@ import (
 )
 
 type Article struct {
-	Id_name string      `json:"id_name" bson:"id_name"`
+	IdName  string      `json:"id_name" bson:"id_name"`
 	Date    int64       `json:"date" bson:"date"`
 	Content interface{} `json:"content" bson:"content"`
 }
 
 type DelArticle struct {
-	Id_name string `json:"id_name" bson:"id_name"`
+	IdName string `json:"id_name" bson:"id_name"`
 }
 
-var ARTICLES_LOCATION = Location{Database: "gohcms", Collection: "articles"}
+var articlesLocation = Location{Database: "gohcms", Collection: "articles"}
 
-// TODO Change to GetArticleList that will find filter json context
 func GetAllArticles(c *gin.Context) {
+	// TODO Change to GetArticleList that will find filter json context
 	var articles []Article
-	documents, err := getDocuments(ARTICLES_LOCATION, bson.D{})
+	documents, err := getDocuments(articlesLocation, bson.D{})
 	if err != nil {
 		SendBadRequest(c, err.Error())
 		return
@@ -40,7 +40,7 @@ func GetAllArticles(c *gin.Context) {
 
 func GetArticle(c *gin.Context) {
 	articleID := c.Params.ByName("id")
-	articles, err := getDocuments(ARTICLES_LOCATION,
+	articles, err := getDocuments(articlesLocation,
 		bson.D{{Key: "id_name", Value: articleID}})
 	if err != nil {
 		SendBadRequest(c, err.Error())
@@ -56,11 +56,11 @@ func GetArticle(c *gin.Context) {
 }
 
 func IsArticleIdAlreadyUsed(id string) bool {
-	documents, _ := getDocuments(ARTICLES_LOCATION, bson.D{})
+	documents, _ := getDocuments(articlesLocation, bson.D{})
 	for i := 0; i < len(documents); i++ {
 		var newArticle Article
 		bson.Unmarshal(documents[i], &newArticle)
-		if newArticle.Id_name == id {
+		if newArticle.IdName == id {
 			return true
 		}
 	}
@@ -69,7 +69,7 @@ func IsArticleIdAlreadyUsed(id string) bool {
 
 func AddArticle(c *gin.Context) {
 	var article Article
-	article.Id_name = c.Params.ByName("id")
+	article.IdName = c.Params.ByName("id")
 	if c.BindJSON(&article) != nil {
 		SendBadRequest(c, "Could not correctly parse the article.")
 		return
@@ -81,12 +81,12 @@ func AddArticle(c *gin.Context) {
 		return
 	}
 
-	if IsArticleIdAlreadyUsed(article.Id_name) {
+	if IsArticleIdAlreadyUsed(article.IdName) {
 		SendBadRequest(c, "Article ID already used.")
 		return
 	}
 
-	err = pushDocument(ARTICLES_LOCATION, document)
+	err = pushDocument(articlesLocation, document)
 	if err != nil {
 		SendBadRequest(c, "Could not insert document into DB.")
 		return
@@ -97,7 +97,7 @@ func AddArticle(c *gin.Context) {
 
 func DeleteArticle(c *gin.Context) {
 	var delArticle DelArticle
-	delArticle.Id_name = c.Params.ByName("id")
+	delArticle.IdName = c.Params.ByName("id")
 	if c.BindJSON(&delArticle) != nil {
 		SendBadRequest(c, "Could not correctly parse the article ID.")
 		return
@@ -109,7 +109,7 @@ func DeleteArticle(c *gin.Context) {
 		return
 	}
 
-	deleteCount, err := deleteDocument(ARTICLES_LOCATION, document)
+	deleteCount, err := deleteDocument(articlesLocation, document)
 	if err != nil {
 		SendBadRequest(c, "Could not insert document into DB.")
 		return
