@@ -7,6 +7,7 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type User struct {
@@ -14,7 +15,7 @@ type User struct {
 	Password string `json:"password" bson:"password"`
 }
 
-var USERS_LOCATION = Location{Database: "gohcms", Collection: "users"}
+var UsersLocation = Location{Database: "gohcms", Collection: "users"}
 
 var AuthMiddleware, _ = jwt.New(&jwt.GinJWTMiddleware{
 	Realm:         "GohCMS",
@@ -26,9 +27,18 @@ var AuthMiddleware, _ = jwt.New(&jwt.GinJWTMiddleware{
 
 func JWTAuthenticator(c *gin.Context) (interface{}, error) {
 	var user = User{}
-	c.BindJSON(&user)
-	if user.Email == "dddeschamps2022" && user.Password == "1234" {
-		return gin.H{"email": "dddeschamps2022"}, nil
+	err := c.BindJSON(&user)
+	if err != nil {
+		return nil, errors.New("wrong credentials json format.")
 	}
-	return nil, errors.New("can't verify credentials.")
+
+	_, err = getUniqueDocument(UsersLocation, bson.D{
+		{Key: "email", Value: user.Email},
+		{Key: "password", Value: user.Password},
+	})
+	if err != nil {
+		return nil, errors.New("wrong email or password.")
+	}
+
+	return gin.H{"email": user.Email}, nil
 }
