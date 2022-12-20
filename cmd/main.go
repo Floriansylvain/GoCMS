@@ -9,6 +9,8 @@ import (
 	"github.com/joho/godotenv"
 )
 
+var ginMode = os.Getenv("GIN_MODE")
+
 func initEnvVariables() {
 	if godotenv.Load() != nil {
 		panic("Error loading .env file.")
@@ -27,16 +29,6 @@ func initBasicRoutes(r *gin.Engine) {
 	r.GET("/ping", internal.Ping)
 }
 
-func initArticlesRoutes(r *gin.Engine) {
-	articlesRouter := r.Group("/articles/")
-	articlesRouter.Use(internal.AuthMiddleware.MiddlewareFunc())
-
-	articlesRouter.GET("/", internal.GetAllArticlesHandler)
-	articlesRouter.GET("/:id", internal.GetArticleHandler)
-	articlesRouter.POST("/:id", internal.AddArticleHandler)
-	articlesRouter.DELETE("/:id", internal.DeleteArticleHandler)
-}
-
 func corsMiddleware(c *gin.Context) {
 	c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
@@ -49,11 +41,23 @@ func corsMiddleware(c *gin.Context) {
 	c.Next()
 }
 
+func initArticlesRoutes(r *gin.Engine) {
+	articlesRouter := r.Group("/articles/")
+	articlesRouter.Use(internal.AuthMiddleware.MiddlewareFunc())
+	if ginMode != "release" {
+		articlesRouter.Use(corsMiddleware)
+	}
+
+	articlesRouter.GET("/", internal.GetAllArticlesHandler)
+	articlesRouter.GET("/:id", internal.GetArticleHandler)
+	articlesRouter.POST("/:id", internal.AddArticleHandler)
+	articlesRouter.DELETE("/:id", internal.DeleteArticleHandler)
+}
+
 func initGin() {
 	r := gin.Default()
 	r.SetTrustedProxies([]string{"localhost"})
 
-	ginMode := os.Getenv("GIN_MODE")
 	if ginMode == "release" {
 		gin.SetMode(ginMode)
 	} else {
