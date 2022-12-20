@@ -19,18 +19,14 @@ func GetAllArticlesHandler(c *gin.Context) {
 
 func GetArticleHandler(c *gin.Context) {
 	articleID := c.Params.ByName("id")
-	articles, err := getDocuments(articlesLocation,
+	article, err := getUniqueDocument(articlesLocation,
 		bson.D{{Key: "id_name", Value: articleID}})
 	if err != nil {
-		SendBadRequest(c, err.Error())
-		return
-	}
-	if len(articles) == 0 {
 		SendBadRequest(c, "The ID provided doesn't match any article.")
 		return
 	}
 	var parsedArticle Article
-	bson.Unmarshal(articles[0], &parsedArticle)
+	bson.Unmarshal(article, &parsedArticle)
 	c.JSON(http.StatusOK, parsedArticle)
 }
 

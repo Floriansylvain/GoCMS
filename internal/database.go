@@ -52,6 +52,18 @@ func getDocuments(location Location, filter interface{}) ([][]byte, error) {
 	return results, nil
 }
 
+func getUniqueDocument(location Location, filter interface{}) ([]byte, error) {
+	client := getNewClient()
+	collection := client.Database(location.Database).Collection(location.Collection)
+	defer client.Disconnect(context.TODO())
+
+	singleResult := collection.FindOne(context.TODO(), filter)
+	if singleResult.Err() != nil {
+		return nil, errors.New("no document was found, check the filter or the location.")
+	}
+	return singleResult.DecodeBytes()
+}
+
 func deleteDocument(location Location, filter interface{}) (int64, error) {
 	client := getNewClient()
 	collection := client.Database(location.Database).Collection(location.Collection)
