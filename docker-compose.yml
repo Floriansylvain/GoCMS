@@ -1,6 +1,8 @@
 services:
   backend:
-    build: .
+    build:
+      context: ./
+      dockerfile: ./Dockerfile.backend
     image: gohcms-backend
     env_file:
       - .env
@@ -9,7 +11,9 @@ services:
     networks:
       - back-net
   frontend:
-    build: web/admin-gui/.
+    build:
+      context: ./
+      dockerfile: ./Dockerfile.frontend
     image: gohcms-frontend
     env_file:
       - .env

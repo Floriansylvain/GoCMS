@@ -7,7 +7,7 @@ const email = ref('')
 const password = ref('')
 
 function getArticles() {
-	fetch(`http://localhost:8080/articles/`, {
+	fetch(`http://localhost:${__APP_ENV__.API_PORT}/articles/`, {
 		headers: { "Authorization": `Bearer ${useAuthStore().token}` }
 	})
 	.then(response => response.json())
@@ -25,7 +25,7 @@ function jwtHandler(apiResponse: jwtFormat): void {
 }
 
 function login(email: string, password: string): void {
-	fetch(`http://localhost:8080/login/`, {
+	fetch(`http://localhost:${__APP_ENV__.API_PORT}/login/`, {
 		method: "POST",
 		body: JSON.stringify({
 			email: email,

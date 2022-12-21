@@ -16,8 +16,9 @@ function jwtHandler(apiResponse: jwtFormat): void {
 	isTokenOK.value = true
 }
 
+//TODO rempalcer tous les :8080 par la var d'env du port de l'API (sinon c un peu dommage)
 function login(email: string, password: string): void {
-	fetch(`http://localhost:8080/login/`, {
+	fetch(`http://localhost:${__APP_ENV__.API_PORT}/login/`, {
 		method: "POST",
 		body: JSON.stringify({
 			email: email,
@@ -28,7 +29,7 @@ function login(email: string, password: string): void {
 		.then(result => {
 			jwtHandler(result)
 			if (isTokenOK.value === true)  {
-				router.push('/')
+				router.push('/home')
 			}
 		})
 }
