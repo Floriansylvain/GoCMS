@@ -25,8 +25,8 @@ func initJWT() {
 }
 
 func initBasicRoutes(r *gin.Engine) {
-	r.POST("/login", internal.AuthMiddleware.LoginHandler)
-	r.GET("/ping", internal.Ping)
+	r.POST("/login/", internal.AuthMiddleware.LoginHandler)
+	r.GET("/ping/", internal.Ping)
 }
 
 func corsMiddleware(c *gin.Context) {
@@ -42,7 +42,7 @@ func corsMiddleware(c *gin.Context) {
 }
 
 func initArticlesRoutes(r *gin.Engine) {
-	articlesRouter := r.Group("/articles/")
+	articlesRouter := r.Group("/articles")
 	articlesRouter.Use(internal.AuthMiddleware.MiddlewareFunc())
 	if ginMode != "release" {
 		articlesRouter.Use(corsMiddleware)
