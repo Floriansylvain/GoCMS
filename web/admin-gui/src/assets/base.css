@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500&family=Hind:wght@400;500;600;700&family=Nunito:wght@500;600;700&display=swap');
+
+:root {
+	--regular-weight: 400;
+	--medium-weight: 500;
+	--semibold-weight: 600;
+	--bold-weight: 700;
+
+	--radius: 10px;
+
+	--primary: #2CD358;
+	--primary-dark: #00BA2A;
+	--primary-light: #97E6A2;
+	--secondary: #D32CA6;
+	--secondary-dark: #BA0094;
+	--secondary-light: #E88DCA;
+	--neutral-dark: #121212;
+	--neutral-light: #aaaaaa;
+}
+
+body {
+	margin: 0;
+}
+
+h1 {
+	font-family: 'Frank Ruhl Libre', serif;
+}
+
+h2, h3, h4, h5, h6 {
+	font-family: 'Nunito', sans-serif;
+}
+
+* {
+	font-family: 'Hind', sans-serif;
+	box-sizing: border-box;
+
+	color: var(--neutral-dark);
+}
+
+.label-input {
+	display: flex;
+	flex-direction: column;
+}
+
+.label-input label {
+	font-weight: var(--medium-weight);
+}
+
+.label-input input {
+	height: 32px;
+	padding: 0 8px;
+
+	border: solid 1.25px var(--neutral-light);
+	border-radius: var(--radius);
+}
+
+.button-primary {
+	border-radius: var(--radius);
+	border: none;
+	
+	height: 32px;
+	
+	background-color: var(--primary);
+	
+	font-weight: var(--medium-weight);
+	
+	cursor: pointer;
+}
+
+.button-primary:hover {
+	background-color: var(--primary-light);
+}
+
+.button-primary:active {
+	background-color: var(--primary-dark);
+}
