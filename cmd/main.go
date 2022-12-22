@@ -10,6 +10,9 @@ import (
 )
 
 var ginMode = os.Getenv("APP_GIN_MODE")
+var apiPort = os.Getenv("APP_API_PORT")
+var frontPort = os.Getenv("APP_FRONT_PORT")
+var hostAddress = os.Getenv("APP_HOST_ADDRESS")
 
 func initEnvVariables() {
 	if godotenv.Load() != nil {
@@ -30,7 +33,7 @@ func initBasicRoutes(r *gin.Engine) {
 }
 
 func corsMiddleware(c *gin.Context) {
-	c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+	c.Writer.Header().Set("Access-Control-Allow-Origin", fmt.Sprintf("http://%v:%v", hostAddress, frontPort))
 	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 	c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
 	c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
@@ -43,10 +46,7 @@ func corsMiddleware(c *gin.Context) {
 
 func initArticlesRoutes(r *gin.Engine) {
 	articlesRouter := r.Group("/articles")
-	articlesRouter.Use(internal.AuthMiddleware.MiddlewareFunc())
-	if ginMode != "release" {
-		articlesRouter.Use(corsMiddleware)
-	}
+	articlesRouter.Use(corsMiddleware, internal.AuthMiddleware.MiddlewareFunc())
 
 	articlesRouter.GET("/", internal.GetAllArticlesHandler)
 	articlesRouter.GET("/:id", internal.GetArticleHandler)
@@ -56,18 +56,16 @@ func initArticlesRoutes(r *gin.Engine) {
 
 func initGin() {
 	r := gin.Default()
-	r.SetTrustedProxies([]string{"localhost"})
+	r.Use(corsMiddleware)
 
 	if ginMode == "release" {
 		gin.SetMode(ginMode)
-	} else {
-		r.Use(corsMiddleware)
 	}
 
 	initBasicRoutes(r)
 	initArticlesRoutes(r)
 
-	r.Run(":" + os.Getenv("APP_API_PORT"))
+	r.Run(":" + apiPort)
 }
 
 func main() {
