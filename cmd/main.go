@@ -9,7 +9,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var ginMode = os.Getenv("GIN_MODE")
+var ginMode = os.Getenv("APP_GIN_MODE")
 
 func initEnvVariables() {
 	if godotenv.Load() != nil {
@@ -67,7 +67,7 @@ func initGin() {
 	initBasicRoutes(r)
 	initArticlesRoutes(r)
 
-	r.Run(":" + os.Getenv("API_PORT"))
+	r.Run(":" + os.Getenv("APP_API_PORT"))
 }
 
 func main() {

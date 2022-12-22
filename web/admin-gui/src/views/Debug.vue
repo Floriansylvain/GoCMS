@@ -6,8 +6,18 @@ import { ref } from 'vue';
 const email = ref('')
 const password = ref('')
 
+const baseURL = `http://${__APP_ENV__.APP_HOST_ADDRESS}:${__APP_ENV__.APP_API_PORT}`
+
 function getArticles() {
-	fetch(`http://localhost:${__APP_ENV__.API_PORT}/articles/`, {
+	fetch(`${baseURL}/articles/`, {
+		headers: { "Authorization": `Bearer ${useAuthStore().token}` }
+	})
+	.then(response => response.json())
+	.then(result => console.log(result))
+}
+
+function ping() {
+	fetch(`${baseURL}/ping/`, {
 		headers: { "Authorization": `Bearer ${useAuthStore().token}` }
 	})
 	.then(response => response.json())
@@ -25,7 +35,7 @@ function jwtHandler(apiResponse: jwtFormat): void {
 }
 
 function login(email: string, password: string): void {
-	fetch(`http://localhost:${__APP_ENV__.API_PORT}/login/`, {
+	fetch(`${baseURL}/login/`, {
 		method: "POST",
 		body: JSON.stringify({
 			email: email,
@@ -54,10 +64,8 @@ function login(email: string, password: string): void {
 	
 	<div>
 		<div>
-			<button @click="getArticles()">get all articles</button>
-			<button @click="getArticles()">get all articles</button>
-			<button @click="getArticles()">get all articles</button>
-			<button @click="getArticles()">get all articles</button>
+			<button class="button-primary" @click="getArticles()">get all articles</button>
+			<button class="button-primary" @click="ping()">ping</button>
 		</div>
 	</div>
 </template>

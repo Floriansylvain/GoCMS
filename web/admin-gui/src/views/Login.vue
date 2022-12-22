@@ -18,7 +18,7 @@ function jwtHandler(apiResponse: jwtFormat): void {
 
 //TODO rempalcer tous les :8080 par la var d'env du port de l'API (sinon c un peu dommage)
 function login(email: string, password: string): void {
-	fetch(`http://localhost:${__APP_ENV__.API_PORT}/login/`, {
+	fetch(`http://${__APP_ENV__.APP_HOST_ADDRESS}:${__APP_ENV__.APP_API_PORT}/login/`, {
 		method: "POST",
 		body: JSON.stringify({
 			email: email,

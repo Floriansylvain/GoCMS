@@ -19,7 +19,7 @@ var UsersLocation = Location{Database: "gohcms", Collection: "users"}
 
 var AuthMiddleware, _ = jwt.New(&jwt.GinJWTMiddleware{
 	Realm:         "GohCMS",
-	Key:           []byte(os.Getenv("JWT_SECRET")),
+	Key:           []byte(os.Getenv("APP_JWT_SECRET")),
 	Timeout:       time.Hour,
 	MaxRefresh:    time.Hour,
 	Authenticator: JWTAuthenticator,
