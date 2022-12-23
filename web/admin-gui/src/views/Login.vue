@@ -1,22 +1,48 @@
 <script setup lang="ts">
 import { useAuthStore, type jwtFormat } from '@/stores/AuthStore';
+import { useErrorsStore } from '@/stores/ErrorsStore';
+import { setCookie } from '@/utils/cookies';
 import { ref, type Ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const isTokenOK: Ref<boolean|undefined> = ref(undefined)
 const router = useRouter()
 
+const authStore = useAuthStore()
+
+function updateJWTcookies(JWTdata: jwtFormat): void {
+	const cookieExpire = new Date(JWTdata.expire)
+	cookieExpire.setDate(cookieExpire.getDate() + 1)
+
+	setCookie({
+		key: 'JWTtoken',
+		value: JWTdata.token,
+		expire: cookieExpire.toString()
+	})
+	setCookie({
+		key: 'JWTexpire',
+		value: JWTdata.expire,
+		expire: cookieExpire.toString()
+	})
+}
+
+function disableErrors(): void {
+	useErrorsStore().sessionExpired = false
+}
+
 function jwtHandler(apiResponse: jwtFormat): void {
 	if (apiResponse.code !== 200) {
 		console.error(apiResponse)
+		isTokenOK.value = false
 		return
 	}
-	useAuthStore().token = apiResponse.token
-	useAuthStore().expire = apiResponse.expire
+	updateJWTcookies(apiResponse)
+	disableErrors()
+	authStore.token = apiResponse.token
+	authStore.expire = apiResponse.expire
 	isTokenOK.value = true
 }
 
-//TODO rempalcer tous les :8080 par la var d'env du port de l'API (sinon c un peu dommage)
 function login(email: string, password: string): void {
 	fetch(`http://${__APP_ENV__.APP_HOST_ADDRESS}:${__APP_ENV__.APP_API_PORT}/login/`, {
 		method: "POST",
@@ -46,13 +72,15 @@ const password = ref('')
 			
 			<form @submit.prevent="login(email, password)">
 				<div class="inputs-group">
-					<div class="label-input">
+					<div :class="`label-input${isTokenOK === false ? '-error' : ''}`">
 						<label for="email">Adresse mail</label>
 						<input id="email" name="email" placeholder="E-mail" type="text" v-model="email">
 					</div>
-					<div class="label-input">
+					<div :class="`label-input${isTokenOK === false ? '-error' : ''}`">
 						<label for="password">Mot de passe</label>
 						<input id="password" name="password" placeholder="Mot de passe" type="password" v-model="password">
+						<p v-if="isTokenOK === false">❌ E-mail et/ou mot de passe incorrect(s).</p>
+						<p v-else-if="useErrorsStore().sessionExpired">⌛ Votre session a expiré.</p>
 					</div>
 				</div>
 				<button class="button-primary" type="submit">Se connecter</button>
@@ -74,8 +102,8 @@ h2 {
 }
 
 .login-form {
-	width: 100%;
-	max-width: 350px;
+	width: fit-content;
+	max-width: 100%;
 	
 	padding: 32px;
 }
