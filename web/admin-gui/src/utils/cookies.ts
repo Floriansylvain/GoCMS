@@ -11,3 +11,11 @@ export function setCookie(cookieData: cookie): void {
 export function getCookie(cookieName: string): string {
 	return document.cookie.match('(^|;)\\s*' + cookieName + '\\s*=\\s*([^;]+)')?.pop() || ''
 }
+
+export function deleteCookie(cookieName: string): void {
+	setCookie({
+		key: cookieName,
+		value: '',
+		expire: new Date(0).toString()
+	})
+}

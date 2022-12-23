@@ -10,11 +10,16 @@ export interface jwtFormat {
 }
 
 export const useAuthStore = defineStore("AuthStore", () => {
-	const expire = ref("")
-	const token = ref("")
+	const expire = ref('')
+	const token = ref('')
 	
+	function clearAll(): void {
+		expire.value = ''
+		token.value = ''
+	}
+ 
 	function isSet(): boolean {
-		return token.value !== undefined && token.value !== ""
+		return token.value !== undefined && token.value !== ''
 	}
 	
 	function isExpired(): boolean {
@@ -43,5 +48,5 @@ export const useAuthStore = defineStore("AuthStore", () => {
 	
 	initStore()
 	
-	return { expire, token, isValid }
+	return { expire, token, isValid, clearAll }
 })

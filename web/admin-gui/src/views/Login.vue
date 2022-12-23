@@ -69,7 +69,7 @@ function login(email: string, password: string): void {
 <template>
 	<div class="login-page">
 		<div class="login-form">
-			<h2>Connexion à <span style="color:#00ACD7">Go</span>hCMS</h2>
+			<h2>Connexion à <span style="color:var(--brand-blue)">Go</span>hCMS</h2>
 			
 			<form @submit.prevent="login(email, password)">
 				<div class="inputs-group">
@@ -96,6 +96,11 @@ function login(email: string, password: string): void {
 h2 { 
 	margin: 0 0 16px 0;
 }
+
+h2 span { 
+	font-family: inherit;
+}
+
 .login-page {
 	display: flex;
 	justify-content: center;

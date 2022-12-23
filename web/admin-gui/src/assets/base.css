@@ -21,6 +21,9 @@
 	--neutral-dark: #121212;
 	--neutral-medium: #707070;
 	--neutral-light: #aaaaaa;
+	--neutral-verylight: #e7e7e7;
+	--brand-blue: #00ACD7;
+	--error: #E80000;
 }
 
 body {
@@ -40,9 +43,9 @@ h2, h3, h4, h5, h6 {
 
 * {
 	font-family: 'Hind', sans-serif;
-	box-sizing: border-box;
-
 	color: var(--neutral-dark);
+
+	box-sizing: border-box;
 }
 
 .label-input,
@@ -75,11 +78,11 @@ h2, h3, h4, h5, h6 {
 }
 
 .label-input-error input {
-	border: solid 1.75px red;
+	border: solid 1.75px var(--error);
 }
 
 .label-input-error p {
-	color: red;
+	color: var(--error);
 }
 
 .button-primary,

@@ -1,9 +1,10 @@
 import { createRouter, createWebHistory, type NavigationGuard } from 'vue-router'
-import Home from '@/views/Home.vue'
-import Debug from '@/views/Debug.vue'
-import Login from '@/views/Login.vue'
 import { useAuthStore } from '@/stores/AuthStore'
 import { nextTick } from 'vue'
+import Debug from '@/views/Debug.vue'
+import Login from '@/views/Login.vue'
+import Home from '@/views/Home.vue'
+import Articles from '@/views/Articles.vue'
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -30,6 +31,14 @@ const router = createRouter({
 			component: Home,
 			meta: {
 				title: 'GohCMS - Accueil'
+			}
+		},
+		{
+			path: '/articles',
+			name: 'articles',
+			component: Articles,
+			meta: {
+				title: 'GohCMS - Articles'
 			}
 		},
 	]
