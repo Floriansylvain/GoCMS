@@ -7,8 +7,13 @@ import { useRouter } from 'vue-router';
 
 const isTokenOK: Ref<boolean|undefined> = ref(undefined)
 const router = useRouter()
-
 const authStore = useAuthStore()
+const email = ref('')
+const password = ref('')
+
+const isFormEmpty: ()=>boolean = () => { 
+	return email.value === '' || password.value === ''
+}
 
 function updateJWTcookies(JWTdata: jwtFormat): void {
 	const cookieExpire = new Date(JWTdata.expire)
@@ -59,16 +64,12 @@ function login(email: string, password: string): void {
 			}
 		})
 }
-
-const email = ref('')
-const password = ref('')
-
 </script>
 
 <template>
 	<div class="login-page">
 		<div class="login-form">
-			<h2>Connexion à GohCMS</h2>
+			<h2>Connexion à <span style="color:#00ACD7">Go</span>hCMS</h2>
 			
 			<form @submit.prevent="login(email, password)">
 				<div class="inputs-group">
@@ -83,7 +84,9 @@ const password = ref('')
 						<p v-else-if="useErrorsStore().sessionExpired">⌛ Votre session a expiré.</p>
 					</div>
 				</div>
-				<button class="button-primary" type="submit">Se connecter</button>
+				<button :class="`button-${isFormEmpty() ? 'disabled' : 'primary'}`" type="submit" :disabled="isFormEmpty()">
+					Se connecter
+				</button>
 			</form>
 		</div>
 	</div>

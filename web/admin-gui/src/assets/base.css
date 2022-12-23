@@ -82,7 +82,8 @@ h2, h3, h4, h5, h6 {
 	color: red;
 }
 
-.button-primary {
+.button-primary,
+.button-disabled {
 	border-radius: var(--radius);
 	border: none;
 	
@@ -101,4 +102,10 @@ h2, h3, h4, h5, h6 {
 
 .button-primary:active {
 	background-color: var(--primary-dark);
+}
+
+.button-disabled {
+	color: var(--neutral-dark);
+	background-color: var(--neutral-light);
+	cursor: default;
 }
