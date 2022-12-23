@@ -3,7 +3,10 @@ import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
-export default defineConfig(({command, mode}) => {
+export default defineConfig(({ command, mode }) => {
+	const env1 = loadEnv(mode, "./../../", "")
+	const env2 = loadEnv(mode, process.cwd(), "")
+
 	return { 
 		plugins: [vue()],
 		resolve: {
@@ -13,9 +16,12 @@ export default defineConfig(({command, mode}) => {
 		},
 		define: {
 			__APP_ENV__: {
-				...loadEnv(mode, "./../../", ""), // when running directly | access .env from ./web/admin-gui/ 
-				...loadEnv(mode, process.cwd(), ""), // when running from docker
+				...env1,
+				...env2,
 			}
+		},
+		server: {
+			port: env1.APP_FRONT_PORT,
 		}
 	}
 })
