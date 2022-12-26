@@ -1,20 +1,24 @@
 services:
   backend:
-    build: .
+    build:
+      context: ./
+      dockerfile: ./Dockerfile.backend
     image: gohcms-backend
     env_file:
       - .env
     ports:
-      - "${API_PORT}:8080"
+      - "${APP_API_PORT}:${APP_API_PORT}"
     networks:
       - back-net
   frontend:
-    build: web/admin-gui/.
+    build:
+      context: ./
+      dockerfile: ./Dockerfile.frontend
     image: gohcms-frontend
     env_file:
       - .env
     ports:
-      - "${FRONT_PORT}:80"
+      - "${APP_FRONT_PORT}:80"
     networks:
       - front-net
   db:

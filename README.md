@@ -12,7 +12,9 @@ docker-compose up
 TODO
 ## Environment variables
 - ./env
-    - API_PORT
-    - FRONT_PORT
+    - APP_HOST_ADDRESS
+    - APP_API_PORT
+    - APP_FRONT_PORT
+    - APP_JWT_SECRET
 ## Demo
 TODO

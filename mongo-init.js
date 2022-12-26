@@ -42,3 +42,8 @@ db.createCollection('users', {
 		}
 	}
 })
+
+db.users.insertOne({
+	email: "root",
+	password: "root"
+})

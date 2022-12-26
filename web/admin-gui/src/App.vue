@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
+import { RouterView, useRoute } from 'vue-router'
+import Navbar from './components/Navbar.vue';
 </script>
 
 <template>
-  <RouterView />
+	<Navbar v-if="useRoute().name !== 'login'"></Navbar>
+	<RouterView />
 </template>
