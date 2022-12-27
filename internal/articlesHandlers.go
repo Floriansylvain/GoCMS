@@ -68,7 +68,11 @@ func DeleteArticleHandler(c *gin.Context) {
 		return
 	}
 
-	SendOk(c, fmt.Sprintf("%d articles were successfully deleted!", deleteCount))
+	if deleteCount != 0 {
+		SendOk(c, fmt.Sprintf("%d articles were successfully deleted!", deleteCount))
+	} else {
+		SendOk(c, "No articles were deleted.")
+	}
 }
 
 func EditArticleHandler(c *gin.Context) {
