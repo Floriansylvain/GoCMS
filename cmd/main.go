@@ -10,15 +10,20 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var ginMode = os.Getenv("APP_GIN_MODE")
-var apiPort = os.Getenv("APP_API_PORT")
-var frontPort = os.Getenv("APP_FRONT_PORT")
-var hostAddress = os.Getenv("APP_HOST_ADDRESS")
+var ginMode string
+var apiPort string
+var frontPort string
+var hostAddress string
 
 func initEnvVariables() {
 	if godotenv.Load() != nil {
 		panic("Error loading .env file.")
 	}
+
+	ginMode = os.Getenv("APP_GIN_MODE")
+	apiPort = os.Getenv("APP_API_PORT")
+	frontPort = os.Getenv("APP_FRONT_PORT")
+	hostAddress = os.Getenv("APP_HOST_ADDRESS")
 }
 
 func initJWT() {
