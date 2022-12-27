@@ -10,10 +10,6 @@ type Article struct {
 	Content interface{} `json:"content" bson:"content"`
 }
 
-type DelArticle struct {
-	IdName string `json:"id_name" bson:"id_name"`
-}
-
 var articlesLocation = Location{Database: "gohcms", Collection: "articles"}
 
 func GetAllArticlesBusiness(documents [][]byte) []Article {

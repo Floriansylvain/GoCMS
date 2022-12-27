@@ -9,7 +9,7 @@ import (
 )
 
 func GetAllArticlesHandler(c *gin.Context) {
-	documents, err := getDocuments(articlesLocation, bson.D{})
+	documents, err := getDocuments(articlesLocation, gin.H{})
 	if err != nil {
 		SendBadRequest(c, err.Error())
 		return
@@ -20,7 +20,7 @@ func GetAllArticlesHandler(c *gin.Context) {
 func GetArticleHandler(c *gin.Context) {
 	articleID := c.Params.ByName("id")
 	article, err := getUniqueDocument(articlesLocation,
-		bson.D{{Key: "id_name", Value: articleID}})
+		gin.H{"id_name": articleID})
 	if err != nil {
 		SendBadRequest(c, "The ID provided doesn't match any article.")
 		return
@@ -60,22 +60,11 @@ func AddArticleHandler(c *gin.Context) {
 }
 
 func DeleteArticleHandler(c *gin.Context) {
-	var delArticle DelArticle
-	delArticle.IdName = c.Params.ByName("id")
-	if c.BindJSON(&delArticle) != nil {
-		SendBadRequest(c, "Could not correctly parse the article ID.")
-		return
-	}
+	id := c.Params.ByName("id")
 
-	document, err := bson.Marshal(delArticle)
+	deleteCount, err := deleteDocument(articlesLocation, gin.H{"id_name": id})
 	if err != nil {
-		SendBadRequest(c, "Could not correctly marshal the article ID.")
-		return
-	}
-
-	deleteCount, err := deleteDocument(articlesLocation, document)
-	if err != nil {
-		SendBadRequest(c, "Could not insert document into DB.")
+		SendBadRequest(c, "Could not delete document into DB.")
 		return
 	}
 
