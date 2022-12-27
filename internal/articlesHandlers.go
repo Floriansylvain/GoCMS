@@ -70,3 +70,23 @@ func DeleteArticleHandler(c *gin.Context) {
 
 	SendOk(c, fmt.Sprintf("%d articles were successfully deleted!", deleteCount))
 }
+
+func EditArticleHandler(c *gin.Context) {
+	id := c.Params.ByName("id")
+
+	var articleUpdate DocumentUpdate
+	articleUpdate.Filter = gin.H{"id_name": id}
+	c.BindJSON(&articleUpdate.Update)
+
+	editCount, err := editDocument(articlesLocation, articleUpdate)
+	if err != nil {
+		SendBadRequest(c, err.Error())
+		return
+	}
+
+	if editCount != 0 {
+		SendOk(c, fmt.Sprintf("%d articles were successfully edited!", editCount))
+	} else {
+		SendOk(c, "No articles were edited.")
+	}
+}
