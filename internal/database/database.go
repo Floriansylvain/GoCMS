@@ -1,4 +1,4 @@
-package internal
+package database
 
 import (
 	"context"
@@ -19,7 +19,7 @@ type DocumentUpdate struct {
 	Update gin.H `json:"update"`
 }
 
-func getNewClient() *mongo.Client {
+func GetNewClient() *mongo.Client {
 	client, err := mongo.Connect(
 		context.TODO(),
 		options.Client().ApplyURI("mongodb://db:27017/"))
@@ -29,8 +29,8 @@ func getNewClient() *mongo.Client {
 	return client
 }
 
-func pushDocument(location Location, document interface{}) error {
-	client := getNewClient()
+func PushDocument(location Location, document interface{}) error {
+	client := GetNewClient()
 	collection := client.Database(location.Database).Collection(location.Collection)
 	defer client.Disconnect(context.TODO())
 
@@ -41,8 +41,8 @@ func pushDocument(location Location, document interface{}) error {
 	return nil
 }
 
-func getDocuments(location Location, filter interface{}) ([][]byte, error) {
-	client := getNewClient()
+func GetDocuments(location Location, filter interface{}) ([][]byte, error) {
+	client := GetNewClient()
 	collection := client.Database(location.Database).Collection(location.Collection)
 	defer client.Disconnect(context.TODO())
 
@@ -58,8 +58,8 @@ func getDocuments(location Location, filter interface{}) ([][]byte, error) {
 	return results, nil
 }
 
-func getUniqueDocument(location Location, filter interface{}) ([]byte, error) {
-	client := getNewClient()
+func GetUniqueDocument(location Location, filter interface{}) ([]byte, error) {
+	client := GetNewClient()
 	collection := client.Database(location.Database).Collection(location.Collection)
 	defer client.Disconnect(context.TODO())
 
@@ -70,8 +70,8 @@ func getUniqueDocument(location Location, filter interface{}) ([]byte, error) {
 	return singleResult.DecodeBytes()
 }
 
-func deleteDocument(location Location, filter interface{}) (int64, error) {
-	client := getNewClient()
+func DeleteDocument(location Location, filter interface{}) (int64, error) {
+	client := GetNewClient()
 	collection := client.Database(location.Database).Collection(location.Collection)
 	defer client.Disconnect(context.TODO())
 
@@ -83,8 +83,8 @@ func deleteDocument(location Location, filter interface{}) (int64, error) {
 	return result.DeletedCount, nil
 }
 
-func editDocument(location Location, jsons DocumentUpdate) (int64, error) {
-	client := getNewClient()
+func EditDocument(location Location, jsons DocumentUpdate) (int64, error) {
+	client := GetNewClient()
 	collection := client.Database(location.Database).Collection(location.Collection)
 	defer client.Disconnect(context.TODO())
 

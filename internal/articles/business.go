@@ -1,6 +1,7 @@
-package internal
+package articles
 
 import (
+	"github.com/Floriansylvain/GohCMS/internal/database"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -11,7 +12,7 @@ type Article struct {
 	Content gin.H  `json:"content" bson:"content"`
 }
 
-var articlesLocation = Location{Database: "gohcms", Collection: "articles"}
+var articlesLocation = database.Location{Database: "gohcms", Collection: "articles"}
 
 func GetAllArticlesBusiness(documents [][]byte) []Article {
 	var articles = []Article{}

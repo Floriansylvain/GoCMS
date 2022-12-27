@@ -1,10 +1,11 @@
-package internal
+package api
 
 import (
 	"errors"
 	"os"
 	"time"
 
+	"github.com/Floriansylvain/GohCMS/internal/database"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
@@ -15,7 +16,7 @@ type User struct {
 	Password string `json:"password" bson:"password"`
 }
 
-var UsersLocation = Location{Database: "gohcms", Collection: "users"}
+var UsersLocation = database.Location{Database: "gohcms", Collection: "users"}
 
 var AuthMiddleware, _ = jwt.New(&jwt.GinJWTMiddleware{
 	Realm:         "GohCMS",
@@ -32,7 +33,7 @@ func JWTAuthenticator(c *gin.Context) (interface{}, error) {
 		return nil, errors.New("wrong credentials json format.")
 	}
 
-	_, err = getUniqueDocument(UsersLocation, bson.D{
+	_, err = database.GetUniqueDocument(UsersLocation, bson.D{
 		{Key: "email", Value: user.Email},
 		{Key: "password", Value: user.Password},
 	})

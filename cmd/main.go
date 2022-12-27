@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/Floriansylvain/GohCMS/internal/api"
+	"github.com/Floriansylvain/GohCMS/internal/articles"
 	"github.com/gin-gonic/gin"
-	"github.com/gotest/internal"
 	"github.com/joho/godotenv"
 )
 
@@ -21,15 +22,15 @@ func initEnvVariables() {
 }
 
 func initJWT() {
-	errInit := internal.AuthMiddleware.MiddlewareInit()
+	errInit := api.AuthMiddleware.MiddlewareInit()
 	if errInit != nil {
 		fmt.Printf(errInit.Error())
 	}
 }
 
 func initBasicRoutes(r *gin.Engine) {
-	r.POST("/login/", internal.AuthMiddleware.LoginHandler)
-	r.GET("/ping/", internal.Ping)
+	r.POST("/login/", api.AuthMiddleware.LoginHandler)
+	r.GET("/ping/", api.Ping)
 }
 
 func corsMiddleware(c *gin.Context) {
@@ -46,13 +47,13 @@ func corsMiddleware(c *gin.Context) {
 
 func initArticlesRoutes(r *gin.Engine) {
 	articlesRouter := r.Group("/articles")
-	articlesRouter.Use(corsMiddleware, internal.AuthMiddleware.MiddlewareFunc())
+	articlesRouter.Use(corsMiddleware, api.AuthMiddleware.MiddlewareFunc())
 
-	articlesRouter.GET("/", internal.GetAllArticlesHandler)
-	articlesRouter.GET("/:id", internal.GetArticleHandler)
-	articlesRouter.POST("/:id", internal.AddArticleHandler)
-	articlesRouter.PATCH("/:id", internal.EditArticleHandler)
-	articlesRouter.DELETE("/:id", internal.DeleteArticleHandler)
+	articlesRouter.GET("/", articles.GetAllArticlesHandler)
+	articlesRouter.GET("/:id", articles.GetArticleHandler)
+	articlesRouter.POST("/:id", articles.AddArticleHandler)
+	articlesRouter.PATCH("/:id", articles.EditArticleHandler)
+	articlesRouter.DELETE("/:id", articles.DeleteArticleHandler)
 }
 
 func initGin() {
