@@ -1,17 +1,14 @@
 package internal
 
 import (
+	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 type Article struct {
-	IdName  string      `json:"id_name" bson:"id_name"`
-	Date    int64       `json:"date" bson:"date"`
-	Content interface{} `json:"content" bson:"content"`
-}
-
-type DelArticle struct {
-	IdName string `json:"id_name" bson:"id_name"`
+	IdName  string `json:"id_name" bson:"id_name"`
+	Date    int64  `json:"date" bson:"date"`
+	Content gin.H  `json:"content" bson:"content"`
 }
 
 var articlesLocation = Location{Database: "gohcms", Collection: "articles"}

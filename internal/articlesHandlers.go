@@ -9,7 +9,7 @@ import (
 )
 
 func GetAllArticlesHandler(c *gin.Context) {
-	documents, err := getDocuments(articlesLocation, bson.D{})
+	documents, err := getDocuments(articlesLocation, gin.H{})
 	if err != nil {
 		SendBadRequest(c, err.Error())
 		return
@@ -20,7 +20,7 @@ func GetAllArticlesHandler(c *gin.Context) {
 func GetArticleHandler(c *gin.Context) {
 	articleID := c.Params.ByName("id")
 	article, err := getUniqueDocument(articlesLocation,
-		bson.D{{Key: "id_name", Value: articleID}})
+		gin.H{"id_name": articleID})
 	if err != nil {
 		SendBadRequest(c, "The ID provided doesn't match any article.")
 		return
@@ -60,24 +60,37 @@ func AddArticleHandler(c *gin.Context) {
 }
 
 func DeleteArticleHandler(c *gin.Context) {
-	var delArticle DelArticle
-	delArticle.IdName = c.Params.ByName("id")
-	if c.BindJSON(&delArticle) != nil {
-		SendBadRequest(c, "Could not correctly parse the article ID.")
-		return
-	}
+	id := c.Params.ByName("id")
 
-	document, err := bson.Marshal(delArticle)
+	deleteCount, err := deleteDocument(articlesLocation, gin.H{"id_name": id})
 	if err != nil {
-		SendBadRequest(c, "Could not correctly marshal the article ID.")
+		SendBadRequest(c, "Could not delete document into DB.")
 		return
 	}
 
-	deleteCount, err := deleteDocument(articlesLocation, document)
+	if deleteCount != 0 {
+		SendOk(c, fmt.Sprintf("%d articles were successfully deleted!", deleteCount))
+	} else {
+		SendOk(c, "No articles were deleted.")
+	}
+}
+
+func EditArticleHandler(c *gin.Context) {
+	id := c.Params.ByName("id")
+
+	var articleUpdate DocumentUpdate
+	articleUpdate.Filter = gin.H{"id_name": id}
+	c.BindJSON(&articleUpdate.Update)
+
+	editCount, err := editDocument(articlesLocation, articleUpdate)
 	if err != nil {
-		SendBadRequest(c, "Could not insert document into DB.")
+		SendBadRequest(c, err.Error())
 		return
 	}
 
-	SendOk(c, fmt.Sprintf("%d articles were successfully deleted!", deleteCount))
+	if editCount != 0 {
+		SendOk(c, fmt.Sprintf("%d articles were successfully edited!", editCount))
+	} else {
+		SendOk(c, "No articles were edited.")
+	}
 }

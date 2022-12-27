@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -11,6 +12,11 @@ import (
 type Location struct {
 	Database   string
 	Collection string
+}
+
+type DocumentUpdate struct {
+	Filter gin.H `json:"filter"`
+	Update gin.H `json:"update"`
 }
 
 func getNewClient() *mongo.Client {
@@ -44,7 +50,7 @@ func getDocuments(location Location, filter interface{}) ([][]byte, error) {
 
 	cursor, err := collection.Find(context.TODO(), filter)
 	if err != nil {
-		return results, errors.New("something is wrong with filter to find the document")
+		return results, errors.New("something is wrong with filter to find the document.")
 	}
 	for cursor.TryNext(context.TODO()) {
 		results = append(results, cursor.Current)
@@ -71,8 +77,24 @@ func deleteDocument(location Location, filter interface{}) (int64, error) {
 
 	result, err := collection.DeleteOne(context.TODO(), filter)
 	if err != nil {
-		return 0, errors.New("something is wrong with filter to delete the document")
+		return 0, errors.New("something is wrong with filter to delete the document.")
 	}
 
 	return result.DeletedCount, nil
+}
+
+func editDocument(location Location, jsons DocumentUpdate) (int64, error) {
+	client := getNewClient()
+	collection := client.Database(location.Database).Collection(location.Collection)
+	defer client.Disconnect(context.TODO())
+
+	result, err := collection.UpdateOne(context.TODO(), jsons.Filter, gin.H{"$set": jsons.Update})
+	if err != nil {
+		return 0, err
+	}
+	if result.MatchedCount == 0 {
+		return 0, errors.New("cannot find document matching filter.")
+	}
+
+	return result.ModifiedCount, nil
 }
