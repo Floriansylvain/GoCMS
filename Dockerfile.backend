@@ -9,6 +9,6 @@ RUN go mod download
 ADD cmd ./cmd/
 ADD internal ./internal/
 COPY .env ./
-RUN go build -o ./GohCMS/ ./cmd ./internal
+RUN go build -o ./GohCMS/ ./...
 
 CMD ["./GohCMS/cmd"]
