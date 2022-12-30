@@ -4,7 +4,7 @@ const db = conn.getDB("gohcms")
 db.createCollection('articles', {
 	validator: {
 		$jsonSchema: {
-			required: ['content', 'date', 'id_name'],
+			required: ['content', 'date', 'id_name', 'page_id'],
 			properties: {
 				_id: {
 					bsonType: 'objectId'
@@ -18,6 +18,9 @@ db.createCollection('articles', {
 				id_name: {
 					bsonType: 'string',
 					pattern: '^.+$'
+				},
+				page_id: {
+					bsonType: 'string'
 				}
 			}
 		}

@@ -12,12 +12,14 @@ var Article1, _ = bson.Marshal(Article{
 	IdName:  "test_article_1",
 	Date:    1671482492,
 	Content: gin.H{},
+	PageID:  "blog",
 })
 
 var Article2, _ = bson.Marshal(Article{
 	IdName:  "test_article_2",
 	Date:    1671899112,
 	Content: gin.H{},
+	PageID:  "blog",
 })
 
 var BSONConvertedArticles = [][]byte{Article1, Article2}

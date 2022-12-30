@@ -10,6 +10,7 @@ type Article struct {
 	IdName  string `json:"id_name" bson:"id_name"`
 	Date    int64  `json:"date" bson:"date"`
 	Content gin.H  `json:"content" bson:"content"`
+	PageID  string `json:"page_id" bson:"page_id"`
 }
 
 var articlesLocation = database.Location{Database: "gohcms", Collection: "articles"}
