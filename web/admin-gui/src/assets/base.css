@@ -34,18 +34,39 @@ h1 {
 	font-family: 'Frank Ruhl Libre', serif;
 	font-size: 40px;
 }
-h2 { font-size: 32px; }
-h3 { font-size: 24px; }
-h4 { font-size: 18px; }
-h2, h3, h4, h5, h6 {
+
+h2 {
+	font-size: 32px;
+}
+
+h3 {
+	font-size: 24px;
+}
+
+h4 {
+	font-size: 18px;
+}
+
+h2,
+h3,
+h4,
+h5,
+h6 {
 	font-family: 'Nunito', sans-serif;
 }
 
 * {
+	box-sizing: border-box;
+}
+
+p,
+a,
+input,
+label,
+button,
+span {
 	font-family: 'Hind', sans-serif;
 	color: var(--neutral-dark);
-
-	box-sizing: border-box;
 }
 
 .label-input,
@@ -89,13 +110,13 @@ h2, h3, h4, h5, h6 {
 .button-disabled {
 	border-radius: var(--radius);
 	border: none;
-	
+
 	padding: 3px 16px;
 	font-size: var(--font-body);
 	font-weight: var(--medium-weight);
-	
+
 	background-color: var(--primary);
-	
+
 	transition: background-color 150ms;
 
 	cursor: pointer;

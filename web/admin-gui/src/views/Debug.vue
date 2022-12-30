@@ -1,71 +1,62 @@
 <script setup lang="ts">
-// import EditorJS from '@editorjs/editorjs';
-import { useAuthStore, type jwtFormat } from '@/stores/AuthStore';
+import Editor from '@/components/Editor.vue';
+import { useAuthStore } from '@/stores/AuthStore';
 import { ref } from 'vue';
 
-const email = ref('')
-const password = ref('')
-
 const baseURL = `http://${__APP_ENV__.APP_HOST_ADDRESS}:${__APP_ENV__.APP_API_PORT}`
+const articleID = ref('')
 
-function getArticles() {
-	fetch(`${baseURL}/articles/`, {
+function getArticles(id?: string) {
+	fetch(`${baseURL}/articles/${id ?? ''}`, {
 		headers: { "Authorization": `Bearer ${useAuthStore().token}` }
 	})
-	.then(response => response.json())
-	.then(result => console.log(result))
+		.then(response => response.json())
+		.then(result => console.log(result))
 }
 
 function ping() {
 	fetch(`${baseURL}/ping/`, {
 		headers: { "Authorization": `Bearer ${useAuthStore().token}` }
 	})
-	.then(response => response.json())
-	.then(result => console.log(result))
-}
-
-function jwtHandler(apiResponse: jwtFormat): void {
-	if (apiResponse.code !== 200) {
-		console.log(apiResponse)
-		return
-	}
-	useAuthStore().token = apiResponse.token
-	useAuthStore().expire = apiResponse.expire
-	console.log('success! logged in.')
-}
-
-function login(email: string, password: string): void {
-	fetch(`${baseURL}/login/`, {
-		method: "POST",
-		body: JSON.stringify({
-			email: email,
-			password: password
-		})
-	})
-	.then(response => response.json())
-	.then(result => jwtHandler(result))
+		.then(response => response.json())
+		.then(result => console.log(result))
 }
 </script>
 
 <template>
-	<h2>Connexion</h2>
-	
-	<form @submit.prevent="login(email, password)">
+	<div class="inputs-group">
 		<div>
-			<label for="email">Email address</label>
-			<input id="email" name="email" placeholder="email" type="text" v-model="email">
-		</div>
-		<div>
-			<label for="password">Password</label>
-			<input id="password" name="password" placeholder="password" type="password" v-model="password">
-		</div>
-		<button type="submit">Se connecter</button>
-	</form>
-	
-	<div>
-		<div>
-			<button class="button-primary" @click="getArticles()">get all articles</button>
-			<button class="button-primary" @click="ping()">ping</button>
+			<input type="text" placeholder="article ID" v-model="articleID">
+			<button class="button-primary" @click="getArticles(articleID)">get article</button>
 		</div>
 	</div>
+	<div class="buttons-group">
+		<button class="button-primary" @click="ping()">ping</button>
+	</div>
+	<div class="editor">
+		<Editor :show-default-data="true"></Editor>
+	</div>
 </template>
+
+<style scoped>
+.buttons-group,
+.inputs-group {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 32px;
+}
+
+.inputs-group {
+	flex-direction: column;
+}
+
+.inputs-group div {
+	flex-direction: row;
+	gap: 8px;
+}
+
+.editor {
+	border: solid black 2px;
+}
+</style>

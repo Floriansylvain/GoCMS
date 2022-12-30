@@ -1,0 +1,28 @@
+{
+	"time": 1672423262433,
+	"blocks": [
+		{
+			"id": "SsMzvSlYdr",
+			"type": "Header",
+			"data": {
+				"text": "Bienvenue sur l'éditeur d'article !",
+				"level": 2
+			}
+		},
+		{
+			"id": "SCdiyR3ZLh",
+			"type": "paragraph",
+			"data": {
+				"text": "<b>Ici</b>, vous pouvez <u class=\"cdx-underline\">créer</u> votre <i>article</i>."
+			}
+		},
+		{
+			"id": "PYzhBNCoxo",
+			"type": "paragraph",
+			"data": {
+				"text": "Supprimez ces blocks pour commencer.<br>"
+			}
+		}
+	],
+	"version": "2.26.4"
+}
