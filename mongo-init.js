@@ -21,6 +21,9 @@ db.createCollection('articles', {
 				},
 				page_id: {
 					bsonType: 'string'
+				},
+				online: {
+					bsonType: 'bool'
 				}
 			}
 		}

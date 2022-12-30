@@ -13,6 +13,7 @@ var Article1, _ = bson.Marshal(Article{
 	Date:    1671482492,
 	Content: gin.H{},
 	PageID:  "blog",
+	Online:  false,
 })
 
 var Article2, _ = bson.Marshal(Article{
@@ -20,6 +21,7 @@ var Article2, _ = bson.Marshal(Article{
 	Date:    1671899112,
 	Content: gin.H{},
 	PageID:  "blog",
+	Online:  false,
 })
 
 var BSONConvertedArticles = [][]byte{Article1, Article2}
