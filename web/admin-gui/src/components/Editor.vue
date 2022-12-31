@@ -1,83 +1,72 @@
 <script setup lang="ts">
-import i18n from "@/assets/editor_translation.json";
-import defaultData from '@/assets/editor_default_content.json'
+import Editor from '@tinymce/tinymce-vue';
+import { ref, type Ref } from 'vue';
 
-import EditorJS, { type EditorConfig, type OutputData } from "@editorjs/editorjs";
-import Header from "@editorjs/header";
-import List from "@editorjs/list";
-import NestedList from "@editorjs/nested-list";
-import CheckList from "@editorjs/checklist";
-import Quote from "@editorjs/quote";
-import Warning from "@editorjs/warning";
-import Marker from "@editorjs/marker";
-import Code from "@editorjs/code";
-import Table from "@editorjs/table";
-import Underline from "@editorjs/underline";
-import Delimiter from "@editorjs/delimiter";
-
-
+const emits = defineEmits(['dataSaved', 'abort'])
 const props = defineProps<{
-	showDefaultData: boolean
+	data?: string
 }>()
 
-function getEditorConfig(): EditorConfig {
-	let editorConfig: EditorConfig = {
-		tools: {
-			Header,
-			Quote,
-			NestedList,
-			Code,
-			Table,
-			Warning,
-			Delimiter,
-			Marker,
-			Underline
-		},
-		i18n
-	}
-	if (!props.showDefaultData) return editorConfig
-	editorConfig = {
-		...editorConfig,
-		data: defaultData
-	}
-	return editorConfig
+const defaultData = `<h1>Bienvenue</h1><p>Vous &ecirc;tes en mode <em>&eacute;dition</em> d'article.</p><p>Celui-ci semble encore neuf ! Supprimez ces lignes et laissez libre cours &agrave; votre imagination :)</p><p>Pour plus d'infos, rendez-vous sur la <a title="Attention, rickroll incoming" href="https:/www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" rel="noopener">page d'aide</a>.</p>`
+const editorData: Ref<string> = ref(props.data ?? defaultData)
+
+function abort() {
+	emits('abort')
 }
 
-const editor = new EditorJS(getEditorConfig())
-
-async function getEditorData(): Promise<OutputData | undefined> {
-	let data = undefined
-	await editor.save()
-		.then(outputData => {
-			data = outputData
-		})
-		.catch((error) => {
-			console.error(error)
-		})
-	return data
+function saveContent() {
+	emits('dataSaved', editorData)
 }
 </script>
 
 <template>
 	<div class="container">
-		<div id="editorjs"></div>
-		<button @click="getEditorData()" class="button-primary">Enregistrer</button>
+		<div id="editor">
+			<Editor tinymce-script-src="src/assets/tinymce/tinymce.min.js"
+				:init="{ promotion: false, language: 'fr_FR', resize: false, height: '100%' }"
+				:plugins="['link', 'codesample']"
+				toolbar="undo redo | styles | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | outdent indent | codesample link"
+				v-model="editorData">
+			</Editor>
+		</div>
+		<aside class="buttons">
+			<button @click="saveContent()" class="button-primary">Enregistrer</button>
+			<button @click="abort()" class="button-secondary">Annuler</button>
+		</aside>
 	</div>
 </template>
 
 <style scoped>
 .container {
 	display: flex;
-	flex-direction: column;
 	justify-content: center;
 	width: 100%;
+	height: 100%;
 }
 
-#editorjs {
-	font-family: 'Hind', sans-serif;
+#editor {
+	padding-top: 16px;
+	width: 100%;
+	height: 100%;
 }
 
-button {
-	margin: auto;
+.tox-tinymce {
+	border-radius: 0 !important;
+}
+
+.buttons {
+	position: relative;
+	z-index: 1;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: right;
+	align-content: center;
+	gap: 16px;
+
+	width: fit-content;
+	padding: 32px 16px;
+
+	box-shadow: #0002 0 10px 10px;
 }
 </style>

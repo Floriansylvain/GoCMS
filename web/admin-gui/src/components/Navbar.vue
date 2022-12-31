@@ -26,12 +26,15 @@ function logout() {
 
 <style scoped>
 header {
+	position: relative;
+	z-index: 50;
+
 	display: flex;
 	align-items: center;
 	padding: 0 24px;
 
 	box-shadow: #0005 0 0 10px;
-	
+
 	width: 100%;
 }
 

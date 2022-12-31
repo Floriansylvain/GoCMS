@@ -24,7 +24,10 @@ function ping() {
 </script>
 
 <template>
-	<div class="inputs-group">
+	<div class="editor">
+		<Editor :show-default-data="true"></Editor>
+	</div>
+	<!-- <div class="inputs-group">
 		<div>
 			<input type="text" placeholder="article ID" v-model="articleID">
 			<button class="button-primary" @click="getArticles(articleID)">get article</button>
@@ -32,13 +35,15 @@ function ping() {
 	</div>
 	<div class="buttons-group">
 		<button class="button-primary" @click="ping()">ping</button>
-	</div>
-	<div class="editor">
-		<Editor :show-default-data="true"></Editor>
-	</div>
+	</div> -->
 </template>
 
 <style scoped>
+.editor {
+	position: relative;
+	height: 100%;
+}
+
 .buttons-group,
 .inputs-group {
 	display: flex;
@@ -54,9 +59,5 @@ function ping() {
 .inputs-group div {
 	flex-direction: row;
 	gap: 8px;
-}
-
-.editor {
-	border: solid black 2px;
 }
 </style>
