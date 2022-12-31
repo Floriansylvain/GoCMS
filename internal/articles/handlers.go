@@ -54,7 +54,7 @@ func AddArticleHandler(c *gin.Context) {
 
 	err = database.PushDocument(articlesLocation, document)
 	if err != nil {
-		api.SendBadRequest(c, fmt.Sprintf(`Could not insert document into DB: %v`, err.Error()))
+		api.SendBadRequest(c, fmt.Sprintf(`Could not insert document(s) into DB: %v`, err.Error()))
 		return
 	}
 
@@ -66,12 +66,12 @@ func DeleteArticleHandler(c *gin.Context) {
 
 	deleteCount, err := database.DeleteDocument(articlesLocation, gin.H{"id_name": id})
 	if err != nil {
-		api.SendBadRequest(c, "Could not delete document into DB.")
+		api.SendBadRequest(c, fmt.Sprintf(`Could not delete document(s) from DB: %v`, err.Error()))
 		return
 	}
 
 	if deleteCount != 0 {
-		api.SendOk(c, fmt.Sprintf("%d articles were successfully deleted!", deleteCount))
+		api.SendOk(c, fmt.Sprintf("%d article(s) was/were successfully deleted!", deleteCount))
 	} else {
 		api.SendOk(c, "No articles were deleted.")
 	}
@@ -86,12 +86,12 @@ func EditArticleHandler(c *gin.Context) {
 
 	editCount, err := database.EditDocument(articlesLocation, articleUpdate)
 	if err != nil {
-		api.SendBadRequest(c, err.Error())
+		api.SendBadRequest(c, fmt.Sprintf(`Could not edit document(s) from DB: %v`, err.Error()))
 		return
 	}
 
 	if editCount != 0 {
-		api.SendOk(c, fmt.Sprintf("%d articles were successfully edited!", editCount))
+		api.SendOk(c, fmt.Sprintf("%d article(s) was/were successfully edited!", editCount))
 	} else {
 		api.SendOk(c, "No articles were edited.")
 	}
