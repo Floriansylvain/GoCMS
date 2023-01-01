@@ -4,14 +4,14 @@ import Navbar from './components/Navbar.vue';
 </script>
 
 <template>
-	<div class="container">
+	<div class="app-container">
 		<Navbar v-if="useRoute().name !== 'login'"></Navbar>
 		<RouterView />
 	</div>
 </template>
 
 <style scoped>
-.container {
+.app-container {
 	display: flex;
 	flex-direction: column;
 	height: 100vh;
