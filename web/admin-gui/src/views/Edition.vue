@@ -2,13 +2,10 @@
 import Editor from '@tinymce/tinymce-vue';
 import { ref, type Ref } from 'vue';
 import { useRoute } from 'vue-router';
-import tinymceScriptSrc from '@/assets/tinymce/tinymce.min.js?url'
 
 const articleID = useRoute().params.articleID
 const defaultData = `<h1>Bienvenue</h1><p>Vous &ecirc;tes en mode <em>&eacute;dition</em> d'article.</p><p>Celui-ci semble encore neuf ! Supprimez ces lignes et laissez libre cours &agrave; votre imagination :)</p><p>Pour plus d'infos, rendez-vous sur la <a title="Attention, rickroll incoming" href="https:/www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" rel="noopener">page d'aide</a>.</p>`
 const editorData: Ref<string> = ref(defaultData)
-
-console.log(articleID)
 
 function abort() {
 }
@@ -21,8 +18,8 @@ function saveContent() {
 <template>
     <div class="container">
         <div id="editor">
-            <Editor :tinymce-script-src="tinymceScriptSrc"
-                :init="{ promotion: false, language: 'fr_FR', resize: false, height: '100%' }"
+            <Editor tinymce-script-src="/tinymce/tinymce.min.js"
+                :init="{ promotion: false, language: 'fr_FR', resize: false, height: '100%', }"
                 :plugins="['link', 'codesample']"
                 toolbar="undo redo | styles | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | outdent indent | codesample link"
                 v-model="editorData">
