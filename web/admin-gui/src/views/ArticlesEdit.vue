@@ -2,12 +2,9 @@
 import Editor from '@tinymce/tinymce-vue';
 import { ref, type Ref } from 'vue';
 import { useRoute } from 'vue-router';
-import tinymceScriptSrc from '@/assets/tinymce/tinymce.min.js?url'
 
 const articleID = useRoute().params.articleID
 const editorData: Ref<string> = ref('')
-
-console.log(articleID)
 
 function abort() {
 }
@@ -20,8 +17,8 @@ function saveContent() {
 <template>
     <div class="container">
         <div id="editor">
-            <Editor :tinymce-script-src="tinymceScriptSrc"
-                :init="{ promotion: false, language: 'fr_FR', resize: false, height: '100%' }"
+            <Editor tinymce-script-src="/tinymce/tinymce.min.js"
+                :init="{ promotion: false, language: 'fr_FR', resize: false, height: '100%', }"
                 :plugins="['link', 'codesample']"
                 toolbar="undo redo | styles | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | outdent indent | codesample link"
                 v-model="editorData">
