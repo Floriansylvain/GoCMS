@@ -117,6 +117,9 @@ span {
 	font-size: var(--font-body);
 	font-weight: var(--medium-weight);
 
+	text-align: center;
+	text-decoration: none;
+
 	background-color: var(--primary);
 
 	transition: background-color 150ms, color 150ms;
@@ -132,6 +135,11 @@ span {
 
 .button-secondary:hover {
 	background-color: var(--primary-verylight);
+}
+
+.button-secondary:active {
+	background-color: var(--primary-light);
+	color: var(--neutral-dark);
 }
 
 .button-primary:hover {
