@@ -44,7 +44,7 @@ const router = createRouter({
 			}
 		},
 		{
-			path: '/articles/edit/:articleID?',
+			path: '/articles/edit/:articleID',
 			name: 'edition',
 			component: ArticlesEdit,
 			meta: {
@@ -53,10 +53,10 @@ const router = createRouter({
 		},
 		{
 			path: '/articles/new',
-			name: 'edition',
+			name: 'new',
 			component: ArticlesNew,
 			meta: {
-				title: 'GohCMS - Edition'
+				title: 'GohCMS - Nouveau'
 			}
 		},
 	]

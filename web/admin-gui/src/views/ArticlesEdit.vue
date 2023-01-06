@@ -1,10 +1,16 @@
 <script setup lang="ts">
+import { getArticle, type Article } from '@/utils/database';
 import Editor from '@tinymce/tinymce-vue';
-import { ref, type Ref } from 'vue';
+import { onMounted, ref, type Ref } from 'vue';
 import { useRoute } from 'vue-router';
 
-const articleID = useRoute().params.articleID
+let article: Ref<Article | void> = ref()
 const editorData: Ref<string> = ref('')
+
+onMounted(async () => {
+    article.value = await getArticle(useRoute().params.articleID as string)
+    editorData.value = article.value.content.html
+})
 
 function abort() {
 }
