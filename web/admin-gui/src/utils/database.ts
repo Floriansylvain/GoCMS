@@ -22,3 +22,15 @@ export async function getArticle(id: string) : Promise<Article> {
 			console.error(error)
 		})
 }
+
+export async function postArticle(article: Article) : Promise<object> {
+	return await fetch(`${baseURL}/articles/${article.idName}`, {
+		method: 'POST',
+		headers: { "Authorization": `Bearer ${useAuthStore().token}` },
+		body: JSON.stringify(article)
+	})
+		.then(result => result.json())
+		.catch(error => {
+			console.error(error)
+		})
+}
