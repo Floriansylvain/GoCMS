@@ -9,12 +9,20 @@ const defaultData = `<h1>Bienvenue</h1><p>Vous &ecirc;tes en mode <em>&eacute;di
 const title = ref('')
 const page = ref('')
 
-function createArticle() {
-	if (!isFormValid()) {
-		alert("L'identifiant de l'article ne doit contenir que des caractères alphanumériques (aA-zZ, 1-9) !")
-		return;
-	}
+function isIdValid(): boolean {
+	const regex = /^[a-zA-Z0-9]+$/
+	return regex.test(title.value)
+}
 
+function isFormEmpty(): boolean {
+	return title.value === '' || page.value === ''
+}
+
+function isFormValid(): boolean {
+	return isIdValid() && !isFormEmpty()
+}
+
+function createArticle() {
 	const article: Article = {
 		idName: title.value,
 		date: new Date().getTime(),
@@ -27,15 +35,6 @@ function createArticle() {
 	postArticle(article)
 	router.push(`/articles/edit/${article.idName}`)
 }
-
-const isFormEmpty: () => boolean = () => {
-	return title.value === '' || page.value === ''
-}
-
-function isFormValid(): boolean {
-	const regex = /^[a-zA-Z0-9]+$/
-	return regex.test(title.value)
-}
 </script>
 
 <template>
@@ -43,11 +42,11 @@ function isFormValid(): boolean {
 		<h2>Créer un nouvel article</h2>
 		<form @submit.prevent="createArticle()">
 			<div class="inputs-group">
-				<div class="label-input">
+				<div :class="`label-input${isIdValid() || title === '' ? '' : '-error'}`">
 					<label for="title">Identifiant de l'article</label>
 					<input id="title" name="title" placeholder="Identifiant de l'article" type="text" v-model="title">
-					<p>⚠️ Doit être unique et composé de caractères alphanumériques !</p>
-					<!-- TODO: Remplacer alerte pas ouf par passage du champ en erreur -->
+					<p>⚠️ Doit être unique et composé de caractères alphanumériques, sans espaces !
+					</p>
 				</div>
 				<div class="label-input">
 					<label for="page">Page</label>
@@ -56,8 +55,8 @@ function isFormValid(): boolean {
 			</div>
 			<div class="buttons-group">
 				<RouterLink class="button-secondary" type="submit" to="/articles">Annuler</RouterLink>
-				<button :class="`button-${isFormEmpty() ? 'disabled' : 'primary'}`" type="submit"
-					:disabled="isFormEmpty()">Créer</button>
+				<button :class="`button-${!isFormValid() ? 'disabled' : 'primary'}`" type="submit"
+					:disabled="!isFormValid()">Créer</button>
 			</div>
 		</form>
 	</main>
