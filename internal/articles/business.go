@@ -17,7 +17,7 @@ type Article struct {
 
 var articlesLocation = database.Location{Database: "gohcms", Collection: "articles"}
 
-func GetAllArticlesBusiness(documents [][]byte) []Article {
+func ParseArticlesFromBytesToArray(documents [][]byte) []Article {
 	var articles = []Article{}
 
 	for i := 0; i < len(documents); i++ {

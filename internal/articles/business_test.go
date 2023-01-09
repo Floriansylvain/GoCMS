@@ -27,7 +27,7 @@ var Article2, _ = bson.Marshal(Article{
 var BSONConvertedArticles = [][]byte{Article1, Article2}
 
 func TestGetAllArticlesBusiness(t *testing.T) {
-	documents := GetAllArticlesBusiness(BSONConvertedArticles)
+	documents := ParseArticlesFromBytesToArray(BSONConvertedArticles)
 	article := documents[0]
 
 	if article.TitleID != "test_article_1" {

@@ -10,26 +10,21 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func GetAllArticlesHandler(c *gin.Context) {
-	documents, err := database.GetDocuments(articlesLocation, gin.H{})
-	if err != nil {
-		api.SendBadRequest(c, err.Error())
-		return
-	}
-	c.JSON(http.StatusOK, GetAllArticlesBusiness(documents))
-}
-
 func GetArticleHandler(c *gin.Context) {
 	articleID := c.Params.ByName("id")
-	article, err := database.GetUniqueDocument(articlesLocation,
-		gin.H{"titleID": articleID})
+
+	filter := gin.H{}
+	if articleID != "" {
+		filter["titleID"] = articleID
+	}
+
+	articles, err := database.GetDocuments(articlesLocation, filter)
 	if err != nil {
 		api.SendBadRequest(c, fmt.Sprintf("The ID '%v' doesn't match any article.", articleID))
 		return
 	}
-	var parsedArticle Article
-	bson.Unmarshal(article, &parsedArticle)
-	c.JSON(http.StatusOK, parsedArticle)
+
+	c.JSON(http.StatusOK, ParseArticlesFromBytesToArray(articles))
 }
 
 func AddArticleHandler(c *gin.Context) {

@@ -13,7 +13,7 @@ export interface Article {
 
 const baseURL = `http://${__APP_ENV__.APP_HOST_ADDRESS}:${__APP_ENV__.APP_API_PORT}`
 
-export async function getArticle(id: string) : Promise<Article> {
+export async function getArticles(id: string) : Promise<Array<Article>> {
 	return await fetch(`${baseURL}/articles/${id}`, {
 		method: 'GET',
 		headers: { "Authorization": `Bearer ${useAuthStore().token}` }
