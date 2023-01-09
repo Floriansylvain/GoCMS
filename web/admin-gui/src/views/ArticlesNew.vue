@@ -13,9 +13,9 @@ const tags: Ref<string[]> = ref([])
 const regexAccents = /[\u0300-\u036f]/g
 const regexSymbols = /([-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/])+/g
 
-function updateTags(): void {
+function updateUniqueTags(): void {
 	tags.value = rawTags.value.split(/[,\s]+/g)
-	tags.value = tags.value.filter(x => x !== '')
+	tags.value = Array.from(new Set(tags.value.filter(x => x !== '')))
 }
 
 function generateTitleID(title: string): string {
@@ -23,7 +23,6 @@ function generateTitleID(title: string): string {
 		.replace(regexAccents, '')
 		.replace(regexSymbols, '')
 		.replace(/\s/g, '-')
-		.replace(/-$/g, '')
 }
 
 function isFormEmpty(): boolean {
@@ -54,10 +53,12 @@ function createArticle() {
 				<div class="label-input">
 					<label for="title">Titre de l'article</label>
 					<input id="title" name="title" placeholder="Titre de l'article" type="text" v-model="title">
+					<p>Son URL d'accès ressemblera à: {{ generateTitleID(title) }}</p>
 				</div>
 				<div class="label-input">
 					<label for="tags">Tags</label>
-					<input id="tags" name="tags" placeholder="Tags" type="text" v-model="rawTags" @input="updateTags">
+					<input id="tags" name="tags" placeholder="Tags" type="text" v-model="rawTags"
+						@input="updateUniqueTags">
 					<p>Spéparez les mots-clés par des virgules ou espaces.</p>
 					<ul class="tags" v-if="tags.length !== 0">
 						<li v-for="tag in tags">{{ tag }}</li>
