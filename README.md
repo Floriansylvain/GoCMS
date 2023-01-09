@@ -1,6 +1,6 @@
 # GohCMS
 ## 🚧 This project is under development !
-The features are not complete, not tested and subject to many changes.
+The features are not complete, not fully tested and subject to many changes.
 ## Setup
 ### Use with Docker
 To **run** the app, run the command
