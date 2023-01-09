@@ -1,12 +1,13 @@
 import { useAuthStore } from "@/stores/AuthStore"
 
 export interface Article {
-	idName: string,
+	titleID: string,
+	title: string,
 	date: number,
 	content: {
 		html: string
 	},
-	pageId: string,
+	tags: Array<string>,
 	online: boolean
 }
 
@@ -24,7 +25,7 @@ export async function getArticle(id: string) : Promise<Article> {
 }
 
 export async function postArticle(article: Article) : Promise<object> {
-	return await fetch(`${baseURL}/articles/${article.idName}`, {
+	return await fetch(`${baseURL}/articles/${article.titleID}`, {
 		method: 'POST',
 		headers: { "Authorization": `Bearer ${useAuthStore().token}` },
 		body: JSON.stringify(article)

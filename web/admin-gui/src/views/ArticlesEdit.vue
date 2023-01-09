@@ -4,7 +4,7 @@ import Editor from '@tinymce/tinymce-vue';
 import { onMounted, ref, type Ref } from 'vue';
 import { useRoute } from 'vue-router';
 
-let article: Ref<Article | void> = ref()
+const article: Ref<Article | void> = ref()
 const editorData: Ref<string> = ref('')
 
 onMounted(async () => {

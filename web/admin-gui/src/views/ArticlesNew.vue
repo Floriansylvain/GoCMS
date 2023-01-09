@@ -7,33 +7,42 @@ const router = useRouter()
 
 const defaultData = `<h1>Bienvenue</h1><p>Vous &ecirc;tes en mode <em>&eacute;dition</em> d'article.</p><p>Celui-ci semble encore neuf ! Supprimez ces lignes et laissez libre cours &agrave; votre imagination :)</p><p>Pour plus d'infos, rendez-vous sur la <a title="Attention, rickroll incoming" href="https:/www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" rel="noopener">page d'aide</a>.</p>`
 const title = ref('')
-const page = ref('')
+const rawTags = ref('')
+const tags: Ref<string[]> = ref([])
 
-function isIdValid(): boolean {
-	const regex = /^[a-zA-Z0-9]+$/
-	return regex.test(title.value)
+const regexAccents = /[\u0300-\u036f]/g
+const regexSymbols = /([-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/])+/g
+
+function updateTags(): void {
+	tags.value = rawTags.value.split(/[,\s]+/g)
+	tags.value = tags.value.filter(x => x !== '')
+}
+
+function generateTitleID(title: string): string {
+	return title.toLowerCase().normalize('NFD')
+		.replace(regexAccents, '')
+		.replace(regexSymbols, '')
+		.replace(/\s/g, '-')
+		.replace(/-$/g, '')
 }
 
 function isFormEmpty(): boolean {
-	return title.value === '' || page.value === ''
-}
-
-function isFormValid(): boolean {
-	return isIdValid() && !isFormEmpty()
+	return title.value === '' || rawTags.value === ''
 }
 
 function createArticle() {
 	const article: Article = {
-		idName: title.value,
+		titleID: generateTitleID(title.value),
+		title: title.value,
 		date: new Date().getTime(),
 		content: {
 			html: defaultData
 		},
 		online: false,
-		pageId: page.value
+		tags: tags.value
 	}
 	postArticle(article)
-	router.push(`/articles/edit/${article.idName}`)
+	router.push(`/articles/edit/${article.titleID}`)
 }
 </script>
 
@@ -42,21 +51,23 @@ function createArticle() {
 		<h2>Créer un nouvel article</h2>
 		<form @submit.prevent="createArticle()">
 			<div class="inputs-group">
-				<div :class="`label-input${isIdValid() || title === '' ? '' : '-error'}`">
-					<label for="title">Identifiant de l'article</label>
-					<input id="title" name="title" placeholder="Identifiant de l'article" type="text" v-model="title">
-					<p>⚠️ Doit être unique et composé de caractères alphanumériques, sans espaces !
-					</p>
+				<div class="label-input">
+					<label for="title">Titre de l'article</label>
+					<input id="title" name="title" placeholder="Titre de l'article" type="text" v-model="title">
 				</div>
 				<div class="label-input">
-					<label for="page">Page</label>
-					<input id="page" name="page" placeholder="Page" type="text" v-model="page">
+					<label for="tags">Tags</label>
+					<input id="tags" name="tags" placeholder="Tags" type="text" v-model="rawTags" @input="updateTags">
+					<p>Spéparez les mots-clés par des virgules ou espaces.</p>
+					<ul class="tags" v-if="tags.length !== 0">
+						<li v-for="tag in tags">{{ tag }}</li>
+					</ul>
 				</div>
 			</div>
 			<div class="buttons-group">
 				<RouterLink class="button-secondary" type="submit" to="/articles">Annuler</RouterLink>
-				<button :class="`button-${!isFormValid() ? 'disabled' : 'primary'}`" type="submit"
-					:disabled="!isFormValid()">Créer</button>
+				<button :class="`button-${isFormEmpty() ? 'disabled' : 'primary'}`" type="submit"
+					:disabled="isFormEmpty()">Créer</button>
 			</div>
 		</form>
 	</main>
@@ -73,7 +84,7 @@ main {
 	display: flex;
 	gap: 8px;
 	width: 100%;
-	margin: 32px 0;
+	margin: 16px 0;
 }
 
 .buttons-group a,

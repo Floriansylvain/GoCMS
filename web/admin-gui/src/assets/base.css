@@ -65,7 +65,8 @@ a,
 input,
 label,
 button,
-span {
+span,
+li {
 	font-family: 'Hind', sans-serif;
 	color: var(--neutral-dark);
 }
@@ -97,6 +98,26 @@ span {
 
 	border: solid 1.25px var(--neutral-light);
 	border-radius: var(--radius);
+}
+
+.label-input .tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+
+	margin: 0;
+	padding: 8px;
+}
+
+.label-input .tags li {
+	background-color: var(--neutral-verylight);
+	border-radius: var(--radius);
+
+	padding: 4px 16px;
+}
+
+.label-input .tags li::marker {
+	content: '';
 }
 
 .label-input-error input {
