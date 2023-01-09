@@ -22,9 +22,9 @@ func GetAllArticlesHandler(c *gin.Context) {
 func GetArticleHandler(c *gin.Context) {
 	articleID := c.Params.ByName("id")
 	article, err := database.GetUniqueDocument(articlesLocation,
-		gin.H{"id_name": articleID})
+		gin.H{"titleID": articleID})
 	if err != nil {
-		api.SendBadRequest(c, "The ID provided doesn't match any article.")
+		api.SendBadRequest(c, fmt.Sprintf("The ID '%v' doesn't match any article.", articleID))
 		return
 	}
 	var parsedArticle Article
@@ -48,7 +48,7 @@ func AddArticleHandler(c *gin.Context) {
 
 	documents, _ := database.GetDocuments(articlesLocation, gin.H{})
 	if IsArticleIdAlreadyUsed(article.TitleID, documents) {
-		api.SendBadRequest(c, "Article ID already used.")
+		api.SendBadRequest(c, fmt.Sprintf("Article ID '%v' already used.", article.TitleID))
 		return
 	}
 
@@ -64,7 +64,7 @@ func AddArticleHandler(c *gin.Context) {
 func DeleteArticleHandler(c *gin.Context) {
 	id := c.Params.ByName("id")
 
-	deleteCount, err := database.DeleteDocument(articlesLocation, gin.H{"id_name": id})
+	deleteCount, err := database.DeleteDocument(articlesLocation, gin.H{"titleID": id})
 	if err != nil {
 		api.SendBadRequest(c, fmt.Sprintf(`Could not delete document(s) from DB: %v`, err.Error()))
 		return
@@ -81,7 +81,7 @@ func EditArticleHandler(c *gin.Context) {
 	id := c.Params.ByName("id")
 
 	var articleUpdate database.DocumentUpdate
-	articleUpdate.Filter = gin.H{"id_name": id}
+	articleUpdate.Filter = gin.H{"titleID": id}
 	c.BindJSON(&articleUpdate.Update)
 
 	editCount, err := database.EditDocument(articlesLocation, articleUpdate)
