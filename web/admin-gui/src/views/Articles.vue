@@ -19,17 +19,25 @@ onMounted(async () => {
 				<th>Date création</th>
 				<th>Tags</th>
 				<th>Statut</th>
+				<th>Actions</th>
 			</thead>
 			<tbody>
 				<tr v-for="article in articles">
 					<td>{{ article.title }}</td>
 					<td>{{ new Date(article.date).toLocaleDateString('fr-FR') }}</td>
-					<td>{{ article.tags }}</td>
-					<td>{{`${article.online ? 'En ligne' : 'Hors ligne'}`}}</td>
-					<RouterLink :to="`articles/edit/${article.titleID}`">
-						Éditer
-					</RouterLink>
-					<button>Supprimer</button>
+					<td>
+						<ul class="tags">
+							<li v-for="tag in article.tags">{{ tag }}</li>
+						</ul>
+					</td>
+					<td class="status">{{`${article.online ? '🟢' : '🔴'}`}}</td>
+					<td>
+						<div class="action-buttons">
+							<RouterLink class="button-secondary" :to="`articles/edit/${article.titleID}`">✏️
+							</RouterLink>
+							<button class="button-secondary">❌</button>
+						</div>
+					</td>
 				</tr>
 			</tbody>
 		</table>
@@ -43,5 +51,28 @@ main {
 
 main>a {
 	width: fit-content;
+}
+
+main table {
+	width: 100%;
+
+	border-collapse: collapse;
+}
+
+main table td {
+	padding: 8px;
+}
+
+.action-buttons {
+	margin: auto;
+	width: fit-content;
+}
+
+.action-buttons>* {
+	margin: 0 6px;
+}
+
+.status {
+	text-align: center;
 }
 </style>
