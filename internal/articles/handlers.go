@@ -34,7 +34,7 @@ func GetArticleHandler(c *gin.Context) {
 
 func AddArticleHandler(c *gin.Context) {
 	var article Article
-	article.IdName = c.Params.ByName("id")
+	article.TitleID = c.Params.ByName("id")
 	if c.BindJSON(&article) != nil {
 		api.SendBadRequest(c, "Could not correctly parse the article.")
 		return
@@ -47,7 +47,7 @@ func AddArticleHandler(c *gin.Context) {
 	}
 
 	documents, _ := database.GetDocuments(articlesLocation, gin.H{})
-	if IsArticleIdAlreadyUsed(article.IdName, documents) {
+	if IsArticleIdAlreadyUsed(article.TitleID, documents) {
 		api.SendBadRequest(c, "Article ID already used.")
 		return
 	}

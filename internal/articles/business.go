@@ -7,11 +7,12 @@ import (
 )
 
 type Article struct {
-	IdName  string `json:"id_name" bson:"id_name"`
-	Date    int64  `json:"date" bson:"date"`
-	Content gin.H  `json:"content" bson:"content"`
-	PageID  string `json:"page_id" bson:"page_id"`
-	Online  bool   `json:"online" bson:"online"`
+	TitleID string   `json:"titleID" bson:"titleID"`
+	Title   string   `json:"title" bson:"title"`
+	Date    int64    `json:"date" bson:"date"`
+	Content gin.H    `json:"content" bson:"content"`
+	Tags    []string `json:"tags" bson:"tags"`
+	Online  bool     `json:"online" bson:"online"`
 }
 
 var articlesLocation = database.Location{Database: "gohcms", Collection: "articles"}
@@ -32,7 +33,7 @@ func IsArticleIdAlreadyUsed(id string, documents [][]byte) bool {
 	for i := 0; i < len(documents); i++ {
 		var newArticle Article
 		bson.Unmarshal(documents[i], &newArticle)
-		if newArticle.IdName == id {
+		if newArticle.TitleID == id {
 			return true
 		}
 	}
