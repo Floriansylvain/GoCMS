@@ -19,11 +19,11 @@ function updateJWTcookies(JWTdata: jwtFormat): void {
 	const cookieExpire = new Date(JWTdata.expire)
 	cookieExpire.setDate(cookieExpire.getDate() + 1)
 
-	setCookie({
-		key: 'JWTtoken',
-		value: JWTdata.token,
-		expire: cookieExpire.toString()
-	})
+	// setCookie({
+	// 	key: 'JWTtoken',
+	// 	value: JWTdata.token,
+	// 	expire: cookieExpire.toString()
+	// })
 	setCookie({
 		key: 'JWTexpire',
 		value: JWTdata.expire,
@@ -43,7 +43,7 @@ function jwtHandler(apiResponse: jwtFormat): void {
 	}
 	updateJWTcookies(apiResponse)
 	disableErrors()
-	authStore.token = apiResponse.token
+	authStore.token = 'pouet'
 	authStore.expire = apiResponse.expire
 	isTokenOK.value = true
 }
@@ -51,6 +51,7 @@ function jwtHandler(apiResponse: jwtFormat): void {
 function login(email: string, password: string): void {
 	fetch(`http://${__APP_ENV__.APP_HOST_ADDRESS}:${__APP_ENV__.APP_API_PORT}/login/`, {
 		method: "POST",
+		credentials: 'include',
 		body: JSON.stringify({
 			email: email,
 			password: password

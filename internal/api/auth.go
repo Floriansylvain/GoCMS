@@ -2,6 +2,7 @@ package api
 
 import (
 	"errors"
+	"net/http"
 	"os"
 	"time"
 
@@ -19,12 +20,24 @@ type User struct {
 var UsersLocation = database.Location{Database: "gohcms", Collection: "users"}
 
 var AuthMiddleware, _ = jwt.New(&jwt.GinJWTMiddleware{
-	Realm:         "GohCMS",
-	Key:           []byte(os.Getenv("APP_JWT_SECRET")),
-	Timeout:       time.Hour,
-	MaxRefresh:    time.Hour,
-	Authenticator: JWTAuthenticator,
+	Realm:          "GohCMS",
+	Key:            []byte(os.Getenv("APP_JWT_SECRET")),
+	SendCookie:     true,
+	CookieHTTPOnly: true,
+	CookieSameSite: http.SameSiteStrictMode,
+	Timeout:        time.Hour,
+	MaxRefresh:     time.Hour,
+	LoginResponse:  JWTLoginResponse,
+	Authenticator:  JWTAuthenticator,
 })
+
+func JWTLoginResponse(c *gin.Context, code int, message string, expire time.Time) {
+	if code == http.StatusOK {
+		c.JSON(code, gin.H{"code": code, "message": "Successfully logged in!", "expire": expire.Format(time.RFC3339)})
+	} else {
+		c.JSON(code, gin.H{"code": code, "message": "Something wrong has happened."})
+	}
+}
 
 func JWTAuthenticator(c *gin.Context) (interface{}, error) {
 	var user = User{}

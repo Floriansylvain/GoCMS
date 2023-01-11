@@ -15,8 +15,8 @@ const baseURL = `http://${__APP_ENV__.APP_HOST_ADDRESS}:${__APP_ENV__.APP_API_PO
 
 export async function getArticles(id: string) : Promise<Array<Article>> {
 	return await fetch(`${baseURL}/articles/${id}`, {
+		credentials: 'include',
 		method: 'GET',
-		headers: { "Authorization": `Bearer ${useAuthStore().token}` }
 	})
 		.then(result => result.json())
 		.catch(error => {
@@ -26,9 +26,9 @@ export async function getArticles(id: string) : Promise<Array<Article>> {
 
 export async function postArticle(article: Article) : Promise<object> {
 	return await fetch(`${baseURL}/articles/${article.titleID}`, {
+		credentials: 'include',
 		method: 'POST',
-		headers: { "Authorization": `Bearer ${useAuthStore().token}` },
-		body: JSON.stringify(article)
+ 		body: JSON.stringify(article)
 	})
 		.then(result => result.json())
 		.catch(error => {
