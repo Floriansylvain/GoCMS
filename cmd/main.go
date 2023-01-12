@@ -10,10 +10,12 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var ginMode string
-var apiPort string
-var frontPort string
-var hostAddress string
+var (
+	ginMode     string
+	apiPort     string
+	frontPort   string
+	hostAddress string
+)
 
 func initEnvVariables() {
 	if godotenv.Load() != nil {
@@ -35,6 +37,7 @@ func initJWT() {
 
 func initBasicRoutes(r *gin.Engine) {
 	r.POST("/login/", api.AuthMiddleware.LoginHandler)
+	r.POST("/logout/", api.AuthMiddleware.LogoutHandler)
 	r.GET("/ping/", api.Ping)
 }
 
@@ -47,6 +50,12 @@ func corsMiddleware(c *gin.Context) {
 		c.AbortWithStatus(204)
 		return
 	}
+	c.Next()
+}
+
+func jwtProxyMiddleware(c *gin.Context) {
+	jwtToken, _ := c.Cookie("jwt")
+	c.Request.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
 	c.Next()
 }
 
@@ -63,10 +72,11 @@ func initArticlesRoutes(r *gin.Engine) {
 
 func initGin() {
 	r := gin.Default()
-	r.Use(corsMiddleware)
+	r.Use(jwtProxyMiddleware, corsMiddleware)
 
 	if ginMode == "release" {
 		gin.SetMode(ginMode)
+		api.AuthMiddleware.SecureCookie = true
 	}
 
 	initBasicRoutes(r)
@@ -77,6 +87,6 @@ func initGin() {
 
 func main() {
 	initEnvVariables()
-	initJWT()
 	initGin()
+	initJWT()
 }

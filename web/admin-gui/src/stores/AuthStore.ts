@@ -6,23 +6,18 @@ import { useErrorsStore } from "./ErrorsStore";
 export interface jwtFormat {
 	code: number,
 	expire: string,
-	token: string
+	message: string
 }
 
 export const useAuthStore = defineStore("AuthStore", () => {
 	const expire = ref('')
-	const token = ref('')
 	
 	function clearAll(): void {
 		expire.value = ''
-		token.value = ''
 	}
  
-	function isSet(): boolean {
-		return token.value !== undefined && token.value !== ''
-	}
-	
 	function isExpired(): boolean {
+		if (expire.value === '') return true;
 		const tokenDate = new Date(expire.value)
 		const currentDate = new Date()
 
@@ -33,20 +28,14 @@ export const useAuthStore = defineStore("AuthStore", () => {
 		return false
 	}
 	
-	function isValid(): boolean {
-		return isSet() && !isExpired()
-	}
-	
 	function initStore(): void {
-		const JWTtoken = getCookie('JWTtoken')
-		const JWTexpire = getCookie('JWTexpire')
-		if (JWTtoken !== "" && JWTexpire !== "") {
-			token.value = JWTtoken
+		const JWTexpire = getCookie('jwt_expire')
+		if (JWTexpire !== "") {
 			expire.value = JWTexpire
 		}
 	}
 	
 	initStore()
 	
-	return { expire, token, isValid, clearAll }
+	return { expire, clearAll, isExpired}
 })
