@@ -2,13 +2,20 @@
 import { useAuthStore } from '@/stores/AuthStore';
 import { deleteCookie } from '@/utils/cookies';
 import { RouterLink, useRouter } from 'vue-router'
+import { baseApiUrl } from "@/utils/api"
 
 const router = useRouter()
 
 function logout() {
-	deleteCookie('JWTtoken')
-	deleteCookie('JWTexpire')
+	deleteCookie('jwt_expire')
 	useAuthStore().clearAll()
+
+	fetch(`${baseApiUrl}/logout`, {
+		method: 'POST',
+		credentials: 'include'
+	})
+		.catch(error => console.error(error))
+
 	router.push('/')
 }
 </script>

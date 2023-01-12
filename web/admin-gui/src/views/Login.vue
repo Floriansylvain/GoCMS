@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useAuthStore, type jwtFormat } from '@/stores/AuthStore';
 import { useErrorsStore } from '@/stores/ErrorsStore';
+import { baseApiUrl } from '@/utils/api';
 import { setCookie } from '@/utils/cookies';
 import { ref, type Ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -19,13 +20,8 @@ function updateJWTcookies(JWTdata: jwtFormat): void {
 	const cookieExpire = new Date(JWTdata.expire)
 	cookieExpire.setDate(cookieExpire.getDate() + 1)
 
-	// setCookie({
-	// 	key: 'JWTtoken',
-	// 	value: JWTdata.token,
-	// 	expire: cookieExpire.toString()
-	// })
 	setCookie({
-		key: 'JWTexpire',
+		key: 'jwt_expire',
 		value: JWTdata.expire,
 		expire: cookieExpire.toString()
 	})
@@ -43,14 +39,13 @@ function jwtHandler(apiResponse: jwtFormat): void {
 	}
 	updateJWTcookies(apiResponse)
 	disableErrors()
-	authStore.token = 'pouet'
 	authStore.expire = apiResponse.expire
 	isTokenOK.value = true
 }
 
 function login(email: string, password: string): void {
-	fetch(`http://${__APP_ENV__.APP_HOST_ADDRESS}:${__APP_ENV__.APP_API_PORT}/login/`, {
-		method: "POST",
+	fetch(`${baseApiUrl}/login/`, {
+		method: 'POST',
 		credentials: 'include',
 		body: JSON.stringify({
 			email: email,

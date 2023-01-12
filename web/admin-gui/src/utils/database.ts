@@ -1,4 +1,5 @@
 import { useAuthStore } from "@/stores/AuthStore"
+import { baseApiUrl } from "@/utils/api"
 
 export interface Article {
 	titleID: string,
@@ -11,10 +12,8 @@ export interface Article {
 	online: boolean
 }
 
-const baseURL = `http://${__APP_ENV__.APP_HOST_ADDRESS}:${__APP_ENV__.APP_API_PORT}`
-
 export async function getArticles(id: string) : Promise<Array<Article>> {
-	return await fetch(`${baseURL}/articles/${id}`, {
+	return await fetch(`${baseApiUrl}/articles/${id}`, {
 		credentials: 'include',
 		method: 'GET',
 	})
@@ -25,7 +24,7 @@ export async function getArticles(id: string) : Promise<Array<Article>> {
 }
 
 export async function postArticle(article: Article) : Promise<object> {
-	return await fetch(`${baseURL}/articles/${article.titleID}`, {
+	return await fetch(`${baseApiUrl}/articles/${article.titleID}`, {
 		credentials: 'include',
 		method: 'POST',
  		body: JSON.stringify(article)

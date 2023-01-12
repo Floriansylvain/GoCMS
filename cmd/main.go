@@ -37,6 +37,7 @@ func initJWT() {
 
 func initBasicRoutes(r *gin.Engine) {
 	r.POST("/login/", api.AuthMiddleware.LoginHandler)
+	r.POST("/logout/", api.AuthMiddleware.LogoutHandler)
 	r.GET("/ping/", api.Ping)
 }
 
