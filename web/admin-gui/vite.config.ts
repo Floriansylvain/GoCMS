@@ -22,6 +22,9 @@ export default defineConfig(({ command, mode }) => {
 		},
 		server: {
 			port: env1.APP_FRONT_PORT,
+		},
+		build: {
+			assetsDir: './'
 		}
 	}
 })
