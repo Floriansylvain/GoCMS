@@ -68,7 +68,8 @@ button,
 span,
 li,
 td,
-th {
+th,
+.tabulator {
 	font-family: 'Hind', sans-serif;
 	color: var(--neutral-dark);
 }
@@ -111,7 +112,8 @@ th {
 	padding: 8px;
 }
 
-.tags li {
+.tags li,
+.tags .tag {
 	background-color: var(--neutral-verylight);
 	border-radius: var(--radius);
 
