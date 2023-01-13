@@ -1,1 +1,1 @@
-export const baseApiUrl = `http://${__APP_ENV__.APP_API_ADDRESS}`
+export const baseApiUrl = `${__APP_ENV__.APP_API_ADDRESS}`
