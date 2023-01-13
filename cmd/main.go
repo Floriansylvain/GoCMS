@@ -11,9 +11,9 @@ import (
 )
 
 var (
-	ginMode     string
-	apiPort     string
-	hostAddress string
+	ginMode    string
+	apiPort    string
+	apiAddress string
 )
 
 func initEnvVariables() {
@@ -23,7 +23,7 @@ func initEnvVariables() {
 
 	ginMode = os.Getenv("APP_GIN_MODE")
 	apiPort = os.Getenv("APP_API_PORT")
-	hostAddress = os.Getenv("APP_HOST_ADDRESS")
+	apiAddress = os.Getenv("APP_FRONT_ADDRESS")
 }
 
 func initJWT() {
@@ -40,7 +40,7 @@ func initBasicRoutes(r *gin.Engine) {
 }
 
 func corsMiddleware(c *gin.Context) {
-	c.Writer.Header().Set("Access-Control-Allow-Origin", fmt.Sprintf("http://%v", hostAddress))
+	c.Writer.Header().Set("Access-Control-Allow-Origin", fmt.Sprintf("http://%v", apiAddress))
 	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 	c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
 	c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")

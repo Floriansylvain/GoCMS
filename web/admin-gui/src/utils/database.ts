@@ -1,4 +1,3 @@
-import { useAuthStore } from "@/stores/AuthStore"
 import { baseApiUrl } from "@/utils/api"
 
 export interface Article {
