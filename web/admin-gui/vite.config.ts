@@ -1,17 +1,17 @@
-import { fileURLToPath, URL } from 'node:url'
-import { defineConfig, loadEnv } from 'vite'
-import vue from '@vitejs/plugin-vue'
+import { fileURLToPath, URL } from "node:url"
+import { defineConfig, loadEnv } from "vite"
+import vue from "@vitejs/plugin-vue"
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
 	const env1 = loadEnv(mode, "./../../", "")
 	const env2 = loadEnv(mode, process.cwd(), "")
 
-	return { 
+	return {
 		plugins: [vue()],
 		resolve: {
 			alias: {
-				'@': fileURLToPath(new URL('./src', import.meta.url))
+				"@": fileURLToPath(new URL("./src", import.meta.url)),
 			}
 		},
 		define: {
@@ -22,6 +22,7 @@ export default defineConfig(({ command, mode }) => {
 		},
 		server: {
 			port: env1.APP_FRONT_PORT,
-		}
+		},
+		base: env1.APP_BASE_FRONT_PATH ?? "/"
 	}
 })
