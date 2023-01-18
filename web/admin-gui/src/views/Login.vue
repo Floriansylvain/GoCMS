@@ -1,17 +1,18 @@
 <script setup lang="ts">
 import { useAuthStore, type jwtFormat } from '@/stores/AuthStore';
 import { useErrorsStore } from '@/stores/ErrorsStore';
+import { baseApiUrl } from '@/utils/api';
 import { setCookie } from '@/utils/cookies';
 import { ref, type Ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-const isTokenOK: Ref<boolean|undefined> = ref(undefined)
+const isTokenOK: Ref<boolean | undefined> = ref(undefined)
 const router = useRouter()
 const authStore = useAuthStore()
 const email = ref('')
 const password = ref('')
 
-const isFormEmpty: ()=>boolean = () => { 
+const isFormEmpty: () => boolean = () => {
 	return email.value === '' || password.value === ''
 }
 
@@ -20,12 +21,7 @@ function updateJWTcookies(JWTdata: jwtFormat): void {
 	cookieExpire.setDate(cookieExpire.getDate() + 1)
 
 	setCookie({
-		key: 'JWTtoken',
-		value: JWTdata.token,
-		expire: cookieExpire.toString()
-	})
-	setCookie({
-		key: 'JWTexpire',
+		key: 'jwt_expire',
 		value: JWTdata.expire,
 		expire: cookieExpire.toString()
 	})
@@ -43,14 +39,14 @@ function jwtHandler(apiResponse: jwtFormat): void {
 	}
 	updateJWTcookies(apiResponse)
 	disableErrors()
-	authStore.token = apiResponse.token
 	authStore.expire = apiResponse.expire
 	isTokenOK.value = true
 }
 
 function login(email: string, password: string): void {
-	fetch(`http://${__APP_ENV__.APP_HOST_ADDRESS}:${__APP_ENV__.APP_API_PORT}/login/`, {
-		method: "POST",
+	fetch(`${baseApiUrl}/login/`, {
+		method: 'POST',
+		credentials: 'include',
 		body: JSON.stringify({
 			email: email,
 			password: password
@@ -59,7 +55,7 @@ function login(email: string, password: string): void {
 		.then(response => response.json())
 		.then(result => {
 			jwtHandler(result)
-			if (isTokenOK.value === true)  {
+			if (isTokenOK.value === true) {
 				router.push('/home')
 			}
 		})
@@ -70,7 +66,7 @@ function login(email: string, password: string): void {
 	<div class="login-page">
 		<div class="login-form">
 			<h2>Connexion à <span style="color:var(--brand-blue)">Go</span>hCMS</h2>
-			
+
 			<form @submit.prevent="login(email, password)">
 				<div class="inputs-group">
 					<div :class="`label-input${isTokenOK === false ? '-error' : ''}`">
@@ -79,12 +75,14 @@ function login(email: string, password: string): void {
 					</div>
 					<div :class="`label-input${isTokenOK === false ? '-error' : ''}`">
 						<label for="password">Mot de passe</label>
-						<input id="password" name="password" placeholder="Mot de passe" type="password" v-model="password">
+						<input id="password" name="password" placeholder="Mot de passe" type="password"
+							v-model="password">
 						<p v-if="isTokenOK === false">❌ E-mail et/ou mot de passe incorrect(s).</p>
 						<p v-else-if="useErrorsStore().sessionExpired">⌛ Votre session a expiré.</p>
 					</div>
 				</div>
-				<button :class="`button-${isFormEmpty() ? 'disabled' : 'primary'}`" type="submit" :disabled="isFormEmpty()">
+				<button :class="`button-${isFormEmpty() ? 'disabled' : 'primary'}`" type="submit"
+					:disabled="isFormEmpty()">
 					Se connecter
 				</button>
 			</form>
@@ -93,11 +91,11 @@ function login(email: string, password: string): void {
 </template>
 
 <style scoped>
-h2 { 
+h2 {
 	margin: 0 0 16px 0;
 }
 
-h2 span { 
+h2 span {
 	font-family: inherit;
 }
 
@@ -112,7 +110,7 @@ h2 span {
 .login-form {
 	width: fit-content;
 	max-width: 100%;
-	
+
 	padding: 32px;
 }
 

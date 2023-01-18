@@ -2,13 +2,20 @@
 import { useAuthStore } from '@/stores/AuthStore';
 import { deleteCookie } from '@/utils/cookies';
 import { RouterLink, useRouter } from 'vue-router'
+import { baseApiUrl } from "@/utils/api"
 
 const router = useRouter()
 
 function logout() {
-	deleteCookie('JWTtoken')
-	deleteCookie('JWTexpire')
+	deleteCookie('jwt_expire')
 	useAuthStore().clearAll()
+
+	fetch(`${baseApiUrl}/logout`, {
+		method: 'POST',
+		credentials: 'include'
+	})
+		.catch(error => console.error(error))
+
 	router.push('/')
 }
 </script>
@@ -26,12 +33,15 @@ function logout() {
 
 <style scoped>
 header {
+	position: relative;
+	z-index: 50;
+
 	display: flex;
 	align-items: center;
 	padding: 0 24px;
 
 	box-shadow: #0005 0 0 10px;
-	
+
 	width: 100%;
 }
 

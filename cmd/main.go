@@ -4,36 +4,45 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/Floriansylvain/GohCMS/internal/api"
+	"github.com/Floriansylvain/GohCMS/internal/articles"
 	"github.com/gin-gonic/gin"
-	"github.com/gotest/internal"
 	"github.com/joho/godotenv"
 )
 
-var ginMode = os.Getenv("APP_GIN_MODE")
-var apiPort = os.Getenv("APP_API_PORT")
-var frontPort = os.Getenv("APP_FRONT_PORT")
-var hostAddress = os.Getenv("APP_HOST_ADDRESS")
+var (
+	ginMode      string
+	apiPort      string
+	apiBaseUrl   string
+	frontAddress string
+)
 
 func initEnvVariables() {
 	if godotenv.Load() != nil {
 		panic("Error loading .env file.")
 	}
+
+	ginMode = os.Getenv("APP_GIN_MODE")
+	apiPort = os.Getenv("APP_API_PORT")
+	apiBaseUrl = os.Getenv("APP_BASE_API_PATH")
+	frontAddress = os.Getenv("APP_FRONT_ADDRESS")
 }
 
 func initJWT() {
-	errInit := internal.AuthMiddleware.MiddlewareInit()
+	errInit := api.AuthMiddleware.MiddlewareInit()
 	if errInit != nil {
 		fmt.Printf(errInit.Error())
 	}
 }
 
-func initBasicRoutes(r *gin.Engine) {
-	r.POST("/login/", internal.AuthMiddleware.LoginHandler)
-	r.GET("/ping/", internal.Ping)
+func initBasicRoutes(r *gin.RouterGroup) {
+	r.POST("/login/", api.AuthMiddleware.LoginHandler)
+	r.POST("/logout/", api.AuthMiddleware.LogoutHandler)
+	r.GET("/ping/", api.Ping)
 }
 
 func corsMiddleware(c *gin.Context) {
-	c.Writer.Header().Set("Access-Control-Allow-Origin", fmt.Sprintf("http://%v:%v", hostAddress, frontPort))
+	c.Writer.Header().Set("Access-Control-Allow-Origin", frontAddress)
 	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 	c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
 	c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
@@ -44,33 +53,47 @@ func corsMiddleware(c *gin.Context) {
 	c.Next()
 }
 
-func initArticlesRoutes(r *gin.Engine) {
-	articlesRouter := r.Group("/articles")
-	articlesRouter.Use(corsMiddleware, internal.AuthMiddleware.MiddlewareFunc())
+func jwtProxyMiddleware(c *gin.Context) {
+	jwtToken, _ := c.Cookie("jwt")
+	c.Request.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
+	c.Next()
+}
 
-	articlesRouter.GET("/", internal.GetAllArticlesHandler)
-	articlesRouter.GET("/:id", internal.GetArticleHandler)
-	articlesRouter.POST("/:id", internal.AddArticleHandler)
-	articlesRouter.PATCH("/:id", internal.EditArticleHandler)
-	articlesRouter.DELETE("/:id", internal.DeleteArticleHandler)
+func initArticlesRoutes(r *gin.RouterGroup) {
+	articlesRouter := r.Group("/articles")
+	articlesRouter.Use(corsMiddleware, api.AuthMiddleware.MiddlewareFunc())
+
+	articlesRouter.GET("/", articles.GetArticleHandler)
+	articlesRouter.GET("/:id", articles.GetArticleHandler)
+	articlesRouter.POST("/:id", articles.AddArticleHandler)
+	articlesRouter.PATCH("/:id", articles.EditArticleHandler)
+	articlesRouter.DELETE("/:id", articles.DeleteArticleHandler)
 }
 
 func initGin() {
 	r := gin.Default()
-	r.Use(corsMiddleware)
+	r.Use(jwtProxyMiddleware, corsMiddleware)
+
+	var router *gin.RouterGroup
+	if apiBaseUrl != "" {
+		router = r.Group(apiBaseUrl)
+	} else {
+		router = &r.RouterGroup
+	}
 
 	if ginMode == "release" {
 		gin.SetMode(ginMode)
+		api.AuthMiddleware.SecureCookie = true
 	}
 
-	initBasicRoutes(r)
-	initArticlesRoutes(r)
+	initBasicRoutes(router)
+	initArticlesRoutes(router)
 
 	r.Run(":" + apiPort)
 }
 
 func main() {
 	initEnvVariables()
-	initJWT()
 	initGin()
+	initJWT()
 }

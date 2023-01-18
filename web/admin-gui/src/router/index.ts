@@ -1,10 +1,11 @@
-import { createRouter, createWebHistory, type NavigationGuard } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/AuthStore'
 import { nextTick } from 'vue'
-import Debug from '@/views/Debug.vue'
 import Login from '@/views/Login.vue'
 import Home from '@/views/Home.vue'
 import Articles from '@/views/Articles.vue'
+import ArticlesEdit from '@/views/ArticlesEdit.vue'
+import ArticlesNew from '@/views/ArticlesNew.vue'
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,14 +16,6 @@ const router = createRouter({
 			component: Login,
 			meta: {
 				title: 'GohCMS - Connexion'
-			}
-		},
-		{
-			path: '/debug',
-			name: 'debug',
-			component: Debug,
-			meta: {
-				title: 'GohCMS - Debug'
 			}
 		},
 		{
@@ -41,17 +34,33 @@ const router = createRouter({
 				title: 'GohCMS - Articles'
 			}
 		},
+		{
+			path: '/articles/edit/:articleID',
+			name: 'edition',
+			component: ArticlesEdit,
+			meta: {
+				title: 'GohCMS - Edition'
+			}
+		},
+		{
+			path: '/articles/new',
+			name: 'new',
+			component: ArticlesNew,
+			meta: {
+				title: 'GohCMS - Nouveau'
+			}
+		},
 	]
 })
 
 router.beforeEach(async (to, from) => {
-	const isTokenValid = useAuthStore().isValid()
+	const isJwtExpired = useAuthStore().isExpired()
 	if (to.name === 'login') {
-		if (isTokenValid) return {
+		if (!isJwtExpired) return {
 			name: 'home'
 		}
 	} else {
-		if (!isTokenValid) { 
+		if (isJwtExpired) { 
 			return {
 				name: 'login',
 			}

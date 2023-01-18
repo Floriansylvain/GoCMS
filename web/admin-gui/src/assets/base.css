@@ -15,6 +15,7 @@
 	--primary: #2CD358;
 	--primary-dark: #00BA2A;
 	--primary-light: #97E6A2;
+	--primary-verylight: #ecffef;
 	--secondary: #D32CA6;
 	--secondary-dark: #BA0094;
 	--secondary-light: #E88DCA;
@@ -34,18 +35,43 @@ h1 {
 	font-family: 'Frank Ruhl Libre', serif;
 	font-size: 40px;
 }
-h2 { font-size: 32px; }
-h3 { font-size: 24px; }
-h4 { font-size: 18px; }
-h2, h3, h4, h5, h6 {
+
+h2 {
+	font-size: 32px;
+}
+
+h3 {
+	font-size: 24px;
+}
+
+h4 {
+	font-size: 18px;
+}
+
+h2,
+h3,
+h4,
+h5,
+h6 {
 	font-family: 'Nunito', sans-serif;
 }
 
 * {
+	box-sizing: border-box;
+}
+
+p,
+a,
+input,
+label,
+button,
+span,
+li,
+td,
+th,
+.tabulator {
 	font-family: 'Hind', sans-serif;
 	color: var(--neutral-dark);
-
-	box-sizing: border-box;
 }
 
 .label-input,
@@ -77,6 +103,27 @@ h2, h3, h4, h5, h6 {
 	border-radius: var(--radius);
 }
 
+.tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+
+	margin: 0;
+	padding: 8px;
+}
+
+.tags li,
+.tags .tag {
+	background-color: var(--neutral-verylight);
+	border-radius: var(--radius);
+
+	padding: 4px 16px;
+}
+
+.tags li::marker {
+	content: '';
+}
+
 .label-input-error input {
 	border: solid 1.75px var(--error);
 }
@@ -86,19 +133,38 @@ h2, h3, h4, h5, h6 {
 }
 
 .button-primary,
+.button-secondary,
 .button-disabled {
 	border-radius: var(--radius);
 	border: none;
-	
+
 	padding: 3px 16px;
 	font-size: var(--font-body);
 	font-weight: var(--medium-weight);
-	
+
+	text-align: center;
+	text-decoration: none;
+
 	background-color: var(--primary);
-	
-	transition: background-color 150ms;
+
+	transition: background-color 150ms, color 150ms;
 
 	cursor: pointer;
+}
+
+.button-secondary {
+	color: var(--primary-dark);
+	border: solid 1.5px var(--primary-dark);
+	background-color: #fff;
+}
+
+.button-secondary:hover {
+	background-color: var(--primary-verylight);
+}
+
+.button-secondary:active {
+	background-color: var(--primary-light);
+	color: var(--neutral-dark);
 }
 
 .button-primary:hover {
@@ -113,4 +179,9 @@ h2, h3, h4, h5, h6 {
 	color: var(--neutral-dark);
 	background-color: var(--neutral-light);
 	cursor: default;
+}
+
+.tox-tinymce {
+	border: none !important;
+	border-radius: 0 !important;
 }
