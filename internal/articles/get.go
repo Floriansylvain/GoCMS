@@ -16,11 +16,20 @@ func getApiFullUrl() string {
 }
 
 func getArticleSkipTakeFullUrl(skip uint64, take uint64) string {
-	return fmt.Sprintf("%v/articles?skip=%v&take=%v", getApiFullUrl(), skip+take, take)
+	return fmt.Sprintf("%varticles?skip=%v&take=%v", getApiFullUrl(), skip+take, take)
 }
 
 func getBuiltGetResponse(articles []Article, skip uint64, take uint64) map[string]any {
-	slicedArticles := articles[skip : skip+take]
+	articlesCap := uint64(len(articles))
+
+	var normTake uint64
+	if skip+take > articlesCap {
+		normTake = articlesCap
+	} else {
+		normTake = skip + take
+	}
+
+	slicedArticles := articles[skip:normTake]
 	return map[string]any{
 		"content": slicedArticles,
 		"total":   len(slicedArticles),
@@ -35,11 +44,11 @@ func getBuiltGetResponse(articles []Article, skip uint64, take uint64) map[strin
 	}
 }
 
-func parseUintQueryParam(c *gin.Context, param string) (uint64, error) {
-	value, err := strconv.ParseUint(c.Query(param), 10, 0)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, fmt.Sprintf("%s query parameter must be a positive number.", param))
+func parseUintQueryParam(c *gin.Context, param string, defaultValue uint64) (uint64, error) {
+	if c.Query(param) == "" {
+		return defaultValue, nil
 	}
+	value, err := strconv.ParseUint(c.Query(param), 10, 0)
 	return value, err
 }
 
@@ -54,9 +63,10 @@ func getArticleIdFilter(titleID string) map[string]any {
 func Get(c *gin.Context) {
 	titleID := c.Params.ByName("id")
 
-	skip, skipErr := parseUintQueryParam(c, "skip")
-	take, takeErr := parseUintQueryParam(c, "take")
+	skip, skipErr := parseUintQueryParam(c, "skip", 0)
+	take, takeErr := parseUintQueryParam(c, "take", 10)
 	if skipErr != nil || takeErr != nil {
+		api.SendBadRequest(c, "Take and Skip query parameters must be positive numbers.")
 		return
 	}
 
