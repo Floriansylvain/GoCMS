@@ -4,7 +4,7 @@
 <template>
     <main>
         <h1>Bienvenue.</h1>
-        <h2>Vous êtes sur la page d'accueuil de GohCMS.</h2>
+        <h2>Vous êtes sur la page d'accueil de GohCMS.</h2>
     </main>
 </template>
 
