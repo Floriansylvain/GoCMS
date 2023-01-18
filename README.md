@@ -12,6 +12,7 @@ docker-compose up
 TODO
 ## Environment variables
 - ./env
+    - APP_BASE_API_PATH
     - APP_BASE_FRONT_PATH
     - APP_API_ADDRESS
     - APP_FRONT_ADDRESS

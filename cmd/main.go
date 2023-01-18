@@ -11,9 +11,10 @@ import (
 )
 
 var (
-	ginMode    string
-	apiPort    string
-	apiAddress string
+	ginMode      string
+	apiPort      string
+	apiBaseUrl   string
+	frontAddress string
 )
 
 func initEnvVariables() {
@@ -23,7 +24,8 @@ func initEnvVariables() {
 
 	ginMode = os.Getenv("APP_GIN_MODE")
 	apiPort = os.Getenv("APP_API_PORT")
-	apiAddress = os.Getenv("APP_FRONT_ADDRESS")
+	apiBaseUrl = os.Getenv("APP_BASE_API_PATH")
+	frontAddress = os.Getenv("APP_FRONT_ADDRESS")
 }
 
 func initJWT() {
@@ -33,14 +35,14 @@ func initJWT() {
 	}
 }
 
-func initBasicRoutes(r *gin.Engine) {
+func initBasicRoutes(r *gin.RouterGroup) {
 	r.POST("/login/", api.AuthMiddleware.LoginHandler)
 	r.POST("/logout/", api.AuthMiddleware.LogoutHandler)
 	r.GET("/ping/", api.Ping)
 }
 
 func corsMiddleware(c *gin.Context) {
-	c.Writer.Header().Set("Access-Control-Allow-Origin", apiAddress)
+	c.Writer.Header().Set("Access-Control-Allow-Origin", frontAddress)
 	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 	c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
 	c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
@@ -57,7 +59,7 @@ func jwtProxyMiddleware(c *gin.Context) {
 	c.Next()
 }
 
-func initArticlesRoutes(r *gin.Engine) {
+func initArticlesRoutes(r *gin.RouterGroup) {
 	articlesRouter := r.Group("/articles")
 	articlesRouter.Use(corsMiddleware, api.AuthMiddleware.MiddlewareFunc())
 
@@ -72,13 +74,20 @@ func initGin() {
 	r := gin.Default()
 	r.Use(jwtProxyMiddleware, corsMiddleware)
 
+	var router *gin.RouterGroup
+	if apiBaseUrl != "" {
+		router = r.Group(apiBaseUrl)
+	} else {
+		router = &r.RouterGroup
+	}
+
 	if ginMode == "release" {
 		gin.SetMode(ginMode)
 		api.AuthMiddleware.SecureCookie = true
 	}
 
-	initBasicRoutes(r)
-	initArticlesRoutes(r)
+	initBasicRoutes(router)
+	initArticlesRoutes(router)
 
 	r.Run(":" + apiPort)
 }
