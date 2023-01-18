@@ -10,7 +10,7 @@ const table = ref<HTMLInputElement | string>('')
 const tabulator: Ref<Tabulator | undefined> = ref(undefined)
 
 onMounted(async () => {
-	articles.value = await getArticles('')
+	articles.value = await (await getArticles('')).content
 	tabulator.value = new Tabulator(table.value, {
 		data: articles.value,
 		reactiveData: true,

@@ -16,7 +16,7 @@ const errorModalDescription: Ref<string> = ref("Quelque chose s'est mal passé..
 onMounted(async () => {
 	await getArticles(useRoute().params.articleID as string)
 		.then(articleFetch => {
-			article.value = articleFetch[0]
+			article.value = articleFetch.content[0]
 			editorData.value = article.value.content.html
 		})
 		.catch(error => {

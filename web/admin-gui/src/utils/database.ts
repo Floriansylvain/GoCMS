@@ -11,7 +11,20 @@ export interface Article {
 	online: boolean
 }
 
-export async function getArticles(id: string): Promise<Array<Article>> {
+export interface GetArticle {
+	content: Article[],
+	total: number
+	pagination: {
+		skip: number,
+		take: number
+		links: {
+			next: string,
+			previous: string
+		}
+	}
+}
+
+export async function getArticles(id: string): Promise<GetArticle> {
 	return await fetch(`${baseApiUrl}/articles/${id}`, {
 		credentials: 'include',
 		method: 'GET',
