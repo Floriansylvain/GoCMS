@@ -6,6 +6,8 @@ The features are not complete, not tested and subject to many changes.
 
 ## Setup
 
+Don't forget to setup the [Environment variables](#environment-variables)!
+
 ### Use with Docker
 
 To **run** the app, run the command
@@ -18,7 +20,7 @@ docker-compose up
 
 TODO
 
-## Environment variables
+### Environment variables
 
 - ./env
   - APP_API_ADDRESS: `http://example.com`
@@ -28,6 +30,10 @@ TODO
   - APP_API_PORT: `1234`
   - APP_FRONT_PORT: `1234`
   - APP_JWT_SECRET: `secret`
+
+## API Usage
+
+TODO
 
 ## Demo
 
