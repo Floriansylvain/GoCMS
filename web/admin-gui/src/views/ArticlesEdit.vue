@@ -1,23 +1,48 @@
 <script setup lang="ts">
-import { getArticles, type Article } from '@/utils/database';
+import Modal from '@/components/ModalSuccessError.vue';
+import { editArticle, getArticles, type Article } from '@/utils/database';
 import Editor from '@tinymce/tinymce-vue';
 import { onMounted, ref, type Ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const article: Ref<Article | void> = ref()
 const editorData: Ref<string> = ref('')
+const router = useRouter()
+
+const successModalShow = ref(false)
+const errorModalShow = ref(false)
+const errorModalDescription: Ref<string> = ref("Quelque chose s'est mal passé...")
 
 onMounted(async () => {
-	const articleFetch = await getArticles(useRoute().params.articleID as string)
-	article.value = articleFetch[0]
-	editorData.value = article.value.content.html
+	await getArticles(useRoute().params.articleID as string)
+		.then(articleFetch => {
+			article.value = articleFetch[0]
+			editorData.value = article.value.content.html
+		})
+		.catch(error => {
+			errorModalDescription.value = "Impossible de récupérer l'article. Vérifiez l'URL. Tentez-vous d'accéder au mode édition directement depuis un lien ?"
+			errorModalShow.value = true
+			console.error(error)
+		})
 })
 
 function abort() {
+	router.push('/articles')
 }
 
-function saveContent() {
-	console.log(editorData.value)
+async function saveContent() {
+	if (article.value == undefined) return;
+	article.value.content.html = editorData.value
+	await editArticle(article.value)
+		.then(() => {
+			successModalShow.value = true
+		})
+		.catch(error => {
+			errorModalDescription.value = `Impossible de sauvegarder l'article. (${error.toString()})`
+			errorModalShow.value = true
+			console.error(error)
+		})
+
 }
 </script>
 	
@@ -33,9 +58,14 @@ function saveContent() {
 		</div>
 		<aside class="buttons">
 			<button @click="saveContent()" class="button-primary">Enregistrer</button>
-			<button @click="abort()" class="button-secondary">Annuler</button>
+			<button @click="abort()" class="button-secondary">Retour</button>
 		</aside>
 	</div>
+	<Modal v-if="errorModalShow" :description="errorModalDescription" @close="errorModalShow = false" type="error">
+	</Modal>
+	<Modal v-if="successModalShow" description="Le contenu a bien été sauvegardé." @close="successModalShow = false"
+		type="success">
+	</Modal>
 </template>
 
 <style scoped>

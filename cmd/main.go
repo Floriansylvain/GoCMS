@@ -66,7 +66,7 @@ func initArticlesRoutes(r *gin.RouterGroup) {
 	articlesRouter.GET("/", articles.GetArticleHandler)
 	articlesRouter.GET("/:id", articles.GetArticleHandler)
 	articlesRouter.POST("/:id", articles.AddArticleHandler)
-	articlesRouter.PATCH("/:id", articles.EditArticleHandler)
+	articlesRouter.PUT("/:id", articles.EditArticleHandler)
 	articlesRouter.DELETE("/:id", articles.DeleteArticleHandler)
 }
 
