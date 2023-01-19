@@ -29,7 +29,7 @@ function isFormEmpty(): boolean {
 	return title.value === '' || rawTags.value === ''
 }
 
-function createArticle() {
+async function createArticle() {
 	const article: Article = {
 		titleID: generateTitleID(title.value),
 		title: title.value,
@@ -40,7 +40,7 @@ function createArticle() {
 		online: false,
 		tags: tags.value
 	}
-	postArticle(article)
+	await postArticle(article)
 	router.push(`/articles/edit/${article.titleID}`)
 }
 </script>
