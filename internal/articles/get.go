@@ -2,6 +2,7 @@ package articles
 
 import (
 	"fmt"
+	"math"
 	"net/http"
 	"os"
 	"strconv"
@@ -30,9 +31,10 @@ func getBuiltGetResponse(articles []Article, skip uint64, take uint64) map[strin
 	}
 
 	slicedArticles := articles[skip:normTake]
+	total := len(slicedArticles)
 	return map[string]any{
 		"content": slicedArticles,
-		"total":   len(slicedArticles),
+		"total":   total,
 		"pagination": map[string]any{
 			"skip": skip,
 			"take": take,
@@ -41,6 +43,7 @@ func getBuiltGetResponse(articles []Article, skip uint64, take uint64) map[strin
 				"previous": getArticleSkipTakeFullUrl(skip-take, take),
 			},
 		},
+		"last_page": math.Ceil(float64(articlesCap) / float64(take)),
 	}
 }
 

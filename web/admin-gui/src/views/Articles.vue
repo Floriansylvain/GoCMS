@@ -1,20 +1,29 @@
 <script setup lang="ts">
-import { getArticles, type Article } from '@/utils/database';
-import { onMounted, ref, type Ref } from 'vue';
+import { onMounted, ref, type Ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { TabulatorFull as Tabulator } from 'tabulator-tables'
-
-const articles: Ref<Array<Article>> = ref([])
+import { baseApiUrl } from '@/utils/api'
 
 const table = ref<HTMLInputElement | string>('')
 const tabulator: Ref<Tabulator | undefined> = ref(undefined)
 
 onMounted(async () => {
-	articles.value = await (await getArticles('')).content
 	tabulator.value = new Tabulator(table.value, {
-		data: articles.value,
-		reactiveData: true,
 		layout: 'fitColumns',
+		locale: 'fr-FR',
+		reactiveData: true,
+		pagination: true,
+		paginationSizeSelector: true,
+		paginationMode: 'remote',
+		paginationSize: 10,
+		ajaxURL: `${baseApiUrl}/articles`,
+		ajaxURLGenerator: function (url, config, params) {
+			config.credentials = 'include'
+			return url + `?skip=${params.size * (params.page - 1)}&take=${params.size}`
+		},
+		dataReceiveParams: {
+			"data": "content"
+		},
 		columns: [
 			{
 				title: 'Titre',
@@ -63,7 +72,23 @@ onMounted(async () => {
 				},
 				headerSort: false
 			}
-		]
+		],
+		langs: {
+			"fr-FR": {
+				"pagination": {
+					"first": "Premier",
+					"first_title": "Première Page",
+					"last": "Dernier",
+					"last_title": "Dernière Page",
+					"prev": "Précédent",
+					"prev_title": "Page Précédente",
+					"next": "Suivant",
+					"next_title": "Page Suivante",
+					"all": "Toute",
+					"page_size": "Nombre d'éléments"
+				},
+			},
+		}
 	})
 })
 </script>
@@ -81,6 +106,8 @@ main {
 	flex-direction: column;
 	gap: 16px;
 
+	height: 100%;
+
 	padding: 32px;
 }
 
@@ -90,7 +117,7 @@ main>a {
 
 #table {
 	width: 100%;
-
+	height: 100%;
 	margin: auto;
 }
 
