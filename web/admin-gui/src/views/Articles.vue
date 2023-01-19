@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref, type Ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import { TabulatorFull as Tabulator } from 'tabulator-tables'
 import { baseApiUrl } from '@/utils/api'
+import { deleteArticle } from '@/utils/database'
 
+const router = useRouter()
 const table = ref<HTMLInputElement | string>('')
 const tabulator: Ref<Tabulator | undefined> = ref(undefined)
 
@@ -66,6 +68,15 @@ onMounted(async () => {
 					deleteButton.textContent = '🗑️'
 
 					editButton.href = `/articles/edit/${cell.getValue()}`
+					deleteButton.onclick = async () => {
+						await deleteArticle(cell.getValue())
+						const currentPage = tabulator.value?.getPage()
+						if (isNaN(currentPage as number)) {
+							router.go(0)
+						} else {
+							tabulator.value?.setPage(currentPage as number)
+						}
+					}
 
 					container.append(editButton, deleteButton)
 					return container

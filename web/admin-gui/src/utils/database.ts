@@ -32,7 +32,15 @@ export async function getArticles(id: string): Promise<GetArticle> {
 		.then(result => result.json())
 }
 
-async function sendArticle(article: Article, method: 'POST' | 'PUT') {
+export async function deleteArticle(id: string) {
+	return await fetch(`${baseApiUrl}/articles/${id}`, {
+		credentials: 'include',
+		method: 'DELETE',
+	})
+		.then(result => result.json())
+}
+
+async function sendArticle(article: Article, method: 'POST' | 'PUT'): Promise<object> {
 	return await fetch(`${baseApiUrl}/articles/${article.titleID}`, {
 		credentials: 'include',
 		method,
