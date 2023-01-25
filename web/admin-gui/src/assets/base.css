@@ -103,6 +103,12 @@ th,
 	border-radius: var(--radius);
 }
 
+.label-input input:focus,
+.label-input-error input:focus {
+	border-color: var(--primary);
+	outline: solid 3px var(--primary-light);
+}
+
 .tags {
 	display: flex;
 	flex-wrap: wrap;
@@ -179,6 +185,11 @@ th,
 	color: var(--neutral-dark);
 	background-color: var(--neutral-light);
 	cursor: default;
+}
+
+.button-primary:focus,
+.button-secondary:focus {
+	outline: solid 3px var(--primary-light);
 }
 
 .tox-tinymce {
