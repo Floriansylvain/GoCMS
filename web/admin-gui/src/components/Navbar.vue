@@ -78,6 +78,10 @@ header nav a:hover {
 	background-color: var(--neutral-verylight);
 }
 
+header nav a:focus {
+	outline: solid 3px var(--primary-light);
+}
+
 .disconnect-link {
 	margin-left: auto;
 }

@@ -1,9 +1,9 @@
 import { fileURLToPath, URL } from "node:url"
-import { defineConfig, loadEnv } from "vite"
+import { defineConfig, loadEnv, type UserConfig } from "vite"
 import vue from "@vitejs/plugin-vue"
 
 // https://vitejs.dev/config/
-export default defineConfig(({ command, mode }) => {
+export default defineConfig(({ command, mode }): UserConfig => {
 	const env1 = loadEnv(mode, "./../../", "")
 	const env2 = loadEnv(mode, process.cwd(), "")
 
@@ -21,7 +21,7 @@ export default defineConfig(({ command, mode }) => {
 			}
 		},
 		server: {
-			port: env1.APP_FRONT_PORT,
+			port: parseInt(env1.APP_FRONT_PORT),
 		},
 		base: env1.APP_BASE_FRONT_PATH ?? "/"
 	}

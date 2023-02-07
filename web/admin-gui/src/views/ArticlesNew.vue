@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { postArticle, type Article } from '@/utils/database';
+import { sendArticleWithMethod, type Article } from '@/utils/database';
 import { ref, type Ref } from 'vue';
-import { RouterLink, useRouter } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router';
 
 const router = useRouter()
 
@@ -29,7 +29,7 @@ function isFormEmpty(): boolean {
 	return title.value === '' || rawTags.value === ''
 }
 
-function createArticle() {
+async function createArticle(): Promise<Article> {
 	const article: Article = {
 		titleID: generateTitleID(title.value),
 		title: title.value,
@@ -40,7 +40,12 @@ function createArticle() {
 		online: false,
 		tags: tags.value
 	}
-	postArticle(article)
+	await sendArticleWithMethod(article, 'POST')
+	return article
+}
+
+async function formSubmitHandler(): Promise<void> {
+	const article = await createArticle()
 	router.push(`/articles/edit/${article.titleID}`)
 }
 </script>
@@ -48,7 +53,7 @@ function createArticle() {
 <template>
 	<main>
 		<h2>Créer un nouvel article</h2>
-		<form @submit.prevent="createArticle()">
+		<form @submit.prevent="formSubmitHandler()">
 			<div class="inputs-group">
 				<div class="label-input">
 					<label for="title">Titre de l'article</label>

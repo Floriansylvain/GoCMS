@@ -63,11 +63,11 @@ func initArticlesRoutes(r *gin.RouterGroup) {
 	articlesRouter := r.Group("/articles")
 	articlesRouter.Use(corsMiddleware, api.AuthMiddleware.MiddlewareFunc())
 
-	articlesRouter.GET("/", articles.GetArticleHandler)
-	articlesRouter.GET("/:id", articles.GetArticleHandler)
-	articlesRouter.POST("/:id", articles.AddArticleHandler)
-	articlesRouter.PATCH("/:id", articles.EditArticleHandler)
-	articlesRouter.DELETE("/:id", articles.DeleteArticleHandler)
+	articlesRouter.GET("/", articles.Get)
+	articlesRouter.GET("/:id", articles.GetUnique)
+	articlesRouter.POST("/:id", articles.Add)
+	articlesRouter.PUT("/:id", articles.Edit)
+	articlesRouter.DELETE("/:id", articles.Delete)
 }
 
 func initGin() {

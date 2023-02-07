@@ -1,23 +1,43 @@
 # GohCMS
+
 ## 🚧 This project is under development !
+
 The features are not complete, not fully tested and subject to many changes.
+
 ## Setup
+
+Don't forget to setup the [Environment variables](#environment-variables)!
+
 ### Use with Docker
+
 To **run** the app, run the command
+
 ```shell
 docker-compose up
 ```
 
 ### Build and run it yourself
+
 TODO
-## Environment variables
-- ./env
-    - APP_BASE_API_PATH
-    - APP_BASE_FRONT_PATH
-    - APP_API_ADDRESS
-    - APP_FRONT_ADDRESS
-    - APP_API_PORT
-    - APP_FRONT_PORT
-    - APP_JWT_SECRET
+
+### Environment variables
+
+- ./env:
+
+```
+APP_API_ADDRESS=http://example.com
+APP_FRONT_ADDRESS=http://example.com
+APP_BASE_API_PATH=/example
+APP_BASE_FRONT_PATH=/example
+APP_API_PORT=1234
+APP_FRONT_PORT=1234
+APP_JWT_SECRET=secret
+```
+
+## API Usage
+
+TODO
+
 ## Demo
+
 TODO
