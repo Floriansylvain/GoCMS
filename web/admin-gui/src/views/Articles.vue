@@ -1,15 +1,69 @@
 <script setup lang="ts">
-import { onMounted, ref, type Ref } from 'vue'
-import { RouterLink, useRouter } from 'vue-router'
-import { TabulatorFull as Tabulator } from 'tabulator-tables'
+import tabulator_langs from '@/assets/tabulator_langs.json'
 import { baseApiUrl } from '@/utils/api'
 import { deleteArticle } from '@/utils/database'
+import { reloadPage } from '@/utils/router'
+import { TabulatorFull as Tabulator, type CellComponent } from 'tabulator-tables'
+import { onMounted, ref, type Ref } from 'vue'
+import { RouterLink } from 'vue-router'
 
-const router = useRouter()
-const table = ref<HTMLInputElement | string>('')
+interface BasicTableButton {
+	classes: string[],
+	text: string
+}
+
+const table: Ref<HTMLInputElement | string> = ref('')
 const tabulator: Ref<Tabulator | undefined> = ref(undefined)
 
-onMounted(async () => {
+const basicEditButton = getBasicTableButton({ classes: ['button-secondary', 'table-action-button'], text: '✏️' })
+const basicDeleteButton = getBasicTableButton({ classes: ['button-secondary', 'table-action-button'], text: '❌' })
+
+function getBasicTableButton(basicButton: BasicTableButton): HTMLAnchorElement {
+	const button = document.createElement('a')
+	button.classList.add(...basicButton.classes)
+	button.textContent = basicButton.text
+	return button
+}
+
+function updateTablePage(): void {
+	const currentPage = tabulator.value?.getPage()
+
+	if (isNaN(currentPage as number)) {
+		reloadPage()
+	} else {
+		tabulator.value?.setPage(currentPage as number)
+	}
+}
+
+function getRowEditButton(cell: CellComponent): Node {
+	const editButton = basicEditButton.cloneNode(true) as HTMLAnchorElement
+	editButton.href = `/articles/edit/${cell.getValue()}`
+	return editButton
+}
+
+function getRowDeleteButton(cell: CellComponent): Node {
+	const deleteButton = basicDeleteButton.cloneNode(true) as HTMLAnchorElement
+
+	deleteButton.onclick = async () => {
+		await deleteArticle(cell.getValue())
+		updateTablePage()
+	}
+
+	return deleteButton
+}
+
+function getButtonsCell(cell: CellComponent): HTMLDivElement {
+	const container = document.createElement('div')
+	container.append(getRowEditButton(cell), getRowDeleteButton(cell))
+	return container
+}
+
+function getTableAjaxUrlPage(url: string, config: any, params: any) {
+	config.credentials = 'include'
+	return url + `?skip=${params.size * (params.page - 1)}&take=${params.size}`
+}
+
+function initTabulatorTable(): void {
 	tabulator.value = new Tabulator(table.value, {
 		layout: 'fitColumns',
 		locale: 'fr-FR',
@@ -19,13 +73,8 @@ onMounted(async () => {
 		paginationMode: 'remote',
 		paginationSize: 10,
 		ajaxURL: `${baseApiUrl}/articles`,
-		ajaxURLGenerator: function (url, config, params) {
-			config.credentials = 'include'
-			return url + `?skip=${params.size * (params.page - 1)}&take=${params.size}`
-		},
-		dataReceiveParams: {
-			"data": "content"
-		},
+		ajaxURLGenerator: getTableAjaxUrlPage,
+		dataReceiveParams: { data: "content" },
 		columns: [
 			{
 				title: 'Titre',
@@ -57,50 +106,16 @@ onMounted(async () => {
 			{
 				title: 'Actions',
 				field: 'titleID',
-				formatter: function (cell) {
-					const container = document.createElement('div')
-
-					const editButton = document.createElement('a')
-					const deleteButton = document.createElement('a')
-					editButton.classList.add('button-secondary')
-					deleteButton.classList.add('button-secondary')
-					editButton.textContent = '✏️'
-					deleteButton.textContent = '🗑️'
-
-					editButton.href = `/articles/edit/${cell.getValue()}`
-					deleteButton.onclick = async () => {
-						await deleteArticle(cell.getValue())
-						const currentPage = tabulator.value?.getPage()
-						if (isNaN(currentPage as number)) {
-							router.go(0)
-						} else {
-							tabulator.value?.setPage(currentPage as number)
-						}
-					}
-
-					container.append(editButton, deleteButton)
-					return container
-				},
+				formatter: getButtonsCell,
 				headerSort: false
 			}
 		],
-		langs: {
-			"fr-FR": {
-				"pagination": {
-					"first": "Premier",
-					"first_title": "Première Page",
-					"last": "Dernier",
-					"last_title": "Dernière Page",
-					"prev": "Précédent",
-					"prev_title": "Page Précédente",
-					"next": "Suivant",
-					"next_title": "Page Suivante",
-					"all": "Toute",
-					"page_size": "Nombre d'éléments"
-				},
-			},
-		}
+		langs: tabulator_langs
 	})
+}
+
+onMounted(async () => {
+	initTabulatorTable()
 })
 </script>
 
@@ -110,6 +125,12 @@ onMounted(async () => {
 		<div id="table" ref="table"></div>
 	</main>
 </template>
+
+<style>
+.table-action-button {
+	margin: 0 4px;
+}
+</style>
 
 <style scoped>
 main {
@@ -130,15 +151,6 @@ main>a {
 	width: 100%;
 	height: 100%;
 	margin: auto;
-}
-
-.action-buttons {
-	margin: auto;
-	width: fit-content;
-}
-
-.action-buttons>* {
-	margin: 0 6px;
 }
 
 .status {
