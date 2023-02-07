@@ -24,35 +24,39 @@ export interface GetArticle {
 	}
 }
 
-export async function getArticles(id: string): Promise<GetArticle> {
-	return await fetch(`${baseApiUrl}/articles/${id}`, {
-		credentials: 'include',
-		method: 'GET',
+export function fetchArticle(id: string): Promise<GetArticle> {
+	return new Promise((resolve, reject) => {
+		fetch(`${baseApiUrl}/articles/${id}`, {
+			credentials: 'include',
+			method: 'GET',
+		})
+			.then(response => response.json())
+			.then(article => resolve(article))
+			.catch(error => reject(error))
 	})
-		.then(result => result.json())
 }
 
-export async function deleteArticle(id: string) {
-	return await fetch(`${baseApiUrl}/articles/${id}`, {
-		credentials: 'include',
-		method: 'DELETE',
+export function deleteArticle(id: string): Promise<any> {
+	return new Promise((resolve, reject) => {
+		fetch(`${baseApiUrl}/articles/${id}`, {
+			credentials: 'include',
+			method: 'DELETE'
+		})
+			.then(result => result.json())
+			.then(article => resolve(article))
+			.catch(error => reject(error))
 	})
-		.then(result => result.json())
 }
 
-async function sendArticle(article: Article, method: 'POST' | 'PUT'): Promise<object> {
-	return await fetch(`${baseApiUrl}/articles/${article.titleID}`, {
-		credentials: 'include',
-		method,
-		body: JSON.stringify(article)
+export function sendArticleWithMethod(article: Article, method: 'POST' | 'PUT'): Promise<any> {
+	return new Promise((resolve, reject) => {
+		fetch(`${baseApiUrl}/articles/${article.titleID}`, {
+			credentials: 'include',
+			method,
+			body: JSON.stringify(article)
+		})
+			.then(result => result.json())
+			.then(article => resolve(article))
+			.catch(error => reject(error))
 	})
-		.then(result => result.json())
-}
-
-export async function postArticle(article: Article): Promise<object> {
-	return await sendArticle(article, 'POST')
-}
-
-export async function editArticle(article: Article): Promise<object> {
-	return await sendArticle(article, 'PUT')
 }

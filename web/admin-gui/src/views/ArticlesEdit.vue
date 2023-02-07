@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Modal from '@/components/ModalSuccessError.vue';
-import { editArticle, getArticles, type Article } from '@/utils/database';
+import { fetchArticle, sendArticleWithMethod, type Article, type GetArticle } from '@/utils/database';
 import Editor from '@tinymce/tinymce-vue';
 import { onMounted, ref, type Ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -8,44 +8,46 @@ import { useRoute, useRouter } from 'vue-router';
 const article: Ref<Article | void> = ref()
 const editorData: Ref<string> = ref('')
 const router = useRouter()
+const route = useRoute()
 
 const successModalShow = ref(false)
 const errorModalShow = ref(false)
 const errorModalDescription: Ref<string> = ref("Quelque chose s'est mal passé...")
 
+function displayErrorMessage(message: string): void {
+	errorModalDescription.value = message
+	errorModalShow.value = true
+}
+
+async function getArticle(): Promise<GetArticle | undefined> {
+	try {
+		return await fetchArticle(route.params.articleID as string)
+	} catch {
+		displayErrorMessage("Impossible de récupérer l'article. Vérifiez l'URL. Tentez-vous d'accéder au mode édition directement depuis un lien ?")
+		return undefined
+	}
+}
+
 onMounted(async () => {
-	await getArticles(useRoute().params.articleID as string)
-		.then(articleFetch => {
-			article.value = articleFetch.content[0]
-			editorData.value = article.value.content.html
-		})
-		.catch(error => {
-			errorModalDescription.value = "Impossible de récupérer l'article. Vérifiez l'URL. Tentez-vous d'accéder au mode édition directement depuis un lien ?"
-			errorModalShow.value = true
-			console.error(error)
-		})
+	article.value = (await getArticle())?.content[0]
+	editorData.value = article.value?.content.html ?? ""
 })
 
 function abort() {
 	router.push('/articles')
 }
 
-async function saveContent() {
+function saveContent() {
 	if (article.value == undefined) return;
-	article.value.content.html = editorData.value
-	await editArticle(article.value)
-		.then(() => {
-			successModalShow.value = true
-		})
-		.catch(error => {
-			errorModalDescription.value = `Impossible de sauvegarder l'article. (${error.toString()})`
-			errorModalShow.value = true
-			console.error(error)
-		})
 
+	article.value.content.html = editorData.value
+
+	sendArticleWithMethod(article.value, 'PUT')
+		.then(() => successModalShow.value = true)
+		.catch(error => displayErrorMessage(`Impossible de sauvegarder l'article. (${error.toString()})`))
 }
 </script>
-	
+
 <template>
 	<div class="container">
 		<div id="editor">
