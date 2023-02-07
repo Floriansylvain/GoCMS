@@ -68,6 +68,7 @@ function initTabulatorTable(): void {
 		layout: 'fitColumns',
 		locale: 'fr-FR',
 		reactiveData: true,
+		selectable: false,
 		pagination: true,
 		paginationSizeSelector: true,
 		paginationMode: 'remote',
