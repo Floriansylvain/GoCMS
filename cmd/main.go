@@ -64,7 +64,7 @@ func initArticlesRoutes(r *gin.RouterGroup) {
 	articlesRouter.Use(corsMiddleware, api.AuthMiddleware.MiddlewareFunc())
 
 	articlesRouter.GET("/", articles.Get)
-	articlesRouter.GET("/:id", articles.Get)
+	articlesRouter.GET("/:id", articles.GetUnique)
 	articlesRouter.POST("/:id", articles.Add)
 	articlesRouter.PUT("/:id", articles.Edit)
 	articlesRouter.DELETE("/:id", articles.Delete)

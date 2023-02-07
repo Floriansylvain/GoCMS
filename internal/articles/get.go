@@ -10,6 +10,7 @@ import (
 	"github.com/Floriansylvain/GohCMS/internal/api"
 	"github.com/Floriansylvain/GohCMS/internal/database"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 func getApiFullUrl() string {
@@ -64,8 +65,6 @@ func getArticleIdFilter(titleID string) map[string]any {
 }
 
 func Get(c *gin.Context) {
-	titleID := c.Params.ByName("id")
-
 	skip, skipErr := parseUintQueryParam(c, "skip", 0)
 	take, takeErr := parseUintQueryParam(c, "take", 10)
 	if skipErr != nil || takeErr != nil {
@@ -73,13 +72,8 @@ func Get(c *gin.Context) {
 		return
 	}
 
-	articles, err := database.GetDocuments(articlesLocation, getArticleIdFilter(titleID))
-	if err != nil {
-		api.SendBadRequest(c, fmt.Sprintf("The ID '%v' doesn't match any article.", titleID))
-		return
-	}
-
-	articlesArray := ParseArticlesFromBytesToArray(articles)
+	documents, _ := database.GetDocuments(articlesLocation, map[string]any{})
+	articlesArray := ParseArticlesFromBytesToArray(documents)
 	articlesArrayLength := uint64(len(articlesArray))
 	if skip >= articlesArrayLength || take == 0 {
 		c.JSON(http.StatusOK, map[string]any{
@@ -90,4 +84,19 @@ func Get(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, getBuiltGetResponse(articlesArray, skip, take))
+}
+
+func GetUnique(c *gin.Context) {
+	titleID := c.Params.ByName("id")
+
+	article, err := database.GetUniqueDocument(articlesLocation, getArticleIdFilter(titleID))
+	if err != nil {
+		api.SendBadRequest(c, fmt.Sprintf("The ID '%v' doesn't match any article.", titleID))
+		return
+	}
+
+	var parsedArticle Article
+	bson.Unmarshal(article, &parsedArticle)
+
+	c.JSON(http.StatusOK, parsedArticle)
 }

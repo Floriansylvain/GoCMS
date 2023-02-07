@@ -24,7 +24,7 @@ export interface GetArticle {
 	}
 }
 
-export function fetchArticle(id: string): Promise<GetArticle> {
+function fetchArticle(id: string): Promise<Article | GetArticle> {
 	return new Promise((resolve, reject) => {
 		fetch(`${baseApiUrl}/articles/${id}`, {
 			credentials: 'include',
@@ -34,6 +34,15 @@ export function fetchArticle(id: string): Promise<GetArticle> {
 			.then(article => resolve(article))
 			.catch(error => reject(error))
 	})
+}
+
+export function fetchUniqueArticle(id: string): Promise<Article> {
+	return fetchArticle(id) as Promise<Article>
+
+}
+
+export function fetchAllArticle(): Promise<GetArticle> {
+	return fetchArticle("") as Promise<GetArticle>
 }
 
 export function deleteArticle(id: string): Promise<any> {

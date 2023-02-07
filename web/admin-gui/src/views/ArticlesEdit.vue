@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Modal from '@/components/ModalSuccessError.vue';
-import { fetchArticle, sendArticleWithMethod, type Article, type GetArticle } from '@/utils/database';
+import { fetchUniqueArticle, sendArticleWithMethod, type Article } from '@/utils/database';
 import Editor from '@tinymce/tinymce-vue';
 import { onMounted, ref, type Ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -19,9 +19,9 @@ function displayErrorMessage(message: string): void {
 	errorModalShow.value = true
 }
 
-async function getArticle(): Promise<GetArticle | undefined> {
+async function getArticle(): Promise<Article | undefined> {
 	try {
-		return await fetchArticle(route.params.articleID as string)
+		return await fetchUniqueArticle(route.params.articleID as string)
 	} catch {
 		displayErrorMessage("Impossible de récupérer l'article. Vérifiez l'URL. Tentez-vous d'accéder au mode édition directement depuis un lien ?")
 		return undefined
@@ -29,7 +29,7 @@ async function getArticle(): Promise<GetArticle | undefined> {
 }
 
 onMounted(async () => {
-	article.value = (await getArticle())?.content[0]
+	article.value = await getArticle()
 	editorData.value = article.value?.content.html ?? ""
 })
 
