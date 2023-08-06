@@ -18,9 +18,24 @@ func NewArticleRepository() *ArticleRepository {
 	return &a
 }
 
+func (a *ArticleRepository) connectClient() {
+	err := a.client.Connect()
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (a *ArticleRepository) disconnectClient() {
+	err := a.client.Disconnect()
+	if err != nil {
+		panic(err)
+	}
+	a.client = db.NewClient()
+}
+
 func (a *ArticleRepository) Get(id int) Article {
-	a.client.Connect()
-	defer a.client.Disconnect()
+	a.connectClient()
+	defer a.disconnectClient()
 
 	article, err := a.client.Article.FindUnique(db.Article.ID.Equals(id)).Exec(context.Background())
 	if err != nil {
@@ -31,8 +46,8 @@ func (a *ArticleRepository) Get(id int) Article {
 }
 
 func (a *ArticleRepository) Create(article Article) Article {
-	a.client.Connect()
-	defer a.client.Disconnect()
+	a.connectClient()
+	defer a.disconnectClient()
 
 	articleDb, err := a.client.Article.CreateOne(
 		db.Article.Title.Set(article.Title),
@@ -43,6 +58,23 @@ func (a *ArticleRepository) Create(article Article) Article {
 	}
 
 	return FromDb(articleDb.ID, articleDb.Title, articleDb.Body, articleDb.CreatedAt.String(), articleDb.UpdatedAt.String())
+}
+
+func (a *ArticleRepository) GetAll() []Article {
+	a.connectClient()
+	defer a.disconnectClient()
+
+	articlesDb, err := a.client.Article.FindMany().Exec(context.Background())
+	if err != nil {
+		panic(err)
+	}
+
+	var articles []Article
+	for _, articleDb := range articlesDb {
+		articles = append(articles, FromDb(articleDb.ID, articleDb.Title, articleDb.Body, articleDb.CreatedAt.String(), articleDb.UpdatedAt.String()))
+	}
+
+	return articles
 }
 
 var _ IArticleRepository = &ArticleRepository{}

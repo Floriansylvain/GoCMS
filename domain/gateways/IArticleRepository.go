@@ -6,5 +6,6 @@ import (
 
 type IArticleRepository interface {
 	Get(id int) Article
+	GetAll() []Article
 	Create(article Article) Article
 }

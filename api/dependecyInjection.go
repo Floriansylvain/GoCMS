@@ -2,40 +2,40 @@ package api
 
 import (
 	. "GohCMS2/useCases"
-	"errors"
 	"go.uber.org/dig"
 )
 
 type Container struct {
 	CreateArticleUseCase *CreateArticleUseCase
 	GetArticleUseCase    *GetArticleUseCase
+	ListArticlesUseCase  *ListArticlesUseCase
 }
 
 var container *Container
 
-func InitContainer() *Container {
+func createContainer(
+	createArticle *CreateArticleUseCase,
+	getArticle *GetArticleUseCase,
+	listArticle *ListArticlesUseCase,
+) *Container {
+	container = &Container{
+		CreateArticleUseCase: createArticle,
+		GetArticleUseCase:    getArticle,
+		ListArticlesUseCase:  listArticle,
+	}
+	return container
+}
+
+func InitContainer() {
 	if container != nil {
-		return container
+		return
 	}
 
 	digContainer := dig.New()
 
-	err1 := digContainer.Provide(NewCreateArticleUseCase)
-	err2 := digContainer.Provide(NewGetArticleUseCase)
+	_ = digContainer.Provide(NewCreateArticleUseCase)
+	_ = digContainer.Provide(NewGetArticleUseCase)
+	_ = digContainer.Provide(NewListArticlesUseCase)
 
-	if err := errors.Join(err1, err2); err != nil {
-		panic(err)
-	}
-
-	err := digContainer.Invoke(func(createArticle *CreateArticleUseCase, getArticle *GetArticleUseCase) {
-		container = &Container{
-			CreateArticleUseCase: createArticle,
-			GetArticleUseCase:    getArticle,
-		}
-	})
-	if err != nil {
-		panic(err)
-	}
-
-	return container
+	_ = digContainer.Invoke(createContainer)
 }

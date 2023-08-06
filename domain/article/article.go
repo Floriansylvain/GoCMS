@@ -1,11 +1,11 @@
 package article
 
 type Article struct {
-	Id        int
-	Title     string
-	Body      string
-	createdAt string
-	updatedAt string
+	Id        int    `json:"id"`
+	Title     string `json:"title"`
+	Body      string `json:"body"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
 }
 
 func FromApi(
@@ -29,7 +29,7 @@ func FromDb(
 		Id:        id,
 		Title:     title,
 		Body:      body,
-		createdAt: createdAt,
-		updatedAt: updatedAt,
+		CreatedAt: createdAt,
+		UpdatedAt: updatedAt,
 	}
 }
