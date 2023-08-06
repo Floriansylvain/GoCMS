@@ -3,17 +3,23 @@ module GohCMS2
 go 1.20
 
 require (
-	github.com/iancoleman/strcase v0.0.0-20190422225806-e506e3ef7365
-	github.com/joho/godotenv v1.5.1
-	github.com/shopspring/decimal v1.3.1
-	github.com/steebchen/prisma-client-go v0.21.0
-	github.com/takuoki/gocase v1.0.0
-	golang.org/x/text v0.10.0
+	github.com/glebarez/sqlite v1.9.0
+	github.com/go-chi/httplog v0.3.1
+	go.uber.org/dig v1.17.0
+	gorm.io/gorm v1.25.2
 )
 
 require (
-	github.com/go-chi/httplog v0.3.1
-	go.uber.org/dig v1.17.0
+	github.com/dustin/go-humanize v1.0.1 // indirect
+	github.com/glebarez/go-sqlite v1.21.2 // indirect
+	github.com/google/uuid v1.3.0 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
+	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
+	modernc.org/libc v1.24.1 // indirect
+	modernc.org/mathutil v1.5.0 // indirect
+	modernc.org/memory v1.6.0 // indirect
+	modernc.org/sqlite v1.25.0 // indirect
 )
 
 require (

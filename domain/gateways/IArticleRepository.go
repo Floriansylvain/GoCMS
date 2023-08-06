@@ -5,7 +5,7 @@ import (
 )
 
 type IArticleRepository interface {
-	Get(id int) Article
+	Get(id uint32) (Article, error)
 	GetAll() []Article
-	Create(article Article) Article
+	Create(article Article) (Article, error)
 }

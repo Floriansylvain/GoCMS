@@ -1,8 +1,11 @@
 package api
 
 import (
+	"GohCMS2/adapters/secondary/gateways/models"
 	. "GohCMS2/useCases"
+	"github.com/glebarez/sqlite"
 	"go.uber.org/dig"
+	"gorm.io/gorm"
 )
 
 type Container struct {
@@ -13,7 +16,7 @@ type Container struct {
 
 var container *Container
 
-func createContainer(
+func setContainer(
 	createArticle *CreateArticleUseCase,
 	getArticle *GetArticleUseCase,
 	listArticle *ListArticlesUseCase,
@@ -33,9 +36,17 @@ func InitContainer() {
 
 	digContainer := dig.New()
 
-	_ = digContainer.Provide(NewCreateArticleUseCase)
-	_ = digContainer.Provide(NewGetArticleUseCase)
-	_ = digContainer.Provide(NewListArticlesUseCase)
+	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
+	if err != nil {
+		panic(err)
+	}
+	_ = db.AutoMigrate(&models.Article{})
 
-	_ = digContainer.Invoke(createContainer)
+	_ = digContainer.Provide(func() *gorm.DB { return db })
+
+	_ = digContainer.Provide(func(db *gorm.DB) *CreateArticleUseCase { return NewCreateArticleUseCase(db) })
+	_ = digContainer.Provide(func(db *gorm.DB) *GetArticleUseCase { return NewGetArticleUseCase(db) })
+	_ = digContainer.Provide(func(db *gorm.DB) *ListArticlesUseCase { return NewListArticlesUseCase(db) })
+
+	_ = digContainer.Invoke(setContainer)
 }

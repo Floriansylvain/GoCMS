@@ -9,6 +9,13 @@ import (
 	"net/http"
 )
 
+func jsonContentTypeMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		next.ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	api.InitContainer()
 
@@ -21,6 +28,7 @@ func main() {
 
 	apiRouter := chi.NewRouter()
 	apiRouter.Use(httplog.RequestLogger(httplog.NewLogger("GohCMS2")))
+	apiRouter.Use(jsonContentTypeMiddleware)
 	apiRouter.Mount("/v1", r)
 
 	fmt.Println("Server starting on port 8080")

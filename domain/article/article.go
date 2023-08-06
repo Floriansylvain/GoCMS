@@ -1,11 +1,13 @@
 package article
 
+import "time"
+
 type Article struct {
-	Id        int    `json:"id"`
-	Title     string `json:"title"`
-	Body      string `json:"body"`
-	CreatedAt string `json:"created_at"`
-	UpdatedAt string `json:"updated_at"`
+	ID        uint32    `json:"id"`
+	Title     string    `json:"title"`
+	Body      string    `json:"body"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func FromApi(
@@ -19,14 +21,14 @@ func FromApi(
 }
 
 func FromDb(
-	id int,
+	id uint32,
 	title string,
 	body string,
-	createdAt string,
-	updatedAt string,
+	createdAt time.Time,
+	updatedAt time.Time,
 ) Article {
 	return Article{
-		Id:        id,
+		ID:        id,
 		Title:     title,
 		Body:      body,
 		CreatedAt: createdAt,

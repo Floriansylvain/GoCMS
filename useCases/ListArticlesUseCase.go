@@ -3,15 +3,16 @@ package useCases
 import (
 	. "GohCMS2/adapters/secondary/gateways"
 	. "GohCMS2/domain/article"
+	"gorm.io/gorm"
 )
 
 type ListArticlesUseCase struct {
 	articleRepository ArticleRepository
 }
 
-func NewListArticlesUseCase() *ListArticlesUseCase {
+func NewListArticlesUseCase(db *gorm.DB) *ListArticlesUseCase {
 	return &ListArticlesUseCase{
-		articleRepository: *NewArticleRepository(),
+		articleRepository: *NewArticleRepository(db),
 	}
 }
 

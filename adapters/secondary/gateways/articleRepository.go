@@ -1,77 +1,57 @@
 package gateways
 
 import (
-	"GohCMS2/db"
-	. "GohCMS2/domain/article"
+	entity "GohCMS2/adapters/secondary/gateways/models"
+	domain "GohCMS2/domain/article"
 	. "GohCMS2/domain/gateways"
-	"context"
+	"gorm.io/gorm"
 )
 
 type ArticleRepository struct {
-	client *db.PrismaClient
+	db *gorm.DB
 }
 
-func NewArticleRepository() *ArticleRepository {
-	a := ArticleRepository{
-		client: db.NewClient(),
-	}
+func NewArticleRepository(db *gorm.DB) *ArticleRepository {
+	a := ArticleRepository{db}
 	return &a
 }
 
-func (a *ArticleRepository) connectClient() {
-	err := a.client.Connect()
+func (a *ArticleRepository) Get(id uint32) (domain.Article, error) {
+	var article domain.Article
+	err := a.db.Model(&entity.Article{}).First(&article, id).Error
 	if err != nil {
-		panic(err)
+		return article, err
 	}
+
+	return domain.FromDb(article.ID, article.Title, article.Body, article.CreatedAt, article.UpdatedAt), nil
 }
 
-func (a *ArticleRepository) disconnectClient() {
-	err := a.client.Disconnect()
-	if err != nil {
-		panic(err)
+func (a *ArticleRepository) Create(article domain.Article) (domain.Article, error) {
+	creationResult := a.db.Create(&entity.Article{
+		Title: article.Title,
+		Body:  article.Body,
+	})
+	if creationResult.Error != nil {
+		return domain.Article{}, creationResult.Error
 	}
-	a.client = db.NewClient()
+
+	var createdArticle entity.Article
+	creationResult.Scan(&createdArticle)
+
+	return domain.FromDb(
+			createdArticle.ID,
+			createdArticle.Title,
+			createdArticle.Body,
+			createdArticle.CreatedAt,
+			createdArticle.UpdatedAt),
+		nil
 }
 
-func (a *ArticleRepository) Get(id int) Article {
-	a.connectClient()
-	defer a.disconnectClient()
-
-	article, err := a.client.Article.FindUnique(db.Article.ID.Equals(id)).Exec(context.Background())
+func (a *ArticleRepository) GetAll() []domain.Article {
+	var articles []domain.Article
+	err := a.db.Model(&entity.Article{}).Find(&articles).Error
 	if err != nil {
-		panic(err)
-	}
-
-	return FromDb(article.ID, article.Title, article.Body, article.CreatedAt.String(), article.UpdatedAt.String())
-}
-
-func (a *ArticleRepository) Create(article Article) Article {
-	a.connectClient()
-	defer a.disconnectClient()
-
-	articleDb, err := a.client.Article.CreateOne(
-		db.Article.Title.Set(article.Title),
-		db.Article.Body.Set(article.Body),
-	).Exec(context.Background())
-	if err != nil {
-		panic(err)
-	}
-
-	return FromDb(articleDb.ID, articleDb.Title, articleDb.Body, articleDb.CreatedAt.String(), articleDb.UpdatedAt.String())
-}
-
-func (a *ArticleRepository) GetAll() []Article {
-	a.connectClient()
-	defer a.disconnectClient()
-
-	articlesDb, err := a.client.Article.FindMany().Exec(context.Background())
-	if err != nil {
-		panic(err)
-	}
-
-	var articles []Article
-	for _, articleDb := range articlesDb {
-		articles = append(articles, FromDb(articleDb.ID, articleDb.Title, articleDb.Body, articleDb.CreatedAt.String(), articleDb.UpdatedAt.String()))
+		return []domain.Article{}
 	}
 
 	return articles
