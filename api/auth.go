@@ -86,7 +86,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 	_ = SetJwtCookie(&w, dbUser.ID)
 
-	message, _ := json.Marshal(map[string]interface{}{"message": "User logged in! HTTPonly access_token cookie created"})
+	message, _ := json.Marshal(map[string]interface{}{"message": "User logged in! HTTPonly jwt cookie created"})
 	_, _ = w.Write(message)
 }
 
@@ -121,13 +121,29 @@ func register(w http.ResponseWriter, r *http.Request) {
 
 	err = SetJwtCookie(&w, createdUser.ID)
 
-	message, _ := json.Marshal(map[string]interface{}{"message": "User registered! HTTPonly access_token cookie created"})
-	_, err = w.Write(message)
+	message, _ := json.Marshal(map[string]interface{}{"message": "User registered! HTTPonly jwt cookie created"})
+	_, _ = w.Write(message)
+}
+
+func logout(w http.ResponseWriter, _ *http.Request) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     "jwt",
+		Value:    "",
+		Expires:  time.Now(),
+		MaxAge:   -1,
+		Secure:   false, // TODO false in dev, true in prod
+		HttpOnly: true,
+		Path:     "/v1/",
+	})
+
+	message, _ := json.Marshal(map[string]interface{}{"message": "User logged out! HTTPonly jwt cookie deleted"})
+	_, _ = w.Write(message)
 }
 
 func NewAuthRouter() http.Handler {
 	r := chi.NewRouter()
 	r.Post("/register", register)
 	r.Post("/login", login)
+	r.Post("/logout", logout)
 	return r
 }
