@@ -12,15 +12,18 @@ type ArticleRepository struct {
 }
 
 func NewArticleRepository(db *gorm.DB) *ArticleRepository {
-	a := ArticleRepository{db}
-	return &a
+	return &ArticleRepository{db}
+}
+
+func mapArticleToDomain(article entity.Article) domain.Article {
+	return domain.FromDb(article.ID, article.Title, article.Body, article.CreatedAt, article.UpdatedAt)
 }
 
 func (a *ArticleRepository) Get(id uint32) (domain.Article, error) {
-	var article domain.Article
+	var article entity.Article
 	err := a.db.Model(&entity.Article{}).First(&article, id).Error
 	if err != nil {
-		return article, err
+		return domain.Article{}, err
 	}
 
 	return domain.FromDb(article.ID, article.Title, article.Body, article.CreatedAt, article.UpdatedAt), nil
@@ -48,13 +51,18 @@ func (a *ArticleRepository) Create(article domain.Article) (domain.Article, erro
 }
 
 func (a *ArticleRepository) GetAll() []domain.Article {
-	var articles []domain.Article
+	var articles []entity.Article
 	err := a.db.Model(&entity.Article{}).Find(&articles).Error
 	if err != nil {
 		return []domain.Article{}
 	}
 
-	return articles
+	var domainArticles = make([]domain.Article, 0)
+	for _, article := range articles {
+		domainArticles = append(domainArticles, mapArticleToDomain(article))
+	}
+
+	return domainArticles
 }
 
 var _ IArticleRepository = &ArticleRepository{}
