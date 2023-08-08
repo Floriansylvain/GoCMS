@@ -37,7 +37,7 @@ func SetJwtCookie(w *http.ResponseWriter, userId uint32) error {
 		Expires:  time.Now().Add(24 * time.Hour),
 		Secure:   false, // TODO false in dev, true in prod
 		HttpOnly: true,
-		Path:     "/v1/",
+		Path:     "/",
 	})
 	return nil
 }
@@ -47,7 +47,7 @@ func isAllowedToCreateUser() bool {
 	return len(users) == 0
 }
 
-func isLoggedIn(r *http.Request) bool {
+func IsLoggedIn(r *http.Request) bool {
 	token, err := jwtauth.VerifyRequest(
 		TokenAuth,
 		r,
@@ -91,7 +91,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 }
 
 func register(w http.ResponseWriter, r *http.Request) {
-	if !isLoggedIn(r) && !isAllowedToCreateUser() {
+	if !IsLoggedIn(r) && !isAllowedToCreateUser() {
 		http.Error(w, "You are not allowed to create a user. Log in or reset database.", http.StatusForbidden)
 		return
 	}
