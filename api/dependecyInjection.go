@@ -9,13 +9,12 @@ import (
 )
 
 type Container struct {
-	CreateArticleUseCase     *CreateArticleUseCase
-	GetArticleUseCase        *GetArticleUseCase
-	ListArticlesUseCase      *ListArticlesUseCase
-	GetUserUseCase           *GetUserUseCase
-	GetUserByUsernameUseCase *GetUserUseCase
-	CreateUserUseCase        *CreateUserUseCase
-	ListUsersUseCase         *ListUsersUseCase
+	CreateArticleUseCase *CreateArticleUseCase
+	GetArticleUseCase    *GetArticleUseCase
+	ListArticlesUseCase  *ListArticlesUseCase
+	GetUserUseCase       *GetUserUseCase
+	CreateUserUseCase    *CreateUserUseCase
+	ListUsersUseCase     *ListUsersUseCase
 }
 
 var container *Container
@@ -25,18 +24,16 @@ func setContainer(
 	getArticle *GetArticleUseCase,
 	listArticle *ListArticlesUseCase,
 	getUser *GetUserUseCase,
-	getUserByUsername *GetUserUseCase,
 	createUser *CreateUserUseCase,
 	listUsers *ListUsersUseCase,
 ) *Container {
 	container = &Container{
-		CreateArticleUseCase:     createArticle,
-		GetArticleUseCase:        getArticle,
-		ListArticlesUseCase:      listArticle,
-		GetUserUseCase:           getUser,
-		GetUserByUsernameUseCase: getUserByUsername,
-		CreateUserUseCase:        createUser,
-		ListUsersUseCase:         listUsers,
+		CreateArticleUseCase: createArticle,
+		GetArticleUseCase:    getArticle,
+		ListArticlesUseCase:  listArticle,
+		GetUserUseCase:       getUser,
+		CreateUserUseCase:    createUser,
+		ListUsersUseCase:     listUsers,
 	}
 	return container
 }

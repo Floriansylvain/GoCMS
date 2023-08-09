@@ -72,7 +72,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbUser, err := container.GetUserByUsernameUseCase.GetUserByUsername(user.Username)
+	dbUser, err := container.GetUserUseCase.GetUserByUsername(user.Username)
 	if err != nil {
 		http.Error(w, logsErrorMessage, http.StatusForbidden)
 		return
