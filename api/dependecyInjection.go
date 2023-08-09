@@ -13,7 +13,7 @@ type Container struct {
 	GetArticleUseCase        *GetArticleUseCase
 	ListArticlesUseCase      *ListArticlesUseCase
 	GetUserUseCase           *GetUserUseCase
-	GetUserByUsernameUseCase *GetUserByUsernameUseCase
+	GetUserByUsernameUseCase *GetUserUseCase
 	CreateUserUseCase        *CreateUserUseCase
 	ListUsersUseCase         *ListUsersUseCase
 }
@@ -25,7 +25,7 @@ func setContainer(
 	getArticle *GetArticleUseCase,
 	listArticle *ListArticlesUseCase,
 	getUser *GetUserUseCase,
-	getUserByUsername *GetUserByUsernameUseCase,
+	getUserByUsername *GetUserUseCase,
 	createUser *CreateUserUseCase,
 	listUsers *ListUsersUseCase,
 ) *Container {
@@ -60,7 +60,6 @@ func InitContainer() {
 	_ = digContainer.Provide(func(db *gorm.DB) *GetArticleUseCase { return NewGetArticleUseCase(db) })
 	_ = digContainer.Provide(func(db *gorm.DB) *ListArticlesUseCase { return NewListArticlesUseCase(db) })
 	_ = digContainer.Provide(func(db *gorm.DB) *GetUserUseCase { return NewGetUserUseCase(db) })
-	_ = digContainer.Provide(func(db *gorm.DB) *GetUserByUsernameUseCase { return NewGetUserByUsernameUseCase(db) })
 	_ = digContainer.Provide(func(db *gorm.DB) *CreateUserUseCase { return NewCreateUserUseCase(db) })
 	_ = digContainer.Provide(func(db *gorm.DB) *ListUsersUseCase { return NewListUsersUseCase(db) })
 

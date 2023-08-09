@@ -19,3 +19,7 @@ func NewGetUserUseCase(db *gorm.DB) *GetUserUseCase {
 func (g *GetUserUseCase) GetUser(id uint32) (User, error) {
 	return g.userRepository.Get(id)
 }
+
+func (g *GetUserUseCase) GetUserByUsername(username string) (User, error) {
+	return g.userRepository.GetByUsername(username)
+}
