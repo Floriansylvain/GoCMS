@@ -1,13 +1,17 @@
 package api
 
 import (
-	. "GohCMS2/domain/article"
 	. "GohCMS2/useCases"
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
 	"net/http"
 	"strconv"
 )
+
+type ArticlePost struct {
+	Title string `json:"title" validate:"required,min=3,max=50"`
+	Body  string `json:"body" validate:"required,max=10000"`
+}
 
 func getArticle(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseUint(chi.URLParam(r, "id"), 10, 32)
@@ -27,10 +31,16 @@ func getArticle(w http.ResponseWriter, r *http.Request) {
 }
 
 func postArticle(w http.ResponseWriter, r *http.Request) {
-	var article Article
+	var article ArticlePost
 	err := json.NewDecoder(r.Body).Decode(&article)
 	if err != nil {
-		http.Error(w, "The request cannot be processed due to a mismatch in the format of the body.", http.StatusBadRequest)
+		http.Error(w, bodyErrorMessage, http.StatusBadRequest)
+		return
+	}
+
+	err = validate.Struct(article)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 

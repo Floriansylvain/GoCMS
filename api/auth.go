@@ -23,6 +23,7 @@ type UserLogin struct {
 
 var TokenAuth *jwtauth.JWTAuth
 
+// TODO Move into its own file or package that handles api errors
 const logsErrorMessage = "Access to the requested resource is forbidden due to incorrect password and/or username."
 const bodyErrorMessage = "The request cannot be processed due to a mismatch in the format of the body."
 
