@@ -126,7 +126,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(message)
 }
 
-func logout(w http.ResponseWriter, _ *http.Request) {
+func removeJwtCookie(w http.ResponseWriter) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     "jwt",
 		Value:    "",
@@ -134,9 +134,12 @@ func logout(w http.ResponseWriter, _ *http.Request) {
 		MaxAge:   -1,
 		Secure:   false, // TODO false in dev, true in prod
 		HttpOnly: true,
-		Path:     "/v1/",
+		Path:     "/",
 	})
+}
 
+func logout(w http.ResponseWriter, _ *http.Request) {
+	removeJwtCookie(w)
 	message, _ := json.Marshal(map[string]interface{}{"message": "User logged out! HTTPonly jwt cookie deleted"})
 	_, _ = w.Write(message)
 }
