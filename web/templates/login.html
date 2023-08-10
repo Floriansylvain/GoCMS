@@ -3,9 +3,9 @@
 <head>
 	<meta charset="UTF-8">
 	<meta content="width=device-width, initial-scale=1.0" name="viewport">
-	<title>GohCMS | Login</title>
+	<title>GohCMS | Connexion</title>
 
-	<link  rel="stylesheet" href="/static/bootstrap.min.css" type="text/css">
+	<link rel="stylesheet" href="/static/bootstrap.min.css" type="text/css">
 	<script src="/static/bootstrap.min.js"
 			type="application/javascript"
 			defer></script>
@@ -16,8 +16,7 @@
         }
 	</style>
 </head>
-<body class="d-flex min-vh-100 vw-100 justify-content-center align-items-center">
-
+<body class="d-flex min-vh-100 vw-100 justify-content-center align-items-center text-dark">
 <div class="container">
 	<div class="d-flex flex-column gap-5 m-auto form-container">
 		<h1>GohCMS</h1>
@@ -27,31 +26,34 @@
 					<input class="form-control {{ if .IsError }} is-invalid {{ end }}"
 						   id="username"
 						   name="username"
-						   placeholder="Votre nom d'utilisateur"
+						   placeholder="Nom d'utilisateur"
 						   required
-						   type="text">
-					<label for="username">Username</label>
+						   type="text"
+						   value="{{.Username}}">
+					<label for="username">Nom d'utilisateur</label>
 				</div>
 				<div class="form-floating">
 					<input class="form-control {{ if .IsError }} is-invalid {{ end }}"
 						   id="password"
 						   name="password"
-						   placeholder="Votre mot de passe"
+						   placeholder="Mot de passe"
 						   required
 						   type="password">
-					<label for="password">Password</label>
-					<div class="invalid-feedback">
-						{{.Error}}
-					</div>
+					<label for="password">Mot de passe</label>
+					<div class="invalid-feedback">{{.Error}}</div>
 				</div>
-				<button class="btn btn-primary" disabled type="submit">Log in</button>
+				<button id="loginFormButton" class="btn btn-primary" disabled type="submit">
+						<span class="loginFormButtonLoading visually-hidden spinner-border spinner-border-sm"
+							  role="status"></span>
+					<span class="loginFormButtonDefault">Se connecter</span>
+				</button>
 			</div>
 		</form>
 	</div>
 </div>
 
 <script>
-    const button = document.querySelector("button[type=submit]")
+    const button = document.querySelector("#loginFormButton")
     const inputs = document.querySelectorAll('input')
 
     function formFieldsEmpty() {
@@ -62,10 +64,24 @@
         button.disabled = formFieldsEmpty() ? "disabled" : ""
     }
 
-    window.addEventListener('input', (event) => {
-        if (event.target.tagName === "INPUT") setButtonDisabled()
-    })
+    function setButtonLoading() {
+        button.classList.add("disabled")
+        button.querySelector(".loginFormButtonDefault").classList.add("visually-hidden")
+        button.querySelector(".loginFormButtonLoading").classList.remove("visually-hidden")
+    }
 
+    function onLoginFormSubmit(event) {
+        event.preventDefault()
+        setButtonLoading()
+        event.target.submit()
+    }
+
+    function onInput(event) {
+        if (event.target.tagName === "INPUT") setButtonDisabled()
+    }
+
+    window.addEventListener('submit', onLoginFormSubmit)
+    window.addEventListener('input', onInput)
     setButtonDisabled()
 </script>
 

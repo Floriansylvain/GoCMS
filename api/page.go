@@ -10,9 +10,28 @@ import (
 	"strings"
 )
 
+var contentTypes = map[string]string{
+	".css":  "text/css",
+	".js":   "application/javascript",
+	".png":  "image/png",
+	".jpg":  "image/jpeg",
+	".webp": "image/webp",
+	".svg":  "image/svg+xml",
+	".ico":  "image/x-icon",
+}
+
 type LoginPage struct {
-	IsError bool   `json:"isError"`
-	Error   string `json:"error"`
+	IsError  bool   `json:"isError"`
+	Error    string `json:"error"`
+	Username string `json:"username"`
+}
+
+func NewLoginPage(error string, username string) *LoginPage {
+	return &LoginPage{
+		IsError:  strings.Compare(error, "") != 0,
+		Error:    error,
+		Username: username,
+	}
 }
 
 func getPage(page string, data interface{}) ([]byte, error) {
@@ -28,7 +47,7 @@ func getPage(page string, data interface{}) ([]byte, error) {
 	return processedHTML.Bytes(), nil
 }
 
-func getLoginPageHandler(errMsg string) http.HandlerFunc {
+func getLoginPageHandler(loginPage *LoginPage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if IsLoggedIn(r) {
 			http.Redirect(w, r, "/home", http.StatusSeeOther)
@@ -38,10 +57,7 @@ func getLoginPageHandler(errMsg string) http.HandlerFunc {
 			postLoginPage(w, r)
 			return
 		}
-		bs, err := getPage("login", &LoginPage{
-			IsError: strings.Compare(errMsg, "") != 0,
-			Error:   errMsg,
-		})
+		bs, err := getPage("login", &loginPage)
 		if err != nil {
 			_, _ = w.Write([]byte(err.Error()))
 		}
@@ -58,7 +74,7 @@ func postLoginPage(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		r.Method = http.MethodGet
-		getLoginPageHandler("Missing username or password.")(w, r)
+		getLoginPageHandler(NewLoginPage("Invalid username or password.", r.FormValue("username")))(w, r)
 		return
 	}
 
@@ -67,7 +83,7 @@ func postLoginPage(w http.ResponseWriter, r *http.Request) {
 	// TODO handle possible errors in separate file (api package)
 	if err != nil || response.StatusCode != http.StatusOK {
 		r.Method = http.MethodGet
-		getLoginPageHandler("Invalid username or password.")(w, r)
+		getLoginPageHandler(NewLoginPage("Invalid username or password.", r.FormValue("username")))(w, r)
 		return
 	}
 
@@ -104,16 +120,6 @@ func IsLoggedInMiddleware(next http.Handler) http.Handler {
 }
 
 func staticFileServerWithContentType(dir http.Dir) http.Handler {
-	contentTypes := map[string]string{
-		".css":  "text/css",
-		".js":   "application/javascript",
-		".png":  "image/png",
-		".jpg":  "image/jpeg",
-		".webp": "image/webp",
-		".svg":  "image/svg+xml",
-		".ico":  "image/x-icon",
-	}
-
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		requestedFilePath := r.URL.Path
 		fileExtension := filepath.Ext(requestedFilePath)
@@ -135,8 +141,8 @@ func NewPageRouter() http.Handler {
 	})
 
 	r.Get("/", getLogin)
-	r.Get("/login", getLoginPageHandler(""))
-	r.Post("/login", getLoginPageHandler(""))
+	r.Get("/login", getLoginPageHandler(NewLoginPage("", "")))
+	r.Post("/login", getLoginPageHandler(NewLoginPage("", "")))
 	r.Get("/logout", getLogout)
 
 	r.Group(func(r chi.Router) {
