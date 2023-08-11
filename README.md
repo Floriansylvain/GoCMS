@@ -18,10 +18,11 @@ TODO
 
 ### Environment variables
 
-| Name        | Type   | Description                           | Comment                                 |
-|-------------|--------|---------------------------------------|-----------------------------------------|
-| PORT        | int    | The port the API will use             | required                                |
-| ENVIRONMENT | string | The environment the API is running in | required, `development` or `production` |
+| Name                 | Type   | Description                           | Comment                                 |
+|----------------------|--------|---------------------------------------|-----------------------------------------|
+| ENVIRONMENT          | string | The environment the API is running in | required, `development` or `production` |
+| PORT                 | int    | The port the API will use             | required                                |
+| CORS_ALLOWED_ORIGINS | string | The allowed origins for CORS          | required, semicolon separated list      |
 
 ## API Usage
 

@@ -12,9 +12,10 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
-var envVarsToLoad = []string{"PORT", "ENVIRONMENT"}
+var envVarsToLoad = []string{"PORT", "ENVIRONMENT", "CORS_ALLOWED_ORIGINS"}
 
 func jsonContentTypeMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -70,9 +71,8 @@ func initRoutes() *chi.Mux {
 	frontend := initFrontendRoutes()
 
 	apiRouter := chi.NewRouter()
-	// TODO use env variable for allowed origins
 	apiRouter.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"https://*", "http://*"},
+		AllowedOrigins:   strings.Split(os.Getenv("CORS_ALLOWED_ORIGINS"), ";"),
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},
@@ -104,7 +104,7 @@ func main() {
 	initJwt()
 	router := initRoutes()
 
-	fmt.Println("Server starting on port " + os.Getenv("PORT"))
+	fmt.Println("Server starting on http://localhost:" + os.Getenv("PORT"))
 	err := http.ListenAndServe(":"+os.Getenv("PORT"), router)
 	if err != nil {
 		panic(err)
