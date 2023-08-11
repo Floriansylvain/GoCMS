@@ -8,8 +8,13 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/jwtauth/v5"
+	"github.com/joho/godotenv"
+	"log"
 	"net/http"
+	"os"
 )
+
+var envVarsToLoad = []string{"PORT", "ENVIRONMENT"}
 
 func jsonContentTypeMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -80,15 +85,27 @@ func initRoutes() *chi.Mux {
 	return apiRouter
 }
 
+func initEnvVariables() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	for _, envVar := range envVarsToLoad {
+		if _, ok := os.LookupEnv(envVar); !ok {
+			panic(fmt.Sprintf("Environment variable %s is not set", envVar))
+		}
+	}
+}
+
 func main() {
+	initEnvVariables()
 	api.InitContainer()
 	api.InitValidator()
 	initJwt()
-
 	router := initRoutes()
 
-	fmt.Println("Server starting on port 8080")
-	err := http.ListenAndServe(":8080", router)
+	fmt.Println("Server starting on port " + os.Getenv("PORT"))
+	err := http.ListenAndServe(":"+os.Getenv("PORT"), router)
 	if err != nil {
 		panic(err)
 	}

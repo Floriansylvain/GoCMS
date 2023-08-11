@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"html/template"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 )
@@ -78,9 +79,11 @@ func postLoginPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO replace url with som env variable
-	response, err := http.Post("http://localhost:8080/v1/auth/login", "application/json", bytes.NewBuffer(credentials))
-	// TODO handle possible errors in separate file (api package)
+	response, err := http.Post(
+		"http://localhost:"+os.Getenv("PORT")+"/v1/auth/login",
+		"application/json",
+		bytes.NewBuffer(credentials))
+
 	if err != nil || response.StatusCode != http.StatusOK {
 		r.Method = http.MethodGet
 		getLoginPageHandler(NewLoginPage("Invalid username or password.", r.FormValue("username")))(w, r)

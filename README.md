@@ -10,11 +10,7 @@ Don't forget to setup the [Environment variables](#environment-variables)!
 
 ### Use with Docker
 
-To **run** the app, run the command
-
-```shell
-docker-compose up
-```
+TODO (or is it...)
 
 ### Build and run it yourself
 
@@ -22,10 +18,10 @@ TODO
 
 ### Environment variables
 
-| Name | Type | Description | Comment |
-|------|------|-------------|---------|
-|      |      |             |         |
-
+| Name        | Type   | Description                           | Comment                                 |
+|-------------|--------|---------------------------------------|-----------------------------------------|
+| PORT        | int    | The port the API will use             | required                                |
+| ENVIRONMENT | string | The environment the API is running in | required, `development` or `production` |
 
 ## API Usage
 

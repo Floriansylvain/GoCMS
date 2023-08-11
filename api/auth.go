@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/jwtauth/v5"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -21,6 +22,7 @@ type UserLogin struct {
 	Password string `json:"password" validate:"required,min=8"`
 }
 
+var shouldCookieBeSecure = os.Getenv("ENVIRONMENT") == "production"
 var TokenAuth *jwtauth.JWTAuth
 
 // TODO Move into its own file or package that handles api errors
@@ -36,14 +38,14 @@ func SetJwtCookie(w *http.ResponseWriter, userId uint32) error {
 		Name:     "jwt",
 		Value:    tokenString,
 		Expires:  time.Now().Add(24 * time.Hour),
-		Secure:   false, // TODO false in dev, true in prod
+		Secure:   shouldCookieBeSecure,
 		HttpOnly: true,
 		Path:     "/",
 	})
 	return nil
 }
 
-func isAllowedToCreateUser() bool {
+func isUserTableEmpty() bool {
 	users := container.ListUsersUseCase.ListUsers()
 	return len(users) == 0
 }
@@ -92,7 +94,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 }
 
 func register(w http.ResponseWriter, r *http.Request) {
-	if !IsLoggedIn(r) && !isAllowedToCreateUser() {
+	if !IsLoggedIn(r) && !isUserTableEmpty() {
 		http.Error(w, "You are not allowed to create a user. Log in or reset database.", http.StatusForbidden)
 		return
 	}
@@ -132,7 +134,7 @@ func removeJwtCookie(w http.ResponseWriter) {
 		Value:    "",
 		Expires:  time.Now(),
 		MaxAge:   -1,
-		Secure:   false, // TODO false in dev, true in prod
+		Secure:   shouldCookieBeSecure,
 		HttpOnly: true,
 		Path:     "/",
 	})
