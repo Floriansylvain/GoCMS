@@ -16,10 +16,6 @@ var ApiUrl string
 var AuthorizationCookie *http.Cookie
 var HttpClient = http.Client{}
 
-func DeleteTestDb() error {
-	return os.Remove("test.db")
-}
-
 func GetDb() *gorm.DB {
 	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
 	if err != nil {
@@ -34,10 +30,7 @@ func StartServerIfNotAlready() {
 	if err == nil {
 		return
 	}
-	err = DeleteTestDb()
-	if err != nil {
-		panic(err)
-	}
+	_ = os.Remove("test.db")
 	go func(url *string) {
 		router := server.InitServer()
 		*url = "http://localhost:" + os.Getenv("PORT") + "/v1"

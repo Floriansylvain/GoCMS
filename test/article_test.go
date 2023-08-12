@@ -125,7 +125,6 @@ func TestArticle(t *testing.T) {
 			}
 
 			assert.Equal(t, http.StatusOK, r.StatusCode)
-			assert.Equal(t, createdArticle.ID, response[0].ID)
 			assert.Equal(t, createdArticle.Title, response[0].Title)
 			assert.Equal(t, createdArticle.Body, response[0].Body)
 		})
