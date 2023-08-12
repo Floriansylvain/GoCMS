@@ -32,8 +32,10 @@
 						   placeholder="E-mail"
 						   required
 						   type="email"
-						   value="{{.Email}}">
+						   value="{{.Email}}"
+						   onblur="validateEmail()">
 					<label for="email">E-mail</label>
+					<div class="invalid-feedback">L'e-mail doit être un e-mail valide.</div>
 				</div>
 				<div class="form-floating">
 					<input class="form-control {{ if .PageError.IsError }} is-invalid {{ end }}"
@@ -53,11 +55,23 @@
 						   required
 						   type="password">
 					<label for="password">Mot de passe</label>
-					<div class="invalid-feedback">{{.PageError.Message}}</div>
+					<div class="invalid-feedback">Les mots de passe ne correspondent pas.</div>
+				</div>
+				<div class="form-floating">
+					<input class="form-control {{ if .PageError.IsError }} is-invalid {{ end }}"
+						   id="confirmPassword"
+						   name="confirmPassword"
+						   placeholder="Confirmation du mot de passe"
+						   required
+						   type="password"
+						   onblur="validatePasswordMatch()"
+						   oninput="validatePasswordMatch()">
+					<label for="confirmPassword">Confirmation du mot de passe</label>
+					<div class="invalid-feedback">Les mots de passe ne correspondent pas.</div>
 				</div>
 				<button id="registerFormButton" class="btn btn-primary" disabled type="submit">
-						<span class="registerFormButtonLoading visually-hidden spinner-border spinner-border-sm"
-							  role="status"></span>
+                    <span class="registerFormButtonLoading visually-hidden spinner-border spinner-border-sm"
+						  role="status"></span>
 					<span class="registerFormButtonDefault">Suivant</span>
 				</button>
 			</div>
@@ -66,36 +80,68 @@
 </div>
 
 <script>
-    const button = document.querySelector("#registerFormButton")
-    const inputs = document.querySelectorAll('input')
-
-    function formFieldsEmpty() {
-        return Array.from(inputs).some((input) => input.value === "")
+    const docElems = {
+        button: document.querySelector("#registerFormButton"),
+        inputs: document.querySelectorAll("input"),
+        email: document.querySelector("#email"),
+        password: document.querySelector("#password"),
+        confirmPassword: document.querySelector("#confirmPassword"),
     }
 
-    function setButtonDisabled() {
-        button.disabled = formFieldsEmpty() ? "disabled" : ""
+    function formSomeFieldsEmpty() {
+        return Array.from(docElems.inputs).some((input) => input.value === "")
     }
+
+    function isFormValid() {
+		return !formSomeFieldsEmpty() && validateEmail() && validatePasswordMatch()
+	}
 
     function setButtonLoading() {
-        button.classList.add("disabled")
-        button.querySelector(".registerFormButtonDefault").classList.add("visually-hidden")
-        button.querySelector(".registerFormButtonLoading").classList.remove("visually-hidden")
+        docElems.button.classList.add("disabled")
+        docElems.button.querySelector(".registerFormButtonDefault").classList.add("visually-hidden")
+        docElems.button.querySelector(".registerFormButtonLoading").classList.remove("visually-hidden")
     }
 
     function onRegisterFormSubmit(event) {
         event.preventDefault()
         setButtonLoading()
+        if (!isFormValid()) return
         event.target.submit()
     }
 
     function onInput(event) {
-        if (event.target.tagName === "INPUT") setButtonDisabled()
+        if (event.target.tagName === "INPUT") {
+			docElems.button.disabled = !isFormValid()
+        }
+    }
+
+    function validateEmail() {
+        const email = docElems.email.value.trim()
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+        if (!emailRegex.test(email)) {
+            docElems.email.classList.add("is-invalid")
+            return false
+        } else {
+            docElems.email.classList.remove("is-invalid")
+            return true
+        }
+    }
+
+    function validatePasswordMatch() {
+        if (docElems.password.value !== docElems.confirmPassword.value) {
+            docElems.confirmPassword.classList.add("is-invalid")
+            docElems.password.classList.add("is-invalid")
+            return false
+        } else {
+            docElems.confirmPassword.classList.remove("is-invalid")
+            docElems.password.classList.remove("is-invalid")
+            return true
+        }
     }
 
     window.addEventListener('submit', onRegisterFormSubmit)
     window.addEventListener('input', onInput)
-    setButtonDisabled()
 </script>
 
 </body>
