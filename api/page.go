@@ -21,6 +21,11 @@ var contentTypes = map[string]string{
 	".ico":  "image/x-icon",
 }
 
+type PageError struct {
+	Message string `json:"message"`
+	IsError bool   `json:"isError"`
+}
+
 func StaticFileServerWithContentType(fsys http.FileSystem) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		path := r.URL.Path

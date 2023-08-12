@@ -23,7 +23,7 @@
 		<form action="login" class="" method="POST">
 			<div class="d-flex flex-column gap-4">
 				<div class="form-floating">
-					<input class="form-control {{ if .IsError }} is-invalid {{ end }}"
+					<input class="form-control {{ if .PageError.IsError }} is-invalid {{ end }}"
 						   id="username"
 						   name="username"
 						   placeholder="Nom d'utilisateur"
@@ -33,14 +33,14 @@
 					<label for="username">Nom d'utilisateur</label>
 				</div>
 				<div class="form-floating">
-					<input class="form-control {{ if .IsError }} is-invalid {{ end }}"
+					<input class="form-control {{ if .PageError.IsError }} is-invalid {{ end }}"
 						   id="password"
 						   name="password"
 						   placeholder="Mot de passe"
 						   required
 						   type="password">
 					<label for="password">Mot de passe</label>
-					<div class="invalid-feedback">{{.Error}}</div>
+					<div class="invalid-feedback">{{.PageError.Message}}</div>
 				</div>
 				<button id="loginFormButton" class="btn btn-primary" disabled type="submit">
 						<span class="loginFormButtonLoading visually-hidden spinner-border spinner-border-sm"

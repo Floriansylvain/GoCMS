@@ -11,15 +11,16 @@ import (
 const LoginRoute = "/login"
 
 type LoginPage struct {
-	IsError  bool   `json:"isError"`
-	Error    string `json:"error"`
-	Username string `json:"username"`
+	PageError *PageError `json:"error"`
+	Username  string     `json:"username"`
 }
 
 func NewLoginPage(error string, username string) *LoginPage {
 	return &LoginPage{
-		IsError:  strings.Compare(error, "") != 0,
-		Error:    error,
+		PageError: &PageError{
+			IsError: strings.Compare(error, "") != 0,
+			Message: error,
+		},
 		Username: username,
 	}
 }
