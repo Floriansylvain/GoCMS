@@ -2,14 +2,22 @@ package api
 
 import (
 	"bytes"
+	"embed"
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
 	"html/template"
+	"io/fs"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 )
+
+//go:embed web/templates/*
+var templateFiles embed.FS
+
+//go:embed web/static
+var staticFolder embed.FS
 
 var contentTypes = map[string]string{
 	".css":  "text/css",
@@ -20,6 +28,8 @@ var contentTypes = map[string]string{
 	".svg":  "image/svg+xml",
 	".ico":  "image/x-icon",
 }
+
+const loginRoute = "/login"
 
 type LoginPage struct {
 	IsError  bool   `json:"isError"`
@@ -37,7 +47,7 @@ func NewLoginPage(error string, username string) *LoginPage {
 
 func getPage(page string, data interface{}) ([]byte, error) {
 	var processedHTML bytes.Buffer
-	tmpl, err := template.ParseFiles("./web/templates/" + page + ".html")
+	tmpl, err := template.ParseFS(templateFiles, "web/templates/"+page+".html")
 	if err != nil {
 		return nil, err
 	}
@@ -104,48 +114,52 @@ func getHomePage(w http.ResponseWriter, _ *http.Request) {
 }
 
 func getLogin(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/login", http.StatusPermanentRedirect)
+	http.Redirect(w, r, loginRoute, http.StatusPermanentRedirect)
 }
 
 func getLogout(w http.ResponseWriter, r *http.Request) {
 	removeJwtCookie(w)
-	http.Redirect(w, r, "/login", http.StatusSeeOther)
+	http.Redirect(w, r, loginRoute, http.StatusSeeOther)
 }
 
 func IsLoggedInMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if !IsLoggedIn(r) {
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			http.Redirect(w, r, loginRoute, http.StatusSeeOther)
 			return
 		}
 		next.ServeHTTP(w, r)
 	})
 }
 
-func staticFileServerWithContentType(dir http.Dir) http.Handler {
+func staticFileServerWithContentType(fsys http.FileSystem) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		requestedFilePath := r.URL.Path
-		fileExtension := filepath.Ext(requestedFilePath)
-
-		if contentType, ok := contentTypes[fileExtension]; ok {
-			w.Header().Set("Content-Type", contentType)
+		path := r.URL.Path
+		if ext := filepath.Ext(path); ext != "" {
+			if ct, ok := contentTypes[ext]; ok {
+				w.Header().Set("Content-Type", ct)
+			}
 		}
-
-		http.FileServer(dir).ServeHTTP(w, r)
+		http.FileServer(fsys).ServeHTTP(w, r)
 	})
 }
 
 func NewPageRouter() http.Handler {
 	r := chi.NewRouter()
 
-	r.Handle("/static/*", http.StripPrefix("/static/", staticFileServerWithContentType("./web/static")))
+	contentStatic, _ := fs.Sub(fs.FS(staticFolder), "web/static")
+
+	r.Handle("/static/*", staticFileServerWithContentType(http.FS(contentStatic)))
 	r.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./web/static/favicon.ico")
+		_, err := http.FS(staticFolder).Open("favicon.ico")
+		if err != nil {
+			return
+		}
 	})
 
 	r.Get("/", getLogin)
-	r.Get("/login", getLoginPageHandler(NewLoginPage("", "")))
-	r.Post("/login", getLoginPageHandler(NewLoginPage("", "")))
+	r.Get(loginRoute, getLoginPageHandler(NewLoginPage("", "")))
+	r.Post(loginRoute, getLoginPageHandler(NewLoginPage("", "")))
 	r.Get("/logout", getLogout)
 
 	r.Group(func(r chi.Router) {
