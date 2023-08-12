@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta content="width=device-width, initial-scale=1.0" name="viewport">
+	<title>GohCMS | Installation</title>
+
+	<link rel="stylesheet" href="/static/bootstrap.min.css" type="text/css">
+	<script src="/static/bootstrap.min.js"
+			type="application/javascript"
+			defer></script>
+
+	<style>
+        .form-container {
+            max-width: 24rem;
+        }
+	</style>
+</head>
+<body class="d-flex min-vh-100 vw-100 justify-content-center align-items-center text-dark">
+<div class="container">
+	<div class="d-flex flex-column gap-5 m-auto form-container">
+		<div>
+			<h1>GohCMS</h1>
+			<h2>Installation terminée !</h2>
+		</div>
+		<p>GohCMS est maintenant prêt à être utilisé.</p>
+		<button id="finalSetupFormButton" class="btn btn-primary" type="button">
+						<span class="finalSetupFormButtonLoading visually-hidden spinner-border spinner-border-sm"
+							  role="status"></span>
+			<span class="finalSetupFormButtonDefault">Terminer</span>
+		</button>
+	</div>
+</div>
+
+<script>
+    const button = document.querySelector("#finalSetupFormButton")
+
+    function setButtonLoading() {
+        button.classList.add("disabled")
+        button.querySelector(".finalSetupFormButtonDefault").classList.add("visually-hidden")
+        button.querySelector(".finalSetupFormButtonLoading").classList.remove("visually-hidden")
+    }
+
+    function onFinalSetupFormSubmit() {
+        setButtonLoading()
+        window.location.replace("/home")
+    }
+
+    button.addEventListener('click', onFinalSetupFormSubmit)
+</script>
+
+</body>
+</html>

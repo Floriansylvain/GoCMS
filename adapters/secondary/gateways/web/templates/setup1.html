@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta content="width=device-width, initial-scale=1.0" name="viewport">
-	<title>GohCMS | Connexion</title>
+	<title>GohCMS | Installation</title>
 
 	<link rel="stylesheet" href="/static/bootstrap.min.css" type="text/css">
 	<script src="/static/bootstrap.min.js"
@@ -21,10 +21,20 @@
 	<div class="d-flex flex-column gap-5 m-auto form-container">
 		<div>
 			<h1>GohCMS</h1>
-			<h2>Connexion</h2>
+			<h2>Création du compte administrateur</h2>
 		</div>
-		<form action="login" class="" method="POST">
+		<form action="register" class="" method="POST">
 			<div class="d-flex flex-column gap-4">
+				<div class="form-floating">
+					<input class="form-control {{ if .PageError.IsError }} is-invalid {{ end }}"
+						   id="email"
+						   name="email"
+						   placeholder="E-mail"
+						   required
+						   type="email"
+						   value="{{.Email}}">
+					<label for="email">E-mail</label>
+				</div>
 				<div class="form-floating">
 					<input class="form-control {{ if .PageError.IsError }} is-invalid {{ end }}"
 						   id="username"
@@ -45,10 +55,10 @@
 					<label for="password">Mot de passe</label>
 					<div class="invalid-feedback">{{.PageError.Message}}</div>
 				</div>
-				<button id="loginFormButton" class="btn btn-primary" disabled type="submit">
-						<span class="loginFormButtonLoading visually-hidden spinner-border spinner-border-sm"
+				<button id="registerFormButton" class="btn btn-primary" disabled type="submit">
+						<span class="registerFormButtonLoading visually-hidden spinner-border spinner-border-sm"
 							  role="status"></span>
-					<span class="loginFormButtonDefault">Se connecter</span>
+					<span class="registerFormButtonDefault">Suivant</span>
 				</button>
 			</div>
 		</form>
@@ -56,7 +66,7 @@
 </div>
 
 <script>
-    const button = document.querySelector("#loginFormButton")
+    const button = document.querySelector("#registerFormButton")
     const inputs = document.querySelectorAll('input')
 
     function formFieldsEmpty() {
@@ -69,11 +79,11 @@
 
     function setButtonLoading() {
         button.classList.add("disabled")
-        button.querySelector(".loginFormButtonDefault").classList.add("visually-hidden")
-        button.querySelector(".loginFormButtonLoading").classList.remove("visually-hidden")
+        button.querySelector(".registerFormButtonDefault").classList.add("visually-hidden")
+        button.querySelector(".registerFormButtonLoading").classList.remove("visually-hidden")
     }
 
-    function onLoginFormSubmit(event) {
+    function onRegisterFormSubmit(event) {
         event.preventDefault()
         setButtonLoading()
         event.target.submit()
@@ -83,7 +93,7 @@
         if (event.target.tagName === "INPUT") setButtonDisabled()
     }
 
-    window.addEventListener('submit', onLoginFormSubmit)
+    window.addEventListener('submit', onRegisterFormSubmit)
     window.addEventListener('input', onInput)
     setButtonDisabled()
 </script>

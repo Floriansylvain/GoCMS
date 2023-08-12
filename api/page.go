@@ -6,6 +6,7 @@ import (
 	"io/fs"
 	"net/http"
 	"path/filepath"
+	"strings"
 )
 
 //go:embed static
@@ -24,6 +25,32 @@ var contentTypes = map[string]string{
 type PageError struct {
 	Message string `json:"message"`
 	IsError bool   `json:"isError"`
+}
+
+func NewPageError(message string) *PageError {
+	return &PageError{
+		Message: message,
+		IsError: strings.Compare(message, "") != 0,
+	}
+}
+
+func IsLoggedInMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !IsLoggedIn(r) {
+			http.Redirect(w, r, LoginRoute, http.StatusSeeOther)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
+func GetLogin(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, LoginRoute, http.StatusPermanentRedirect)
+}
+
+func GetLogout(w http.ResponseWriter, r *http.Request) {
+	RemoveJwtCookie(w)
+	http.Redirect(w, r, LoginRoute, http.StatusSeeOther)
 }
 
 func StaticFileServerWithContentType(fsys http.FileSystem) http.Handler {
@@ -52,12 +79,15 @@ func NewPageRouter() http.Handler {
 	})
 
 	r.Get("/", GetLogin)
-	r.Get(LoginRoute, GetLoginPageHandler(NewLoginPage("", "")))
-	r.Post(LoginRoute, GetLoginPageHandler(NewLoginPage("", "")))
+	r.Get(LoginRoute, GetLoginPageHandler(EmptyLoginPage))
+	r.Post(LoginRoute, GetLoginPageHandler(EmptyLoginPage))
+	r.Get("/register", GetRegisterPageHandler(EmptyRegisterPage))
+	r.Post("/register", GetRegisterPageHandler(EmptyRegisterPage))
 	r.Get("/logout", GetLogout)
 
 	r.Group(func(r chi.Router) {
 		r.Use(IsLoggedInMiddleware)
+		r.Get("/register-confirm", GetRegisterConfirmPage)
 		r.Get("/home", GetHomePage)
 	})
 
