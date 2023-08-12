@@ -22,7 +22,7 @@ func initEnvVariables() {
 		}
 	}
 	if err != nil {
-		panic("Could not load .env file")
+		fmt.Println("WARNING: Could not load any .env file")
 	}
 
 	for _, envVar := range envVarsToLoad {
