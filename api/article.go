@@ -20,7 +20,7 @@ func getArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	article, err := container.GetArticleUseCase.GetArticle(uint32(id))
+	article, err := Container.GetArticleUseCase.GetArticle(uint32(id))
 	if err != nil {
 		http.Error(w, "The requested resource, identified by its unique ID, could not be found on the server.", http.StatusNotFound)
 		return
@@ -44,7 +44,7 @@ func postArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	createdArticle, err := container.CreateArticleUseCase.CreateArticle(CreateArticleCommand{
+	createdArticle, err := Container.CreateArticleUseCase.CreateArticle(CreateArticleCommand{
 		Title: article.Title,
 		Body:  article.Body,
 	})
@@ -58,7 +58,7 @@ func postArticle(w http.ResponseWriter, r *http.Request) {
 }
 
 func listArticles(w http.ResponseWriter, _ *http.Request) {
-	articles := container.ListArticlesUseCase.ListArticles()
+	articles := Container.ListArticlesUseCase.ListArticles()
 	articlesJson, _ := json.Marshal(articles)
 
 	_, _ = w.Write(articlesJson)

@@ -8,16 +8,17 @@ import (
 	"gorm.io/gorm"
 )
 
-type Container struct {
+type LocalContainer struct {
 	CreateArticleUseCase *CreateArticleUseCase
 	GetArticleUseCase    *GetArticleUseCase
 	ListArticlesUseCase  *ListArticlesUseCase
 	GetUserUseCase       *GetUserUseCase
 	CreateUserUseCase    *CreateUserUseCase
 	ListUsersUseCase     *ListUsersUseCase
+	GetPageUseCase       *GetPageUseCase
 }
 
-var container *Container
+var Container *LocalContainer
 
 func setContainer(
 	createArticle *CreateArticleUseCase,
@@ -26,20 +27,22 @@ func setContainer(
 	getUser *GetUserUseCase,
 	createUser *CreateUserUseCase,
 	listUsers *ListUsersUseCase,
-) *Container {
-	container = &Container{
+	getPage *GetPageUseCase,
+) *LocalContainer {
+	Container = &LocalContainer{
 		CreateArticleUseCase: createArticle,
 		GetArticleUseCase:    getArticle,
 		ListArticlesUseCase:  listArticle,
 		GetUserUseCase:       getUser,
 		CreateUserUseCase:    createUser,
 		ListUsersUseCase:     listUsers,
+		GetPageUseCase:       getPage,
 	}
-	return container
+	return Container
 }
 
 func InitContainer() {
-	if container != nil {
+	if Container != nil {
 		return
 	}
 
@@ -59,6 +62,7 @@ func InitContainer() {
 	_ = digContainer.Provide(func(db *gorm.DB) *GetUserUseCase { return NewGetUserUseCase(db) })
 	_ = digContainer.Provide(func(db *gorm.DB) *CreateUserUseCase { return NewCreateUserUseCase(db) })
 	_ = digContainer.Provide(func(db *gorm.DB) *ListUsersUseCase { return NewListUsersUseCase(db) })
+	_ = digContainer.Provide(NewGetPageUseCase)
 
 	_ = digContainer.Invoke(setContainer)
 }

@@ -45,8 +45,8 @@ func SetJwtCookie(w *http.ResponseWriter, userId uint32) error {
 	return nil
 }
 
-func isUserTableEmpty() bool {
-	users := container.ListUsersUseCase.ListUsers()
+func IsUserTableEmpty() bool {
+	users := Container.ListUsersUseCase.ListUsers()
 	return len(users) == 0
 }
 
@@ -75,7 +75,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbUser, err := container.GetUserUseCase.GetUserByUsername(user.Username)
+	dbUser, err := Container.GetUserUseCase.GetUserByUsername(user.Username)
 	if err != nil {
 		http.Error(w, logsErrorMessage, http.StatusForbidden)
 		return
@@ -94,7 +94,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 }
 
 func register(w http.ResponseWriter, r *http.Request) {
-	if !IsLoggedIn(r) && !isUserTableEmpty() {
+	if !IsLoggedIn(r) && !IsUserTableEmpty() {
 		http.Error(w, "You are not allowed to create a user. Log in or reset database.", http.StatusForbidden)
 		return
 	}
@@ -112,7 +112,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	createdUser, err := container.CreateUserUseCase.CreateUser(useCases.CreateUserCommand{
+	createdUser, err := Container.CreateUserUseCase.CreateUser(useCases.CreateUserCommand{
 		Username: user.Username,
 		Password: user.Password,
 		Email:    user.Email,
@@ -128,7 +128,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(message)
 }
 
-func removeJwtCookie(w http.ResponseWriter) {
+func RemoveJwtCookie(w http.ResponseWriter) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     "jwt",
 		Value:    "",
@@ -141,7 +141,7 @@ func removeJwtCookie(w http.ResponseWriter) {
 }
 
 func logout(w http.ResponseWriter, _ *http.Request) {
-	removeJwtCookie(w)
+	RemoveJwtCookie(w)
 	message, _ := json.Marshal(map[string]interface{}{"message": "User logged out! HTTPonly jwt cookie deleted"})
 	_, _ = w.Write(message)
 }
