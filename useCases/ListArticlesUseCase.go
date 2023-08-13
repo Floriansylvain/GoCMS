@@ -1,21 +1,21 @@
 package useCases
 
 import (
-	. "GohCMS2/adapters/secondary/gateways"
-	. "GohCMS2/domain/article"
+	"GohCMS2/adapters/secondary/gateways"
+	"GohCMS2/domain/article"
 	"gorm.io/gorm"
 )
 
 type ListArticlesUseCase struct {
-	articleRepository ArticleRepository
+	articleRepository gateways.ArticleRepository
 }
 
 func NewListArticlesUseCase(db *gorm.DB) *ListArticlesUseCase {
 	return &ListArticlesUseCase{
-		articleRepository: *NewArticleRepository(db),
+		articleRepository: *gateways.NewArticleRepository(db),
 	}
 }
 
-func (g *ListArticlesUseCase) ListArticles() []Article {
+func (g *ListArticlesUseCase) ListArticles() []article.Article {
 	return g.articleRepository.GetAll()
 }

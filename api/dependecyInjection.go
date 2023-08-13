@@ -2,32 +2,32 @@ package api
 
 import (
 	"GohCMS2/adapters/secondary/gateways/models"
-	. "GohCMS2/useCases"
+	"GohCMS2/useCases"
 	"github.com/glebarez/sqlite"
 	"go.uber.org/dig"
 	"gorm.io/gorm"
 )
 
 type LocalContainer struct {
-	CreateArticleUseCase *CreateArticleUseCase
-	GetArticleUseCase    *GetArticleUseCase
-	ListArticlesUseCase  *ListArticlesUseCase
-	GetUserUseCase       *GetUserUseCase
-	CreateUserUseCase    *CreateUserUseCase
-	ListUsersUseCase     *ListUsersUseCase
-	GetPageUseCase       *GetPageUseCase
+	CreateArticleUseCase *useCases.CreateArticleUseCase
+	GetArticleUseCase    *useCases.GetArticleUseCase
+	ListArticlesUseCase  *useCases.ListArticlesUseCase
+	GetUserUseCase       *useCases.GetUserUseCase
+	CreateUserUseCase    *useCases.CreateUserUseCase
+	ListUsersUseCase     *useCases.ListUsersUseCase
+	GetPageUseCase       *useCases.GetPageUseCase
 }
 
 var Container *LocalContainer
 
 func setContainer(
-	createArticle *CreateArticleUseCase,
-	getArticle *GetArticleUseCase,
-	listArticle *ListArticlesUseCase,
-	getUser *GetUserUseCase,
-	createUser *CreateUserUseCase,
-	listUsers *ListUsersUseCase,
-	getPage *GetPageUseCase,
+	createArticle *useCases.CreateArticleUseCase,
+	getArticle *useCases.GetArticleUseCase,
+	listArticle *useCases.ListArticlesUseCase,
+	getUser *useCases.GetUserUseCase,
+	createUser *useCases.CreateUserUseCase,
+	listUsers *useCases.ListUsersUseCase,
+	getPage *useCases.GetPageUseCase,
 ) *LocalContainer {
 	Container = &LocalContainer{
 		CreateArticleUseCase: createArticle,
@@ -56,13 +56,13 @@ func InitContainer() {
 
 	_ = digContainer.Provide(func() *gorm.DB { return db })
 
-	_ = digContainer.Provide(func(db *gorm.DB) *CreateArticleUseCase { return NewCreateArticleUseCase(db) })
-	_ = digContainer.Provide(func(db *gorm.DB) *GetArticleUseCase { return NewGetArticleUseCase(db) })
-	_ = digContainer.Provide(func(db *gorm.DB) *ListArticlesUseCase { return NewListArticlesUseCase(db) })
-	_ = digContainer.Provide(func(db *gorm.DB) *GetUserUseCase { return NewGetUserUseCase(db) })
-	_ = digContainer.Provide(func(db *gorm.DB) *CreateUserUseCase { return NewCreateUserUseCase(db) })
-	_ = digContainer.Provide(func(db *gorm.DB) *ListUsersUseCase { return NewListUsersUseCase(db) })
-	_ = digContainer.Provide(NewGetPageUseCase)
+	_ = digContainer.Provide(func(db *gorm.DB) *useCases.CreateArticleUseCase { return useCases.NewCreateArticleUseCase(db) })
+	_ = digContainer.Provide(func(db *gorm.DB) *useCases.GetArticleUseCase { return useCases.NewGetArticleUseCase(db) })
+	_ = digContainer.Provide(func(db *gorm.DB) *useCases.ListArticlesUseCase { return useCases.NewListArticlesUseCase(db) })
+	_ = digContainer.Provide(func(db *gorm.DB) *useCases.GetUserUseCase { return useCases.NewGetUserUseCase(db) })
+	_ = digContainer.Provide(func(db *gorm.DB) *useCases.CreateUserUseCase { return useCases.NewCreateUserUseCase(db) })
+	_ = digContainer.Provide(func(db *gorm.DB) *useCases.ListUsersUseCase { return useCases.NewListUsersUseCase(db) })
+	_ = digContainer.Provide(useCases.NewGetPageUseCase)
 
 	_ = digContainer.Invoke(setContainer)
 }

@@ -1,7 +1,7 @@
 package gateways
 
 import (
-	. "GohCMS2/domain/gateways"
+	"GohCMS2/domain/gateways"
 	"bytes"
 	"embed"
 	"html/template"
@@ -29,4 +29,4 @@ func (p *PageRepository) Get(name string, data interface{}) ([]byte, error) {
 	return processedHTML.Bytes(), nil
 }
 
-var _ IPageRepository = &PageRepository{}
+var _ gateways.IPageRepository = &PageRepository{}

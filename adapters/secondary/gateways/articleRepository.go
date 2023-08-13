@@ -3,7 +3,7 @@ package gateways
 import (
 	entity "GohCMS2/adapters/secondary/gateways/models"
 	domain "GohCMS2/domain/article"
-	. "GohCMS2/domain/gateways"
+	"GohCMS2/domain/gateways"
 	"gorm.io/gorm"
 )
 
@@ -65,4 +65,4 @@ func (a *ArticleRepository) GetAll() []domain.Article {
 	return domainArticles
 }
 
-var _ IArticleRepository = &ArticleRepository{}
+var _ gateways.IArticleRepository = &ArticleRepository{}

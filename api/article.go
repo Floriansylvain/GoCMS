@@ -1,7 +1,7 @@
 package api
 
 import (
-	. "GohCMS2/useCases"
+	"GohCMS2/useCases"
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
 	"net/http"
@@ -44,7 +44,7 @@ func postArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	createdArticle, err := Container.CreateArticleUseCase.CreateArticle(CreateArticleCommand{
+	createdArticle, err := Container.CreateArticleUseCase.CreateArticle(useCases.CreateArticleCommand{
 		Title: article.Title,
 		Body:  article.Body,
 	})

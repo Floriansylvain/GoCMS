@@ -1,16 +1,16 @@
 package useCases
 
 import (
-	. "GohCMS2/adapters/secondary/gateways"
+	"GohCMS2/adapters/secondary/gateways"
 )
 
 type GetPageUseCase struct {
-	pageRepository PageRepository
+	pageRepository gateways.PageRepository
 }
 
 func NewGetPageUseCase() *GetPageUseCase {
 	return &GetPageUseCase{
-		pageRepository: *NewPageRepository(),
+		pageRepository: *gateways.NewPageRepository(),
 	}
 }
 

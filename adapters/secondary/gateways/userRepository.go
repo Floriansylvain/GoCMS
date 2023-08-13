@@ -2,7 +2,7 @@ package gateways
 
 import (
 	entity "GohCMS2/adapters/secondary/gateways/models"
-	. "GohCMS2/domain/gateways"
+	"GohCMS2/domain/gateways"
 	domain "GohCMS2/domain/user"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -77,4 +77,4 @@ func (u *UserRepository) GetByUsername(username string) (domain.User, error) {
 	return mapUserToDomain(user), nil
 }
 
-var _ IUserRepository = &UserRepository{}
+var _ gateways.IUserRepository = &UserRepository{}

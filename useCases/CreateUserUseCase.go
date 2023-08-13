@@ -1,13 +1,13 @@
 package useCases
 
 import (
-	. "GohCMS2/adapters/secondary/gateways"
-	. "GohCMS2/domain/user"
+	"GohCMS2/adapters/secondary/gateways"
+	"GohCMS2/domain/user"
 	"gorm.io/gorm"
 )
 
 type CreateUserUseCase struct {
-	userRepository UserRepository
+	userRepository gateways.UserRepository
 }
 
 type CreateUserCommand struct {
@@ -18,10 +18,14 @@ type CreateUserCommand struct {
 
 func NewCreateUserUseCase(db *gorm.DB) *CreateUserUseCase {
 	return &CreateUserUseCase{
-		userRepository: *NewUserRepository(db),
+		userRepository: *gateways.NewUserRepository(db),
 	}
 }
 
-func (g *CreateUserUseCase) CreateUser(user CreateUserCommand) (User, error) {
-	return g.userRepository.Create(FromApi(user.Username, user.Password, user.Email))
+func (g *CreateUserUseCase) CreateUser(createUser CreateUserCommand) (user.User, error) {
+	return g.userRepository.Create(user.FromApi(
+		createUser.Username,
+		createUser.Password,
+		createUser.Email,
+	))
 }
