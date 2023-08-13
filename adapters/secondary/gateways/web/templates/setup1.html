@@ -46,6 +46,7 @@
 						   type="text"
 						   value="{{.Username}}">
 					<label for="username">Nom d'utilisateur</label>
+					<div class="invalid-feedback">Le nom d'utilisateur doit être compris entre 3 et 20 caractères.</div>
 				</div>
 				<div class="form-floating">
 					<input class="form-control {{ if .PageError.IsError }} is-invalid {{ end }}"
@@ -55,7 +56,7 @@
 						   required
 						   type="password">
 					<label for="password">Mot de passe</label>
-					<div class="invalid-feedback">Les mots de passe ne correspondent pas.</div>
+					<div class="invalid-feedback">Le mot de passe doit contenir au moins 8 caractères.</div>
 				</div>
 				<div class="form-floating">
 					<input class="form-control {{ if .PageError.IsError }} is-invalid {{ end }}"
@@ -131,11 +132,9 @@
     function validatePasswordMatch() {
         if (docElems.password.value !== docElems.confirmPassword.value) {
             docElems.confirmPassword.classList.add("is-invalid")
-            docElems.password.classList.add("is-invalid")
             return false
         } else {
             docElems.confirmPassword.classList.remove("is-invalid")
-            docElems.password.classList.remove("is-invalid")
             return true
         }
     }
