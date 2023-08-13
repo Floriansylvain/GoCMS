@@ -6,6 +6,8 @@ import (
 	"github.com/glebarez/sqlite"
 	"go.uber.org/dig"
 	"gorm.io/gorm"
+	"os"
+	"path/filepath"
 )
 
 type LocalContainer struct {
@@ -48,10 +50,16 @@ func InitContainer() {
 
 	digContainer := dig.New()
 
-	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
-	if err != nil {
-		panic(err)
+	dbName := os.Getenv("DB_FILE")
+	if err := os.MkdirAll(filepath.Dir(dbName), os.ModePerm); err != nil {
+		panic("Unable to create necessary subdirectories: " + err.Error())
 	}
+
+	db, err := gorm.Open(sqlite.Open(dbName), &gorm.Config{})
+	if err != nil {
+		panic("Unable to open the database: " + err.Error())
+	}
+
 	_ = db.AutoMigrate(&models.Article{}, &models.User{})
 
 	_ = digContainer.Provide(func() *gorm.DB { return db })

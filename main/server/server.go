@@ -11,7 +11,7 @@ import (
 )
 
 var possibleEnvFileLocations = []string{".env", "../.env"}
-var envVarsToLoad = []string{"PORT", "ENVIRONMENT", "CORS_ALLOWED_ORIGINS"}
+var envVarsToLoad = []string{"PORT", "ENVIRONMENT", "CORS_ALLOWED_ORIGINS", "DB_FILE"}
 
 func initEnvVariables() {
 	var err error
