@@ -17,6 +17,7 @@ jobs:
       ENVIRONMENT: "development"
       PORT: "42069"
       CORS_ALLOWED_ORIGINS: "*"
+      DB_FILE: "./gohcms.db"
     steps:
     - uses: actions/checkout@v3
 
