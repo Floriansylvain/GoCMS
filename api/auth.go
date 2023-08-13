@@ -122,7 +122,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = SetJwtCookie(&w, createdUser.ID)
+	_ = SetJwtCookie(&w, createdUser.ID)
 
 	message, _ := json.Marshal(map[string]interface{}{"message": "User registered! HTTPonly jwt cookie created"})
 	_, _ = w.Write(message)

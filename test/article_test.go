@@ -20,7 +20,7 @@ var TestCreateArticleSuccess = func(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	r, err := ApiRequest("POST", "/article", bytes.NewBuffer(jsonBody))
+	r, _ := ApiRequest("POST", "/article", bytes.NewBuffer(jsonBody))
 
 	var response article.Article
 	bd, err := io.ReadAll(r.Body)
@@ -46,7 +46,7 @@ var TestCreateArticleFailTitleMissing = func(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	r, err := ApiRequest("POST", "/article", bytes.NewBuffer(jsonBody))
+	r, _ := ApiRequest("POST", "/article", bytes.NewBuffer(jsonBody))
 
 	assert.Equal(t, http.StatusBadRequest, r.StatusCode)
 }
@@ -60,7 +60,7 @@ var TestCreateArticleTitleTooShort = func(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	r, err := ApiRequest("POST", "/article", bytes.NewBuffer(jsonBody))
+	r, _ := ApiRequest("POST", "/article", bytes.NewBuffer(jsonBody))
 
 	assert.Equal(t, http.StatusBadRequest, r.StatusCode)
 }
@@ -74,7 +74,7 @@ var TestGetArticleSuccess = func(t *testing.T) {
 	db := GetDb()
 	db.Create(&articleToCreate).Scan(&createdArticle)
 
-	r, err := ApiRequest("GET", "/article/"+strconv.Itoa(int(createdArticle.ID)), nil)
+	r, _ := ApiRequest("GET", "/article/"+strconv.Itoa(int(createdArticle.ID)), nil)
 
 	var response article.Article
 	bd, err := io.ReadAll(r.Body)
@@ -102,7 +102,7 @@ var TestGetAllArticlesSuccess = func(t *testing.T) {
 	db := GetDb()
 	db.Create(&articleToCreate).Scan(&createdArticle)
 
-	r, err := ApiRequest("GET", "/article", nil)
+	r, _ := ApiRequest("GET", "/article", nil)
 
 	var response []article.Article
 	bd, err := io.ReadAll(r.Body)
