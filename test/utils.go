@@ -31,6 +31,7 @@ func StartServerIfNotAlready() {
 		return
 	}
 	_ = os.Remove("test.db")
+	_ = os.Setenv("DB_FILE", "test.db")
 	go func(url *string) {
 		router := server.InitServer()
 		*url = "http://localhost:" + os.Getenv("PORT") + "/v1"
