@@ -1,0 +1,12 @@
+services:
+  api:
+    build: .
+    ports:
+      - "${PORT}:8080"
+    volumes:
+      - ${DOCKER_DB_FOLDER}:/app/db/
+    environment:
+        - ENVIRONMENT=${ENVIRONMENT}
+        - PORT=8080
+        - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
+        - DB_FILE=/app/db/gohcms.db
