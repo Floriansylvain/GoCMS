@@ -26,7 +26,7 @@ func (a *ArticleRepository) Get(id uint32) (domain.Article, error) {
 		return domain.Article{}, err
 	}
 
-	return domain.FromDb(article.ID, article.Title, article.Body, article.CreatedAt, article.UpdatedAt), nil
+	return mapArticleToDomain(article), nil
 }
 
 func (a *ArticleRepository) Create(article domain.Article) (domain.Article, error) {
@@ -41,13 +41,7 @@ func (a *ArticleRepository) Create(article domain.Article) (domain.Article, erro
 	var createdArticle entity.Article
 	creationResult.Scan(&createdArticle)
 
-	return domain.FromDb(
-			createdArticle.ID,
-			createdArticle.Title,
-			createdArticle.Body,
-			createdArticle.CreatedAt,
-			createdArticle.UpdatedAt),
-		nil
+	return mapArticleToDomain(createdArticle), nil
 }
 
 func (a *ArticleRepository) GetAll() []domain.Article {

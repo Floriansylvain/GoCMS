@@ -45,13 +45,7 @@ func (u *UserRepository) Create(user domain.User) (domain.User, error) {
 	var createdUser entity.User
 	creationResult.Scan(&createdUser)
 
-	return domain.FromDb(
-			createdUser.ID,
-			createdUser.Username,
-			createdUser.Password,
-			createdUser.Email,
-			createdUser.CreatedAt,
-			createdUser.UpdatedAt),
+	return mapUserToDomain(createdUser),
 		nil
 }
 
