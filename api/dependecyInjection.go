@@ -11,7 +11,7 @@ import (
 )
 
 type LocalContainer struct {
-	CreateArticleUseCase *useCases.CreateArticleUseCase
+	CreateArticleUseCase *useCases.CreatePostUseCase
 	GetArticleUseCase    *useCases.GetArticleUseCase
 	ListArticlesUseCase  *useCases.ListArticlesUseCase
 	GetUserUseCase       *useCases.GetUserUseCase
@@ -23,7 +23,7 @@ type LocalContainer struct {
 var Container *LocalContainer
 
 func setContainer(
-	createArticle *useCases.CreateArticleUseCase,
+	createArticle *useCases.CreatePostUseCase,
 	getArticle *useCases.GetArticleUseCase,
 	listArticle *useCases.ListArticlesUseCase,
 	getUser *useCases.GetUserUseCase,
@@ -60,11 +60,11 @@ func InitContainer() {
 		panic("Unable to open the database: " + err.Error())
 	}
 
-	_ = db.AutoMigrate(&models.Article{}, &models.User{})
+	_ = db.AutoMigrate(&models.Post{}, &models.User{})
 
 	_ = digContainer.Provide(func() *gorm.DB { return db })
 
-	_ = digContainer.Provide(func(db *gorm.DB) *useCases.CreateArticleUseCase { return useCases.NewCreateArticleUseCase(db) })
+	_ = digContainer.Provide(func(db *gorm.DB) *useCases.CreatePostUseCase { return useCases.NewCreatePostUseCase(db) })
 	_ = digContainer.Provide(func(db *gorm.DB) *useCases.GetArticleUseCase { return useCases.NewGetArticleUseCase(db) })
 	_ = digContainer.Provide(func(db *gorm.DB) *useCases.ListArticlesUseCase { return useCases.NewListArticlesUseCase(db) })
 	_ = digContainer.Provide(func(db *gorm.DB) *useCases.GetUserUseCase { return useCases.NewGetUserUseCase(db) })

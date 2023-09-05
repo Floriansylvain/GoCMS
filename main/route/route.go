@@ -46,7 +46,7 @@ func InitBackendRoutes() *chi.Mux {
 	r.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(api.TokenAuth))
 		r.Use(jwtauth.Authenticator)
-		r.Mount("/article", api.NewArticleRouter())
+		r.Mount("/post", api.NewArticleRouter())
 	})
 	r.Mount("/auth", api.NewAuthRouter())
 

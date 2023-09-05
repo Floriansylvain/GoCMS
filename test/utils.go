@@ -12,16 +12,18 @@ import (
 	"time"
 )
 
+const testDbFile = "test.db"
+
 var ApiUrl string
 var AuthorizationCookie *http.Cookie
 var HttpClient = http.Client{}
 
 func GetDb() *gorm.DB {
-	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open(testDbFile), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}
-	_ = db.AutoMigrate(&models.Article{}, &models.User{})
+	_ = db.AutoMigrate(&models.Post{}, &models.User{})
 	return db
 }
 
@@ -30,8 +32,8 @@ func StartServerIfNotAlready() {
 	if err == nil {
 		return
 	}
-	_ = os.Remove("test.db")
-	_ = os.Setenv("DB_FILE", "test.db")
+	_ = os.Remove(testDbFile)
+	_ = os.Setenv("DB_FILE", testDbFile)
 	go func(url *string) {
 		router := server.InitServer()
 		*url = "http://localhost:" + os.Getenv("PORT") + "/v1"
