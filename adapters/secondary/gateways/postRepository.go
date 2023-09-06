@@ -20,43 +20,43 @@ func mapPostToDomain(post entity.Post) domain.Post {
 }
 
 func (a *PostRepository) Get(id uint32) (domain.Post, error) {
-	var article entity.Post
-	err := a.db.Model(&entity.Post{}).First(&article, id).Error
+	var post entity.Post
+	err := a.db.Model(&entity.Post{}).First(&post, id).Error
 	if err != nil {
 		return domain.Post{}, err
 	}
 
-	return mapPostToDomain(article), nil
+	return mapPostToDomain(post), nil
 }
 
-func (a *PostRepository) Create(article domain.Post) (domain.Post, error) {
+func (a *PostRepository) Create(post domain.Post) (domain.Post, error) {
 	creationResult := a.db.Create(&entity.Post{
-		Title: article.Title,
-		Body:  article.Body,
+		Title: post.Title,
+		Body:  post.Body,
 	})
 	if creationResult.Error != nil {
 		return domain.Post{}, creationResult.Error
 	}
 
-	var createdArticle entity.Post
-	creationResult.Scan(&createdArticle)
+	var createdPost entity.Post
+	creationResult.Scan(&createdPost)
 
-	return mapPostToDomain(createdArticle), nil
+	return mapPostToDomain(createdPost), nil
 }
 
 func (a *PostRepository) GetAll() []domain.Post {
-	var articles []entity.Post
-	err := a.db.Model(&entity.Post{}).Find(&articles).Error
+	var posts []entity.Post
+	err := a.db.Model(&entity.Post{}).Find(&posts).Error
 	if err != nil {
 		return []domain.Post{}
 	}
 
-	var domainArticles = make([]domain.Post, 0)
-	for _, article := range articles {
-		domainArticles = append(domainArticles, mapPostToDomain(article))
+	var domainPosts = make([]domain.Post, 0)
+	for _, post := range posts {
+		domainPosts = append(domainPosts, mapPostToDomain(post))
 	}
 
-	return domainArticles
+	return domainPosts
 }
 
-var _ gateways.IArticleRepository = &PostRepository{}
+var _ gateways.IPostRepository = &PostRepository{}

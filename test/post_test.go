@@ -67,12 +67,12 @@ var TestCreatePostTitleTooShort = func(t *testing.T) {
 
 var TestGetPostSuccess = func(t *testing.T) {
 	var createdPost post.Post
-	var articleToCreate = post.Post{
+	var postToCreate = post.Post{
 		Title: "Test Title",
 		Body:  "Test Body",
 	}
 	db := GetDb()
-	db.Create(&articleToCreate).Scan(&createdPost)
+	db.Create(&postToCreate).Scan(&createdPost)
 
 	r, _ := ApiRequest("GET", "/post/"+strconv.Itoa(int(createdPost.ID)), nil)
 
@@ -95,12 +95,12 @@ var TestGetPostSuccess = func(t *testing.T) {
 
 var TestGetAllPostsSuccess = func(t *testing.T) {
 	var createdPost post.Post
-	var articleToCreate = post.Post{
+	var postToCreate = post.Post{
 		Title: "Test Title",
 		Body:  "Test Body",
 	}
 	db := GetDb()
-	db.Create(&articleToCreate).Scan(&createdPost)
+	db.Create(&postToCreate).Scan(&createdPost)
 
 	r, _ := ApiRequest("GET", "/post", nil)
 
@@ -131,7 +131,7 @@ var TestPostGet = func(t *testing.T) {
 }
 
 var TestPostGetAll = func(t *testing.T) {
-	t.Run("Should return all articles", TestGetAllPostsSuccess)
+	t.Run("Should return all posts", TestGetAllPostsSuccess)
 }
 
 func TestPost(t *testing.T) {

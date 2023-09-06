@@ -11,34 +11,34 @@ import (
 )
 
 type LocalContainer struct {
-	CreateArticleUseCase *useCases.CreatePostUseCase
-	GetArticleUseCase    *useCases.GetArticleUseCase
-	ListArticlesUseCase  *useCases.ListArticlesUseCase
-	GetUserUseCase       *useCases.GetUserUseCase
-	CreateUserUseCase    *useCases.CreateUserUseCase
-	ListUsersUseCase     *useCases.ListUsersUseCase
-	GetPageUseCase       *useCases.GetPageUseCase
+	CreatePostUseCase *useCases.CreatePostUseCase
+	GetPostUseCase    *useCases.GetPostUseCase
+	ListPostsUseCase  *useCases.ListPostsUseCase
+	GetUserUseCase    *useCases.GetUserUseCase
+	CreateUserUseCase *useCases.CreateUserUseCase
+	ListUsersUseCase  *useCases.ListUsersUseCase
+	GetPageUseCase    *useCases.GetPageUseCase
 }
 
 var Container *LocalContainer
 
 func setContainer(
-	createArticle *useCases.CreatePostUseCase,
-	getArticle *useCases.GetArticleUseCase,
-	listArticle *useCases.ListArticlesUseCase,
+	createPost *useCases.CreatePostUseCase,
+	getPost *useCases.GetPostUseCase,
+	listPost *useCases.ListPostsUseCase,
 	getUser *useCases.GetUserUseCase,
 	createUser *useCases.CreateUserUseCase,
 	listUsers *useCases.ListUsersUseCase,
 	getPage *useCases.GetPageUseCase,
 ) *LocalContainer {
 	Container = &LocalContainer{
-		CreateArticleUseCase: createArticle,
-		GetArticleUseCase:    getArticle,
-		ListArticlesUseCase:  listArticle,
-		GetUserUseCase:       getUser,
-		CreateUserUseCase:    createUser,
-		ListUsersUseCase:     listUsers,
-		GetPageUseCase:       getPage,
+		CreatePostUseCase: createPost,
+		GetPostUseCase:    getPost,
+		ListPostsUseCase:  listPost,
+		GetUserUseCase:    getUser,
+		CreateUserUseCase: createUser,
+		ListUsersUseCase:  listUsers,
+		GetPageUseCase:    getPage,
 	}
 	return Container
 }
@@ -65,8 +65,8 @@ func InitContainer() {
 	_ = digContainer.Provide(func() *gorm.DB { return db })
 
 	_ = digContainer.Provide(func(db *gorm.DB) *useCases.CreatePostUseCase { return useCases.NewCreatePostUseCase(db) })
-	_ = digContainer.Provide(func(db *gorm.DB) *useCases.GetArticleUseCase { return useCases.NewGetArticleUseCase(db) })
-	_ = digContainer.Provide(func(db *gorm.DB) *useCases.ListArticlesUseCase { return useCases.NewListArticlesUseCase(db) })
+	_ = digContainer.Provide(func(db *gorm.DB) *useCases.GetPostUseCase { return useCases.NewGetPostUseCase(db) })
+	_ = digContainer.Provide(func(db *gorm.DB) *useCases.ListPostsUseCase { return useCases.NewListPostsUseCase(db) })
 	_ = digContainer.Provide(func(db *gorm.DB) *useCases.GetUserUseCase { return useCases.NewGetUserUseCase(db) })
 	_ = digContainer.Provide(func(db *gorm.DB) *useCases.CreateUserUseCase { return useCases.NewCreateUserUseCase(db) })
 	_ = digContainer.Provide(func(db *gorm.DB) *useCases.ListUsersUseCase { return useCases.NewListUsersUseCase(db) })

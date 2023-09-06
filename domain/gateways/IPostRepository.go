@@ -4,8 +4,8 @@ import (
 	"GohCMS2/domain/post"
 )
 
-type IArticleRepository interface {
+type IPostRepository interface {
 	Get(id uint32) (post.Post, error)
 	GetAll() []post.Post
-	Create(article post.Post) (post.Post, error)
+	Create(post post.Post) (post.Post, error)
 }

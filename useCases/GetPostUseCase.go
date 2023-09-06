@@ -6,16 +6,16 @@ import (
 	"gorm.io/gorm"
 )
 
-type GetArticleUseCase struct {
-	articleRepository gateways.PostRepository
+type GetPostUseCase struct {
+	postRepository gateways.PostRepository
 }
 
-func NewGetArticleUseCase(db *gorm.DB) *GetArticleUseCase {
-	return &GetArticleUseCase{
-		articleRepository: *gateways.NewPostRepository(db),
+func NewGetPostUseCase(db *gorm.DB) *GetPostUseCase {
+	return &GetPostUseCase{
+		postRepository: *gateways.NewPostRepository(db),
 	}
 }
 
-func (g *GetArticleUseCase) GetArticle(id uint32) (post.Post, error) {
-	return g.articleRepository.Get(id)
+func (g *GetPostUseCase) GetPost(id uint32) (post.Post, error) {
+	return g.postRepository.Get(id)
 }

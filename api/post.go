@@ -20,7 +20,7 @@ func getPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	post, err := Container.GetArticleUseCase.GetArticle(uint32(id))
+	post, err := Container.GetPostUseCase.GetPost(uint32(id))
 	if err != nil {
 		http.Error(w, "The requested resource, identified by its unique ID, could not be found on the server.", http.StatusNotFound)
 		return
@@ -44,7 +44,7 @@ func postPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	createdArticle, err := Container.CreateArticleUseCase.CreatePost(useCases.CreatePostCommand{
+	createdPost, err := Container.CreatePostUseCase.CreatePost(useCases.CreatePostCommand{
 		Title: post.Title,
 		Body:  post.Body,
 	})
@@ -52,19 +52,19 @@ func postPost(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	postJson, _ := json.Marshal(createdArticle)
+	postJson, _ := json.Marshal(createdPost)
 
 	_, _ = w.Write(postJson)
 }
 
 func listPosts(w http.ResponseWriter, _ *http.Request) {
-	posts := Container.ListArticlesUseCase.ListArticles()
+	posts := Container.ListPostsUseCase.ListPosts()
 	postsJson, _ := json.Marshal(posts)
 
 	_, _ = w.Write(postsJson)
 }
 
-func NewArticleRouter() http.Handler {
+func NewPostRouter() http.Handler {
 	r := chi.NewRouter()
 	r.Get("/{id}", getPost)
 	r.Post("/", postPost)
