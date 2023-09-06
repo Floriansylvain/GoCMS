@@ -8,66 +8,66 @@ import (
 	"strconv"
 )
 
-type ArticlePost struct {
+type PostPost struct {
 	Title string `json:"title" validate:"required,min=3,max=50"`
 	Body  string `json:"body" validate:"required,max=10000"`
 }
 
-func getArticle(w http.ResponseWriter, r *http.Request) {
+func getPost(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseUint(chi.URLParam(r, "id"), 10, 32)
 	if err != nil {
 		http.Error(w, "The server expects the ID to be in the format of an unsigned 32-bit integer (uint32).", http.StatusBadRequest)
 		return
 	}
 
-	article, err := Container.GetArticleUseCase.GetArticle(uint32(id))
+	post, err := Container.GetArticleUseCase.GetArticle(uint32(id))
 	if err != nil {
 		http.Error(w, "The requested resource, identified by its unique ID, could not be found on the server.", http.StatusNotFound)
 		return
 	}
 
-	articleJson, _ := json.Marshal(article)
-	_, _ = w.Write(articleJson)
+	postJson, _ := json.Marshal(post)
+	_, _ = w.Write(postJson)
 }
 
-func postArticle(w http.ResponseWriter, r *http.Request) {
-	var article ArticlePost
-	err := json.NewDecoder(r.Body).Decode(&article)
+func postPost(w http.ResponseWriter, r *http.Request) {
+	var post PostPost
+	err := json.NewDecoder(r.Body).Decode(&post)
 	if err != nil {
 		http.Error(w, bodyErrorMessage, http.StatusBadRequest)
 		return
 	}
 
-	err = validate.Struct(article)
+	err = validate.Struct(post)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	createdArticle, err := Container.CreateArticleUseCase.CreatePost(useCases.CreatePostCommand{
-		Title: article.Title,
-		Body:  article.Body,
+		Title: post.Title,
+		Body:  post.Body,
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	articleJson, _ := json.Marshal(createdArticle)
+	postJson, _ := json.Marshal(createdArticle)
 
-	_, _ = w.Write(articleJson)
+	_, _ = w.Write(postJson)
 }
 
-func listArticles(w http.ResponseWriter, _ *http.Request) {
-	articles := Container.ListArticlesUseCase.ListArticles()
-	articlesJson, _ := json.Marshal(articles)
+func listPosts(w http.ResponseWriter, _ *http.Request) {
+	posts := Container.ListArticlesUseCase.ListArticles()
+	postsJson, _ := json.Marshal(posts)
 
-	_, _ = w.Write(articlesJson)
+	_, _ = w.Write(postsJson)
 }
 
 func NewArticleRouter() http.Handler {
 	r := chi.NewRouter()
-	r.Get("/{id}", getArticle)
-	r.Post("/", postArticle)
-	r.Get("/", listArticles)
+	r.Get("/{id}", getPost)
+	r.Post("/", postPost)
+	r.Get("/", listPosts)
 	return r
 }
