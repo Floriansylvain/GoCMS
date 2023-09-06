@@ -89,6 +89,7 @@ func NewPageRouter() http.Handler {
 		r.Use(IsLoggedInMiddleware)
 		r.Get("/register-confirm", GetRegisterConfirmPage)
 		r.Get("/home", GetHomePage)
+		r.Get("/posts", GetPostsPage)
 	})
 
 	return r
