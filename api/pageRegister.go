@@ -29,7 +29,12 @@ func GetRegisterPageHandler(registerPage *RegisterPage) http.HandlerFunc {
 			PostRegisterPage(w, r)
 			return
 		}
-		bs, err := Container.GetPageUseCase.GetPage("setup1", &registerPage)
+		bs, err := Container.GetPageUseCase.GetPage("setup1", map[string]interface{}{
+			"PageError": registerPage.PageError,
+			"Username":  registerPage.Username,
+			"Email":     registerPage.Email,
+			"Head":      headTmpl,
+		})
 		if err != nil {
 			_, _ = w.Write([]byte(err.Error()))
 		}

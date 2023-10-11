@@ -3,6 +3,7 @@ package api
 import (
 	"embed"
 	"github.com/go-chi/chi/v5"
+	"html/template"
 	"io/fs"
 	"net/http"
 	"path/filepath"
@@ -11,6 +12,8 @@ import (
 
 //go:embed static
 var staticFolder embed.FS
+
+var headTmpl template.HTML
 
 var contentTypes = map[string]string{
 	".css":  "text/css",
@@ -65,18 +68,19 @@ func StaticFileServerWithContentType(fsys http.FileSystem) http.Handler {
 	})
 }
 
+func InitHeadTmpl() {
+	headTmplHtml, _ := Container.GetPageUseCase.GetPage("utilsHead", nil)
+	headTmpl = template.HTML(headTmplHtml)
+}
+
 func NewPageRouter() http.Handler {
 	r := chi.NewRouter()
 
 	contentStatic := fs.FS(staticFolder)
 
+	InitHeadTmpl()
+
 	r.Handle("/static/*", StaticFileServerWithContentType(http.FS(contentStatic)))
-	r.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
-		_, err := http.FS(staticFolder).Open("favicon.ico")
-		if err != nil {
-			return
-		}
-	})
 
 	r.Get("/", GetLogin)
 	r.Get(LoginRoute, GetLoginPageHandler(EmptyLoginPage))
@@ -89,7 +93,8 @@ func NewPageRouter() http.Handler {
 		r.Use(IsLoggedInMiddleware)
 		r.Get("/register-confirm", GetRegisterConfirmPage)
 		r.Get("/home", GetHomePage)
-		r.Get("/posts", GetPostsPage)
+		r.Get("/post", GetPostsPage)
+		r.Get("/post/edit", GetPostEditPage)
 	})
 
 	return r

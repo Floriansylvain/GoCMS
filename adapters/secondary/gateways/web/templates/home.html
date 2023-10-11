@@ -1,22 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta content="width=device-width, initial-scale=1.0" name="viewport">
 	<title>GohCMS | Accueil</title>
-
-	<link rel="stylesheet" href="/static/bootstrap.min.css" type="text/css">
-	<script src="/static/bootstrap.min.js"
-			type="application/javascript"
-			defer></script>
-
+	{{.Head}}
 </head>
 <body class="text-dark">
 {{.Navbar}}
 <div class="container mt-3 text-black-50">
 	<h1>Accueil</h1>
 	<p>Bienvenue sur GohCMS !</p>
-	<a href="/posts">
+	<a href="/post">
 		<button class="btn btn-outline-primary">Posts &raquo;</button>
 	</a>
 </div>

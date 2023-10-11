@@ -33,7 +33,11 @@ func GetLoginPageHandler(loginPage *LoginPage) http.HandlerFunc {
 			http.Redirect(w, r, "/register", http.StatusSeeOther)
 			return
 		}
-		bs, err := Container.GetPageUseCase.GetPage("login", &loginPage)
+		bs, err := Container.GetPageUseCase.GetPage("login", map[string]interface{}{
+			"PageError": loginPage.PageError,
+			"Username":  loginPage.Username,
+			"Head":      headTmpl,
+		})
 		if err != nil {
 			_, _ = w.Write([]byte(err.Error()))
 		}
