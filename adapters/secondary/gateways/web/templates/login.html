@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>GohCMS | Connexion</title>
+	<title>GohCMS | Login</title>
 	{{.Head}}
 
 	<style>
@@ -15,7 +15,7 @@
 	<div class="d-flex flex-column gap-5 m-auto form-container">
 		<div>
 			<h1>GohCMS</h1>
-			<h2>Connexion</h2>
+			<h2>Login</h2>
 		</div>
 		<form action="login" class="" method="POST">
 			<div class="d-flex flex-column gap-4">
@@ -23,26 +23,26 @@
 					<input class="form-control {{ if .PageError.IsError }} is-invalid {{ end }}"
 						   id="username"
 						   name="username"
-						   placeholder="Nom d'utilisateur"
+						   placeholder="Username"
 						   required
 						   type="text"
 						   value="{{.Username}}">
-					<label for="username">Nom d'utilisateur</label>
+					<label for="username">Username</label>
 				</div>
 				<div class="form-floating">
 					<input class="form-control {{ if .PageError.IsError }} is-invalid {{ end }}"
 						   id="password"
 						   name="password"
-						   placeholder="Mot de passe"
+						   placeholder="Password"
 						   required
 						   type="password">
-					<label for="password">Mot de passe</label>
+					<label for="password">Password</label>
 					<div class="invalid-feedback">{{.PageError.Message}}</div>
 				</div>
 				<button id="loginFormButton" class="btn btn-primary" disabled type="submit">
 						<span class="loginFormButtonLoading visually-hidden spinner-border spinner-border-sm"
 							  role="status"></span>
-					<span class="loginFormButtonDefault">Se connecter</span>
+					<span class="loginFormButtonDefault">Log in</span>
 				</button>
 			</div>
 		</form>

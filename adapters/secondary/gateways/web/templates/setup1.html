@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>GohCMS | Installation</title>
+	<title>GohCMS | Setup</title>
 	{{.Head}}
 
 	<style>
@@ -15,7 +15,7 @@
 	<div class="d-flex flex-column gap-5 m-auto form-container">
 		<div>
 			<h1>GohCMS</h1>
-			<h2>Création du compte administrateur</h2>
+			<h2>Admin account creation</h2>
 		</div>
 		<form action="register" class="" method="POST">
 			<div class="d-flex flex-column gap-4">
@@ -29,45 +29,45 @@
 						   value="{{.Email}}"
 						   onblur="validateEmail()">
 					<label for="email">E-mail</label>
-					<div class="invalid-feedback">L'e-mail doit être un e-mail valide.</div>
+					<div class="invalid-feedback">The e-mail must be a valid e-mail.</div>
 				</div>
 				<div class="form-floating">
 					<input class="form-control {{ if .PageError.IsError }} is-invalid {{ end }}"
 						   id="username"
 						   name="username"
-						   placeholder="Nom d'utilisateur"
+						   placeholder="Username"
 						   required
 						   type="text"
 						   value="{{.Username}}">
-					<label for="username">Nom d'utilisateur</label>
-					<div class="invalid-feedback">Le nom d'utilisateur doit être compris entre 3 et 20 caractères.</div>
+					<label for="username">Username</label>
+					<div class="invalid-feedback">The username must be between 3 and 20 characters long.</div>
 				</div>
 				<div class="form-floating">
 					<input class="form-control {{ if .PageError.IsError }} is-invalid {{ end }}"
 						   id="password"
 						   name="password"
-						   placeholder="Mot de passe"
+						   placeholder="Password"
 						   required
 						   type="password">
-					<label for="password">Mot de passe</label>
-					<div class="invalid-feedback">Le mot de passe doit contenir au moins 8 caractères.</div>
+					<label for="password">Password</label>
+					<div class="invalid-feedback">The password must contain at least 8 characters.</div>
 				</div>
 				<div class="form-floating">
 					<input class="form-control {{ if .PageError.IsError }} is-invalid {{ end }}"
 						   id="confirmPassword"
 						   name="confirmPassword"
-						   placeholder="Confirmation du mot de passe"
+						   placeholder="Password confirmation"
 						   required
 						   type="password"
 						   onblur="validatePasswordMatch()"
 						   oninput="validatePasswordMatch()">
-					<label for="confirmPassword">Confirmation du mot de passe</label>
-					<div class="invalid-feedback">Les mots de passe ne correspondent pas.</div>
+					<label for="confirmPassword">Password confirmation</label>
+					<div class="invalid-feedback">The passwords do not match.</div>
 				</div>
 				<button id="registerFormButton" class="btn btn-primary" disabled type="submit">
                     <span class="registerFormButtonLoading visually-hidden spinner-border spinner-border-sm"
 						  role="status"></span>
-					<span class="registerFormButtonDefault">Suivant</span>
+					<span class="registerFormButtonDefault">Next</span>
 				</button>
 			</div>
 		</form>
