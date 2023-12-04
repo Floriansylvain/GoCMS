@@ -8,6 +8,7 @@ COPY api ./api
 COPY domain ./domain
 COPY main ./main
 COPY useCases ./useCases
+COPY .env ./.env
 
 RUN go mod download
 RUN go build -o startServer ./main
