@@ -41,7 +41,7 @@ func InitServer() *chi.Mux {
 }
 
 func StartServer(router *chi.Mux) error {
-	fmt.Println("Server starting on http://localhost:" + os.Getenv("PORT"))
-	err := http.ListenAndServe("localhost:"+os.Getenv("PORT"), router)
+	fmt.Println("Server starting on :" + os.Getenv("PORT"))
+	err := http.ListenAndServe(":"+os.Getenv("PORT"), router)
 	return err
 }
