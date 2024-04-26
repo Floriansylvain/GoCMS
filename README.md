@@ -39,13 +39,13 @@ of course required, but not necessarily via the `.env` file.
 
 ### Environment variables
 
-| Name                 | Type   | Description                             | Comment                                                                                               |
-|----------------------|--------|-----------------------------------------|-------------------------------------------------------------------------------------------------------|
-| ENVIRONMENT          | string | The environment the API is running in   | required, `development` or `production`                                                               |
-| PORT                 | int    | The port the API will use               | required                                                                                              |
-| CORS_ALLOWED_ORIGINS | string | The allowed origins for CORS            | required, semicolon separated list                                                                    |
-| DB_FILE              | string | The path to the sqlite db file          | required, can be at the root but name still required (e.g. `./gohcms.db`) ; have to end up with `.db` |
-| DOCKER_DB_FOLDER     | string | The path to the sqlite db file's folder | required with docker, this will basically be the host machine folder that contains the sqlite db file |
+| Name                 | Type   | Description                             | Comment                                                                                                               |
+|----------------------|--------|-----------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
+| ENVIRONMENT          | string | The environment the API is running in   | required, `development` or `production`                                                                               |
+| PORT                 | int    | The port the API will use               | required                                                                                                              |
+| CORS_ALLOWED_ORIGINS | string | The allowed origins for CORS            | required, semicolon separated list                                                                                    |
+| DB_FILE              | string | The path to the sqlite db file          | required, can be at the root but name still required (e.g. `./gohcms.db`) ; have to end up with `.db`                 |
+| DOCKER_DB_FOLDER     | string | The path to the sqlite db file's folder | required with docker, this will basically be the host machine folder (e.g. `./data`) that contains the sqlite db file |
 
 ## API Usage
 
