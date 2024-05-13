@@ -18,6 +18,7 @@ type UseCases struct {
 	CreateUserUseCase *useCases.CreateUserUseCase
 	ListUsersUseCase  *useCases.ListUsersUseCase
 	GetPageUseCase    *useCases.GetPageUseCase
+	SendMailUseCase   *useCases.SendMailUseCase
 }
 
 var Container *UseCases
@@ -50,6 +51,7 @@ func InitContainer() {
 			CreateUserUseCase: useCases.NewCreateUserUseCase(db),
 			ListUsersUseCase:  useCases.NewListUsersUseCase(db),
 			GetPageUseCase:    useCases.NewGetPageUseCase(),
+			SendMailUseCase:   useCases.NewSendMailUseCase(),
 		}
 	})
 	err := digContainer.Invoke(func(useCases *UseCases) { Container = useCases })
