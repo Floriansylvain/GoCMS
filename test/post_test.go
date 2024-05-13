@@ -121,13 +121,13 @@ var TestGetAllPostsSuccess = func(t *testing.T) {
 }
 
 var TestPostCreate = func(t *testing.T) {
-	t.Run("Should return an post with the given title and body", TestCreatePostSuccess)
+	t.Run("Should return a post with the given title and body", TestCreatePostSuccess)
 	t.Run("Should return an error if the title is missing", TestCreatePostFailTitleMissing)
 	t.Run("Should return an error if the title is too short", TestCreatePostTitleTooShort)
 }
 
 var TestPostGet = func(t *testing.T) {
-	t.Run("Should return an post with the given id", TestGetPostSuccess)
+	t.Run("Should return a post with the given id", TestGetPostSuccess)
 }
 
 var TestPostGetAll = func(t *testing.T) {

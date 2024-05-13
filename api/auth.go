@@ -1,6 +1,7 @@
 package api
 
 import (
+	"GohCMS2/domain/user"
 	"GohCMS2/useCases"
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
@@ -11,13 +12,13 @@ import (
 	"time"
 )
 
-type UserRegister struct {
+type RegisterCredentials struct {
 	Username string `json:"username" validate:"required,min=3,max=20"`
 	Password string `json:"password" validate:"required,min=8"`
 	Email    string `json:"email" validate:"required,email"`
 }
 
-type UserLogin struct {
+type LoginCredentials struct {
 	Username string `json:"username" validate:"required,min=3,max=20"`
 	Password string `json:"password" validate:"required,min=8"`
 }
@@ -60,31 +61,38 @@ func IsLoggedIn(r *http.Request) bool {
 	return token != nil && err == nil
 }
 
-func login(w http.ResponseWriter, r *http.Request) {
-	var user UserLogin
+func getUserFromCredentials(credentials LoginCredentials) (user.User, error) {
+	dbUser, err := Container.GetUserUseCase.GetUserByUsername(credentials.Username)
+	if err != nil {
+		return user.User{}, err
+	}
 
-	err := json.NewDecoder(r.Body).Decode(&user)
+	err = bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(credentials.Password))
+	if err != nil {
+		return user.User{}, err
+	}
+
+	return dbUser, nil
+}
+
+func login(w http.ResponseWriter, r *http.Request) {
+	var credentials LoginCredentials
+
+	err := json.NewDecoder(r.Body).Decode(&credentials)
 	if err != nil {
 		http.Error(w, bodyErrorMessage, http.StatusBadRequest)
 		return
 	}
 
-	err = validate.Struct(user)
+	err = validate.Struct(credentials)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	dbUser, err := Container.GetUserUseCase.GetUserByUsername(user.Username)
+	dbUser, err := getUserFromCredentials(credentials)
 	if err != nil {
 		http.Error(w, logsErrorMessage, http.StatusForbidden)
-		return
-	}
-
-	err = bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(user.Password))
-	if err != nil {
-		http.Error(w, logsErrorMessage, http.StatusForbidden)
-		return
 	}
 
 	_ = SetJwtCookie(&w, dbUser.ID)
@@ -99,23 +107,23 @@ func register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var user UserRegister
-	err := json.NewDecoder(r.Body).Decode(&user)
+	var credentials RegisterCredentials
+	err := json.NewDecoder(r.Body).Decode(&credentials)
 	if err != nil {
 		http.Error(w, bodyErrorMessage, http.StatusBadRequest)
 		return
 	}
 
-	err = validate.Struct(user)
+	err = validate.Struct(credentials)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	createdUser, err := Container.CreateUserUseCase.CreateUser(useCases.CreateUserCommand{
-		Username: user.Username,
-		Password: user.Password,
-		Email:    user.Email,
+		Username: credentials.Username,
+		Password: credentials.Password,
+		Email:    credentials.Email,
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

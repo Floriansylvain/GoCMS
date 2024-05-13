@@ -1,10 +1,7 @@
 package api
 
 import (
-	"bytes"
-	"encoding/json"
 	"net/http"
-	"os"
 )
 
 const LoginRoute = "/login"
@@ -48,10 +45,11 @@ func GetLoginPageHandler(loginPage *LoginPage) http.HandlerFunc {
 func PostLoginPage(w http.ResponseWriter, r *http.Request) {
 	_ = r.ParseForm()
 
-	credentials, err := json.Marshal(&UserLogin{
+	credentials := LoginCredentials{
 		Username: r.FormValue("username"),
 		Password: r.FormValue("password"),
-	})
+	}
+	err := validate.Struct(credentials)
 	if err != nil {
 		r.Method = http.MethodGet
 		GetLoginPageHandler(&LoginPage{
@@ -61,12 +59,8 @@ func PostLoginPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response, err := http.Post(
-		"http://localhost:"+os.Getenv("PORT")+"/v1/auth/login",
-		"application/json",
-		bytes.NewBuffer(credentials))
-
-	if err != nil || response.StatusCode != http.StatusOK {
+	dbUser, err := getUserFromCredentials(credentials)
+	if err != nil {
 		r.Method = http.MethodGet
 		GetLoginPageHandler(&LoginPage{
 			PageError: NewPageError("Invalid username or password."),
@@ -75,7 +69,7 @@ func PostLoginPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Set-Cookie", response.Header.Get("Set-Cookie"))
+	_ = SetJwtCookie(&w, dbUser.ID)
 
 	http.Redirect(w, r, "/home", http.StatusSeeOther)
 }

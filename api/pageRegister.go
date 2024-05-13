@@ -45,7 +45,7 @@ func GetRegisterPageHandler(registerPage *RegisterPage) http.HandlerFunc {
 func PostRegisterPage(w http.ResponseWriter, r *http.Request) {
 	_ = r.ParseForm()
 
-	credentials, err := json.Marshal(&UserRegister{
+	credentials, err := json.Marshal(&RegisterCredentials{
 		Username: r.FormValue("username"),
 		Password: r.FormValue("password"),
 		Email:    r.FormValue("email"),
