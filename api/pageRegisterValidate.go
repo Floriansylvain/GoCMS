@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/go-chi/jwtauth/v5"
+	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"time"
 )
@@ -19,7 +20,8 @@ func GetRegisterValidatePage(w http.ResponseWriter, r *http.Request) {
 	user, _ := Container.GetUserUseCase.GetUser(userId)
 	errorMessage := ""
 
-	if user.VerificationCode != queryVerificationCode || user.VerificationExpiration.Before(time.Now()) {
+	err := bcrypt.CompareHashAndPassword([]byte(user.VerificationCode), []byte(queryVerificationCode))
+	if err != nil || user.VerificationExpiration.Before(time.Now()) {
 		errorMessage = "Verification link is incorrect or has expired."
 	} else {
 		// TODO New usecase "UpdateUserUseCase" to update its verification status
