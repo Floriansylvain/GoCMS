@@ -38,12 +38,14 @@ func (m MailRepository) Send(receiverAddress string, templateName string, data i
 	}
 
 	msg := gomail.NewMessage()
-	msg.SetHeader("From", "GohCMS <"+from+">")
-	msg.SetHeader("To", receiverAddress)
-	msg.SetHeader("MIME-version", "1.0")
-	msg.SetHeader("Content-Type", "text/html")
-	msg.SetHeader("charset", "UTF-8")
-	msg.SetHeader("Subject", "GohCMS | Action required")
+	msg.SetHeaders(map[string][]string{
+		"From":         {"GohCMS <" + from + ">"},
+		"To":           {receiverAddress},
+		"MIME-version": {"1.0"},
+		"Content-Type": {"text/html"},
+		"charset":      {"UTF-8"},
+		"Subject":      {"GohCMS | Action required"},
+	})
 	msg.SetBody("text/html", body.String())
 
 	if err := d.DialAndSend(msg); err != nil {

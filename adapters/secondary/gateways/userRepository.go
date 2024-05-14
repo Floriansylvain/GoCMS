@@ -17,7 +17,16 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 }
 
 func mapUserToDomain(user entity.User) domain.User {
-	return domain.FromDb(user.ID, user.Username, user.Password, user.Email, user.CreatedAt, user.UpdatedAt)
+	return domain.FromDb(
+		user.ID,
+		user.Username,
+		user.Password,
+		user.Email,
+		user.IsVerified,
+		user.VerificationCode,
+		user.VerificationExpiration,
+		user.CreatedAt, user.UpdatedAt,
+	)
 }
 
 func (u *UserRepository) Get(id uint32) (domain.User, error) {
@@ -32,11 +41,13 @@ func (u *UserRepository) Get(id uint32) (domain.User, error) {
 
 func (u *UserRepository) Create(user domain.User) (domain.User, error) {
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 14)
+	hashedVerificationCode, _ := bcrypt.GenerateFromPassword([]byte(user.VerificationCode), 14)
 
 	creationResult := u.db.Create(&entity.User{
-		Username: user.Username,
-		Password: string(hashedPassword),
-		Email:    user.Email,
+		Username:         user.Username,
+		Password:         string(hashedPassword),
+		Email:            user.Email,
+		VerificationCode: string(hashedVerificationCode),
 	})
 	if creationResult.Error != nil {
 		return domain.User{}, creationResult.Error

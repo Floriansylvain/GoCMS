@@ -12,7 +12,9 @@ import (
 
 var possibleEnvFileLocations = []string{".env", "../.env"}
 var envVarsToLoad = []string{
+	"HOST",
 	"PORT",
+	"JWT_SECRET",
 	"ENVIRONMENT",
 	"CORS_ALLOWED_ORIGINS",
 	"DB_FILE",

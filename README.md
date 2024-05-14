@@ -39,17 +39,19 @@ of course required, but not necessarily via the `.env` file.
 
 ### Environment variables
 
-| Name                 | Type   | Description                         | Comment                                                                                                               |
-|----------------------|--------|:------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
-| ENVIRONMENT          | string | environment the API is running in   | required, `development` or `production`                                                                               |
-| PORT                 | int    | port the API will use               | required                                                                                                              |
-| CORS_ALLOWED_ORIGINS | string | allowed origins for CORS            | required, semicolon separated list                                                                                    |
-| DB_FILE              | string | path to the sqlite db file          | required, can be at the root but name still required (e.g. `./gohcms.db`) ; have to end up with `.db`                 |
-| DOCKER_DB_FOLDER     | string | path to the sqlite db file's folder | required with docker, this will basically be the host machine folder (e.g. `./data`) that contains the sqlite db file |
-| SMTP_EMAIL           | string | sender email                        | required                                                                                                              |
-| SMTP_PASSWORD        | string | smtp account password               | required                                                                                                              |
-| SMTP_HOST            | string | smtp server address                 | required                                                                                                              | 
-| SMTP_PORT            | int    | smtp server port                    | required                                                                                                              |
+| Name                 | Type   | Description                                   | Comment                                                                                                               |
+|----------------------|--------|:----------------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
+| ENVIRONMENT          | string | environment the API is running in             | required, `development` or `production`                                                                               |
+| HOST                 | string | the host domain name for emails and callbacks | required                                                                                                              |
+| PORT                 | int    | port the API will use                         | required                                                                                                              |
+| JWT_SECRET           | string | secret for the jwt auth                       | required                                                                                                              |
+| CORS_ALLOWED_ORIGINS | string | allowed origins for CORS                      | required, semicolon separated list                                                                                    |
+| DB_FILE              | string | path to the sqlite db file                    | required, can be at the root but name still required (e.g. `./gohcms.db`) ; have to end up with `.db`                 |
+| DOCKER_DB_FOLDER     | string | path to the sqlite db file's folder           | required with docker, this will basically be the host machine folder (e.g. `./data`) that contains the sqlite db file |
+| SMTP_EMAIL           | string | sender email                                  | required                                                                                                              |
+| SMTP_PASSWORD        | string | smtp account password                         | required                                                                                                              |
+| SMTP_HOST            | string | smtp server address                           | required                                                                                                              | 
+| SMTP_PORT            | int    | smtp server port                              | required                                                                                                              |
 
 ## API Usage
 

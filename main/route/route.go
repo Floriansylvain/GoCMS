@@ -3,7 +3,6 @@ package route
 import (
 	"GohCMS2/api"
 	"encoding/json"
-	"fmt"
 	"github.com/MadAppGang/httplog"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
@@ -30,19 +29,10 @@ func HtmlContentTypeMiddleware(next http.Handler) http.Handler {
 }
 
 func InitJwt() {
-	api.TokenAuth = jwtauth.New("HS256", []byte("secret"), nil)
+	api.TokenAuth = jwtauth.New("HS256", []byte(os.Getenv("JWT_SECRET")), nil)
 }
 
 func GetHelloWorld(w http.ResponseWriter, _ *http.Request) {
-	err := api.Container.SendMailUseCase.SendMail(
-		"floriansylvainpro@gmail.com",
-		"mailValidation",
-		struct{}{},
-	)
-	if err != nil {
-		fmt.Println(err)
-	}
-
 	msg, _ := json.Marshal(map[string]string{"message": "Hello World"})
 	_, _ = w.Write(msg)
 }
