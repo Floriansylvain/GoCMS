@@ -53,7 +53,7 @@ func PostLoginPage(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		r.Method = http.MethodGet
 		GetLoginPageHandler(&LoginPage{
-			PageError: NewPageError("Invalid form data format."),
+			PageError: NewPageError("Invalid username or password format."),
 			Username:  r.FormValue("username"),
 		})(w, r)
 		return
@@ -63,7 +63,7 @@ func PostLoginPage(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		r.Method = http.MethodGet
 		GetLoginPageHandler(&LoginPage{
-			PageError: NewPageError("Invalid username or password."),
+			PageError: NewPageError("Invalid username or password combination."),
 			Username:  r.FormValue("username"),
 		})(w, r)
 		return
