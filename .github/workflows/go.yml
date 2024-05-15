@@ -13,7 +13,18 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    environment: test
+    env:
+        ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
+        HOST: ${{ secrets.HOST }}
+        PORT: ${{ secrets.PORT }}
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        CORS_ALLOWED_ORIGINS: ${{ secrets.CORS_ALLOWED_ORIGINS }}
+        DB_FILE: ${{ secrets.DB_FILE }}
+        DOCKER_DB_FOLDER: ${{ secrets.DOCKER_DB_FOLDER }}
+        SMTP_EMAIL: ${{ secrets.SMTP_EMAIL }}
+        SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+        SMTP_HOST: ${{ secrets.SMTP_HOST }}
+        SMTP_PORT: ${{ secrets.SMTP_PORT }}
     steps:
     - uses: actions/checkout@v3
 
