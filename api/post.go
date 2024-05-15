@@ -1,7 +1,7 @@
 package api
 
 import (
-	"GohCMS2/useCases"
+	"GoCMS/useCases"
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
 	"net/http"

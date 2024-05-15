@@ -1,7 +1,7 @@
 package gateways
 
 import (
-	"GohCMS2/domain/gateways"
+	"GoCMS/domain/gateways"
 	"bytes"
 	"embed"
 	"html/template"

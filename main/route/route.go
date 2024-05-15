@@ -1,7 +1,7 @@
 package route
 
 import (
-	"GohCMS2/api"
+	"GoCMS/api"
 	"encoding/json"
 	"github.com/MadAppGang/httplog"
 	"github.com/go-chi/chi/v5"

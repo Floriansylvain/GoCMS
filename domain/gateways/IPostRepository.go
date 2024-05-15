@@ -1,7 +1,7 @@
 package gateways
 
 import (
-	"GohCMS2/domain/post"
+	"GoCMS/domain/post"
 )
 
 type IPostRepository interface {

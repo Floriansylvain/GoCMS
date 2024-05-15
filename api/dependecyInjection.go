@@ -1,8 +1,8 @@
 package api
 
 import (
-	"GohCMS2/adapters/secondary/gateways/models"
-	"GohCMS2/useCases"
+	"GoCMS/adapters/secondary/gateways/models"
+	"GoCMS/useCases"
 	"github.com/glebarez/sqlite"
 	"go.uber.org/dig"
 	"gorm.io/gorm"

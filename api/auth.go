@@ -1,8 +1,8 @@
 package api
 
 import (
-	"GohCMS2/domain/user"
-	"GohCMS2/useCases"
+	"GoCMS/domain/user"
+	"GoCMS/useCases"
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/jwtauth/v5"

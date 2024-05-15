@@ -1,6 +1,6 @@
 package gateways
 
-import "GohCMS2/domain/user"
+import "GoCMS/domain/user"
 
 type IUserRepository interface {
 	Get(id uint32) (user.User, error)

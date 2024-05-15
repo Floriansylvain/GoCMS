@@ -1,9 +1,9 @@
 package test
 
 import (
-	"GohCMS2/adapters/secondary/gateways/models"
-	"GohCMS2/api"
-	"GohCMS2/main/server"
+	"GoCMS/adapters/secondary/gateways/models"
+	"GoCMS/api"
+	"GoCMS/main/server"
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 	"io"

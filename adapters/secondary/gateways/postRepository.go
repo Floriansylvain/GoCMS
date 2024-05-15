@@ -1,9 +1,9 @@
 package gateways
 
 import (
-	entity "GohCMS2/adapters/secondary/gateways/models"
-	"GohCMS2/domain/gateways"
-	domain "GohCMS2/domain/post"
+	entity "GoCMS/adapters/secondary/gateways/models"
+	"GoCMS/domain/gateways"
+	domain "GoCMS/domain/post"
 	"gorm.io/gorm"
 )
 

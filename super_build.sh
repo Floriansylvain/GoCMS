@@ -4,7 +4,7 @@ export GOARCH=amd64
 OUTPUT_DIR=./bin
 
 GO_FILE_PATH="./main/main.go"
-PROGRAM_NAME=GohCMS
+PROGRAM_NAME=GoCMS
 
 # Compile for Windows
 GOOS=windows go build -o "$OUTPUT_DIR/${PROGRAM_NAME}_windows.exe" "$GO_FILE_PATH"

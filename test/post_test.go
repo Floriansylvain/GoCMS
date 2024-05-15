@@ -1,7 +1,7 @@
 package test
 
 import (
-	"GohCMS2/domain/post"
+	"GoCMS/domain/post"
 	"bytes"
 	"encoding/json"
 	"github.com/stretchr/testify/assert"

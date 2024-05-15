@@ -1,6 +1,6 @@
 package main
 
-import "GohCMS2/main/server"
+import "GoCMS/main/server"
 
 func main() {
 	router := server.InitServer()

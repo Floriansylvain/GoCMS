@@ -1,7 +1,7 @@
 package useCases
 
 import (
-	"GohCMS2/adapters/secondary/gateways"
+	"GoCMS/adapters/secondary/gateways"
 	"gorm.io/gorm"
 )
 

@@ -1,4 +1,4 @@
-module GohCMS2
+module GoCMS
 
 go 1.20
 

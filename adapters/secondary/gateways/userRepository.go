@@ -1,10 +1,10 @@
 package gateways
 
 import (
-	entity "GohCMS2/adapters/secondary/gateways/models"
-	"GohCMS2/domain/gateways"
-	"GohCMS2/domain/user"
-	domain "GohCMS2/domain/user"
+	entity "GoCMS/adapters/secondary/gateways/models"
+	"GoCMS/domain/gateways"
+	"GoCMS/domain/user"
+	domain "GoCMS/domain/user"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
