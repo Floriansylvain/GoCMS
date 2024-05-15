@@ -6,21 +6,31 @@ import (
 	"os"
 )
 
+type RegisterPageError struct {
+	Email    bool `json:"email"`
+	Password bool `json:"password"`
+	Username bool `json:"username"`
+}
+
 type RegisterPage struct {
-	PageError *PageError `json:"error"`
-	Username  string     `json:"username"`
-	Email     string     `json:"email"`
+	PageError *RegisterPageError `json:"error"`
+	Username  string             `json:"username"`
+	Email     string             `json:"email"`
 }
 
 var EmptyRegisterPage = &RegisterPage{
-	PageError: NewPageError(""),
-	Username:  "",
-	Email:     "",
+	PageError: &RegisterPageError{
+		Email:    false,
+		Password: false,
+		Username: false,
+	},
+	Username: "",
+	Email:    "",
 }
 
 func GetRegisterPageHandler(registerPage *RegisterPage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if IsLoggedIn(r) || !IsUserTableEmpty() {
+		if (IsLoggedIn(r) && IsVerified(r)) || SomeUsersVerified() {
 			http.Redirect(w, r, "/home", http.StatusSeeOther)
 			return
 		}
@@ -53,9 +63,13 @@ func PostRegisterPage(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		r.Method = http.MethodGet
 		GetRegisterPageHandler(&RegisterPage{
-			PageError: NewPageError("Invalid register form data format."),
-			Username:  r.FormValue("username"),
-			Email:     r.FormValue("email"),
+			PageError: &RegisterPageError{
+				Email:    true,
+				Password: true,
+				Username: true,
+			},
+			Username: r.FormValue("username"),
+			Email:    r.FormValue("email"),
 		})(w, r)
 		return
 	}
@@ -63,17 +77,23 @@ func PostRegisterPage(w http.ResponseWriter, r *http.Request) {
 	verificationCode := uuid.NewString()
 	createdUser, err := getNewUser(credentials, verificationCode)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		r.Method = http.MethodGet
+		GetRegisterPageHandler(&RegisterPage{
+			PageError: &RegisterPageError{
+				Email:    true,
+				Password: false,
+				Username: false,
+			},
+			Username: r.FormValue("username"),
+			Email:    r.FormValue("email"),
+		})(w, r)
 		return
 	}
 
-	err = Container.SendMailUseCase.SendMail(createdUser.Email, "mailValidation", map[string]string{
+	_ = Container.SendMailUseCase.SendMail(createdUser.Email, "mailValidation", map[string]string{
 		"Host":             os.Getenv("HOST"),
 		"VerificationCode": verificationCode,
 	})
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
 
 	_ = SetJwtCookie(&w, createdUser.ID)
 

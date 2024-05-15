@@ -47,6 +47,16 @@ func SetJwtCookie(w *http.ResponseWriter, userId uint32) error {
 	return nil
 }
 
+func SomeUsersVerified() bool {
+	users := Container.ListUsersUseCase.ListUsers()
+	for _, localUser := range users {
+		if localUser.IsVerified {
+			return true
+		}
+	}
+	return false
+}
+
 func IsUserTableEmpty() bool {
 	users := Container.ListUsersUseCase.ListUsers()
 	return len(users) == 0
@@ -131,7 +141,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 }
 
 func register(w http.ResponseWriter, r *http.Request) {
-	if !IsLoggedIn(r) && !IsUserTableEmpty() {
+	if !IsLoggedIn(r) && !SomeUsersVerified() {
 		http.Error(w, "You are not allowed to create a user. Log in or reset database.", http.StatusForbidden)
 		return
 	}

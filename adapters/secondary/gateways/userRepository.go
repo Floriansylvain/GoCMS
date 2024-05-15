@@ -3,6 +3,7 @@ package gateways
 import (
 	entity "GohCMS2/adapters/secondary/gateways/models"
 	"GohCMS2/domain/gateways"
+	"GohCMS2/domain/user"
 	domain "GohCMS2/domain/user"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -30,13 +31,13 @@ func mapUserToDomain(user entity.User) domain.User {
 }
 
 func (u *UserRepository) Get(id uint32) (domain.User, error) {
-	var user entity.User
-	err := u.db.Model(&entity.User{}).First(&user, id).Error
+	var localUser entity.User
+	err := u.db.Model(&entity.User{}).First(&localUser, id).Error
 	if err != nil {
 		return domain.User{}, err
 	}
 
-	return mapUserToDomain(user), nil
+	return mapUserToDomain(localUser), nil
 }
 
 func (u *UserRepository) Create(user domain.User) (domain.User, error) {
@@ -61,42 +62,46 @@ func (u *UserRepository) Create(user domain.User) (domain.User, error) {
 		nil
 }
 
+func (u *UserRepository) Delete(id uint32) error {
+	return u.db.Delete(&user.User{}, id).Error
+}
+
 func (u *UserRepository) GetAll() []domain.User {
 	var users []entity.User
 	u.db.Model(&entity.User{}).Find(&users)
 
 	var domainUsers []domain.User
-	for _, user := range users {
-		domainUsers = append(domainUsers, mapUserToDomain(user))
+	for _, localUser := range users {
+		domainUsers = append(domainUsers, mapUserToDomain(localUser))
 	}
 
 	return domainUsers
 }
 
 func (u *UserRepository) GetByUsername(username string) (domain.User, error) {
-	var user entity.User
-	err := u.db.Model(&entity.User{}).Where("username = ?", username).First(&user).Error
+	var localUser entity.User
+	err := u.db.Model(&entity.User{}).Where("username = ?", username).First(&localUser).Error
 	if err != nil {
 		return domain.User{}, err
 	}
 
-	return mapUserToDomain(user), nil
+	return mapUserToDomain(localUser), nil
 }
 
 func (u *UserRepository) UpdateVerificationStatus(userId uint32, isVerified bool) (domain.User, error) {
-	var user entity.User
-	err := u.db.Model(&entity.User{}).First(&user, userId).Error
+	var localUser entity.User
+	err := u.db.Model(&entity.User{}).First(&localUser, userId).Error
 	if err != nil {
 		return domain.User{}, err
 	}
 
-	user.IsVerified = isVerified
-	err = u.db.Save(&user).Error
+	localUser.IsVerified = isVerified
+	err = u.db.Save(&localUser).Error
 	if err != nil {
 		return domain.User{}, err
 	}
 
-	return mapUserToDomain(user), nil
+	return mapUserToDomain(localUser), nil
 }
 
 var _ gateways.IUserRepository = &UserRepository{}

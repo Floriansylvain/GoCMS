@@ -41,12 +41,8 @@
         button.querySelector("button > span:first-child").classList.remove("visually-hidden")
     }
 
-    function onSubmit(event) {
-        setButtonLoading()
-    }
-
-    window.addEventListener('submit', onSubmit)
-    button.addEventListener('click', onSubmit)
+    window.addEventListener('submit', setButtonLoading)
+    button.addEventListener('click', setButtonLoading)
 </script>
 
 </body>

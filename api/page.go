@@ -113,6 +113,7 @@ func NewPageRouter() http.Handler {
 		r.Use(IsLoggedInMiddleware)
 		r.Use(IsNotVerifiedMiddleware)
 		r.Get("/register/pending", GetRegisterPendingPage)
+		r.Post("/register/pending", PostRegisterPendingPage)
 		r.Get("/register/validate", GetRegisterValidatePage)
 	})
 
