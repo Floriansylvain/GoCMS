@@ -1,8 +1,7 @@
 package api
 
 import (
-	"bytes"
-	"encoding/json"
+	"github.com/google/uuid"
 	"net/http"
 	"os"
 )
@@ -29,7 +28,7 @@ func GetRegisterPageHandler(registerPage *RegisterPage) http.HandlerFunc {
 			PostRegisterPage(w, r)
 			return
 		}
-		bs, err := Container.GetPageUseCase.GetPage("setup1", map[string]interface{}{
+		bs, err := Container.GetPageUseCase.GetPage("register", map[string]interface{}{
 			"PageError": registerPage.PageError,
 			"Username":  registerPage.Username,
 			"Email":     registerPage.Email,
@@ -45,11 +44,12 @@ func GetRegisterPageHandler(registerPage *RegisterPage) http.HandlerFunc {
 func PostRegisterPage(w http.ResponseWriter, r *http.Request) {
 	_ = r.ParseForm()
 
-	credentials, err := json.Marshal(&RegisterCredentials{
+	credentials := RegisterCredentials{
 		Username: r.FormValue("username"),
 		Password: r.FormValue("password"),
 		Email:    r.FormValue("email"),
-	})
+	}
+	err := validate.Struct(credentials)
 	if err != nil {
 		r.Method = http.MethodGet
 		GetRegisterPageHandler(&RegisterPage{
@@ -60,22 +60,22 @@ func PostRegisterPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response, err := http.Post(
-		"http://localhost:"+os.Getenv("PORT")+"/v1/auth/register",
-		"application/json",
-		bytes.NewBuffer(credentials))
-
-	if err != nil || response.StatusCode != http.StatusOK {
-		r.Method = http.MethodGet
-		GetRegisterPageHandler(&RegisterPage{
-			PageError: NewPageError("Username should be between 3 and 20 characters long, password should be between 8 and 20 characters long, and email should be a valid email address."),
-			Username:  r.FormValue("username"),
-			Email:     r.FormValue("email"),
-		})(w, r)
+	verificationCode := uuid.NewString()
+	createdUser, err := getNewUser(credentials, verificationCode)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	w.Header().Set("Set-Cookie", response.Header.Get("Set-Cookie"))
+	err = Container.SendMailUseCase.SendMail(createdUser.Email, "mailValidation", map[string]string{
+		"Host":             os.Getenv("HOST"),
+		"VerificationCode": verificationCode,
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 
-	http.Redirect(w, r, "/register-confirm", http.StatusSeeOther)
+	_ = SetJwtCookie(&w, createdUser.ID)
+
+	http.Redirect(w, r, "/register/pending", http.StatusSeeOther)
 }

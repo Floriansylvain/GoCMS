@@ -11,9 +11,10 @@ type CreateUserUseCase struct {
 }
 
 type CreateUserCommand struct {
-	Username string
-	Password string
-	Email    string
+	Username         string
+	Password         string
+	Email            string
+	VerificationCode string
 }
 
 func NewCreateUserUseCase(db *gorm.DB) *CreateUserUseCase {
@@ -27,5 +28,6 @@ func (g *CreateUserUseCase) CreateUser(createUser CreateUserCommand) (user.User,
 		createUser.Username,
 		createUser.Password,
 		createUser.Email,
+		createUser.VerificationCode,
 	))
 }

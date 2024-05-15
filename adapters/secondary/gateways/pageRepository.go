@@ -10,7 +10,7 @@ import (
 type PageRepository struct{}
 
 //go:embed web/templates/*
-var templateFiles embed.FS
+var webTemplateFiles embed.FS
 
 func NewPageRepository() *PageRepository {
 	return &PageRepository{}
@@ -18,7 +18,7 @@ func NewPageRepository() *PageRepository {
 
 func (p *PageRepository) Get(name string, data interface{}) ([]byte, error) {
 	var processedHTML bytes.Buffer
-	tmpl, err := template.ParseFS(templateFiles, "web/templates/"+name+".html")
+	tmpl, err := template.ParseFS(webTemplateFiles, "web/templates/"+name+".html")
 	if err != nil {
 		return nil, err
 	}

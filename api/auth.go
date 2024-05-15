@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/jwtauth/v5"
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"os"
@@ -61,6 +62,21 @@ func IsLoggedIn(r *http.Request) bool {
 	return token != nil && err == nil
 }
 
+func IsVerified(r *http.Request) bool {
+	token, err := jwtauth.VerifyRequest(
+		TokenAuth,
+		r,
+		jwtauth.TokenFromCookie,
+		jwtauth.TokenFromHeader,
+		jwtauth.TokenFromQuery)
+	if err != nil {
+		return false
+	}
+	userId := token.PrivateClaims()["user_id"].(float64)
+	currentUser, _ := Container.GetUserUseCase.GetUser(uint32(userId))
+	return currentUser.IsVerified
+}
+
 func getUserFromCredentials(credentials LoginCredentials) (user.User, error) {
 	dbUser, err := Container.GetUserUseCase.GetUserByUsername(credentials.Username)
 	if err != nil {
@@ -73,6 +89,19 @@ func getUserFromCredentials(credentials LoginCredentials) (user.User, error) {
 	}
 
 	return dbUser, nil
+}
+
+func getNewUser(newUserCredentials RegisterCredentials, verificationCode string) (user.User, error) {
+	createdUser, err := Container.CreateUserUseCase.CreateUser(useCases.CreateUserCommand{
+		Username:         newUserCredentials.Username,
+		Password:         newUserCredentials.Password,
+		Email:            newUserCredentials.Email,
+		VerificationCode: verificationCode,
+	})
+	if err != nil {
+		return user.User{}, err
+	}
+	return createdUser, nil
 }
 
 func login(w http.ResponseWriter, r *http.Request) {
@@ -120,11 +149,8 @@ func register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	createdUser, err := Container.CreateUserUseCase.CreateUser(useCases.CreateUserCommand{
-		Username: credentials.Username,
-		Password: credentials.Password,
-		Email:    credentials.Email,
-	})
+	verificationCode := uuid.NewString()
+	createdUser, err := getNewUser(credentials, verificationCode)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

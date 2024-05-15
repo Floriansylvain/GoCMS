@@ -47,6 +47,26 @@ func IsLoggedInMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+func IsVerifiedMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !IsVerified(r) {
+			http.Redirect(w, r, "/register/pending", http.StatusSeeOther)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
+func IsNotVerifiedMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if IsVerified(r) {
+			http.Redirect(w, r, "/register/pending", http.StatusSeeOther)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
 func GetLogin(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, LoginRoute, http.StatusPermanentRedirect)
 }
@@ -91,7 +111,14 @@ func NewPageRouter() http.Handler {
 
 	r.Group(func(r chi.Router) {
 		r.Use(IsLoggedInMiddleware)
-		r.Get("/register-confirm", GetRegisterConfirmPage)
+		r.Use(IsNotVerifiedMiddleware)
+		r.Get("/register/pending", GetRegisterPendingPage)
+		r.Get("/register/validate", GetRegisterValidatePage)
+	})
+
+	r.Group(func(r chi.Router) {
+		r.Use(IsLoggedInMiddleware)
+		r.Use(IsVerifiedMiddleware)
 		r.Get("/home", GetHomePage)
 		r.Get("/post", GetPostsPage)
 		r.Get("/post/edit", GetPostEditPage)

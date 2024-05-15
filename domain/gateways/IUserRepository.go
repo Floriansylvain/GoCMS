@@ -7,4 +7,5 @@ type IUserRepository interface {
 	GetByUsername(username string) (user.User, error)
 	GetAll() []user.User
 	Create(user user.User) (user.User, error)
+	UpdateVerificationStatus(userId uint32, isVerified bool) (user.User, error)
 }

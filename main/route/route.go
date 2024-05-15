@@ -29,7 +29,7 @@ func HtmlContentTypeMiddleware(next http.Handler) http.Handler {
 }
 
 func InitJwt() {
-	api.TokenAuth = jwtauth.New("HS256", []byte("secret"), nil)
+	api.TokenAuth = jwtauth.New("HS256", []byte(os.Getenv("JWT_SECRET")), nil)
 }
 
 func GetHelloWorld(w http.ResponseWriter, _ *http.Request) {
