@@ -14,17 +14,25 @@ func GetRegisterValidatePage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, claims, _ := jwtauth.FromContext(r.Context())
-	userId, _ := claims["user_id"].(uint32)
+	token, _ := jwtauth.VerifyRequest(
+		TokenAuth,
+		r,
+		jwtauth.TokenFromCookie,
+		jwtauth.TokenFromHeader,
+		jwtauth.TokenFromQuery)
 
-	user, _ := Container.GetUserUseCase.GetUser(userId)
+	userId := token.PrivateClaims()["user_id"].(float64)
+	user, _ := Container.GetUserUseCase.GetUser(uint32(userId))
 	errorMessage := ""
 
 	err := bcrypt.CompareHashAndPassword([]byte(user.VerificationCode), []byte(queryVerificationCode))
 	if err != nil || user.VerificationExpiration.Before(time.Now()) {
 		errorMessage = "Verification link is incorrect or has expired."
 	} else {
-		// TODO New usecase "UpdateUserUseCase" to update its verification status
+		_, err := Container.UpdateUserUseCase.UpdateVerificationStatus(user.ID, true)
+		if err != nil {
+			errorMessage = "Something went wrong server-side. User account may not exist."
+		}
 	}
 
 	registerValidateTmpl, _ := Container.GetPageUseCase.GetPage("registerValidate", map[string]interface{}{

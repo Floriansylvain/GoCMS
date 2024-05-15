@@ -57,6 +57,16 @@ func IsVerifiedMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+func IsNotVerifiedMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if IsVerified(r) {
+			http.Redirect(w, r, "/register/pending", http.StatusSeeOther)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
 func GetLogin(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, LoginRoute, http.StatusPermanentRedirect)
 }
@@ -101,6 +111,7 @@ func NewPageRouter() http.Handler {
 
 	r.Group(func(r chi.Router) {
 		r.Use(IsLoggedInMiddleware)
+		r.Use(IsNotVerifiedMiddleware)
 		r.Get("/register/pending", GetRegisterPendingPage)
 		r.Get("/register/validate", GetRegisterValidatePage)
 	})

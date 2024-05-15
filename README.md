@@ -60,3 +60,7 @@ TODO
 ## Demo
 
 TODO
+
+## TODOs
+
+- Cancel button when email validation pending or expired

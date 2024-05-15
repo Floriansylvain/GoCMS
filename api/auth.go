@@ -63,9 +63,17 @@ func IsLoggedIn(r *http.Request) bool {
 }
 
 func IsVerified(r *http.Request) bool {
-	_, claims, _ := jwtauth.FromContext(r.Context())
-	userIDClaim, _ := claims["user_id"].(uint32)
-	currentUser, _ := Container.GetUserUseCase.GetUser(userIDClaim)
+	token, err := jwtauth.VerifyRequest(
+		TokenAuth,
+		r,
+		jwtauth.TokenFromCookie,
+		jwtauth.TokenFromHeader,
+		jwtauth.TokenFromQuery)
+	if err != nil {
+		return false
+	}
+	userId := token.PrivateClaims()["user_id"].(float64)
+	currentUser, _ := Container.GetUserUseCase.GetUser(uint32(userId))
 	return currentUser.IsVerified
 }
 

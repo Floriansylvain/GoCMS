@@ -22,13 +22,14 @@ func FromApi(
 	email string,
 	verificationCode string,
 ) User {
+	expiration := time.Now().Add(2 * time.Hour)
 	return User{
 		Username:               username,
 		Password:               password,
 		Email:                  email,
 		IsVerified:             false,
 		VerificationCode:       verificationCode,
-		VerificationExpiration: time.Now().Add(2 * time.Hour),
+		VerificationExpiration: expiration,
 	}
 }
 

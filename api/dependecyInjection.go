@@ -16,6 +16,7 @@ type UseCases struct {
 	ListPostsUseCase  *useCases.ListPostsUseCase
 	GetUserUseCase    *useCases.GetUserUseCase
 	CreateUserUseCase *useCases.CreateUserUseCase
+	UpdateUserUseCase *useCases.UpdateUserUseCase
 	ListUsersUseCase  *useCases.ListUsersUseCase
 	GetPageUseCase    *useCases.GetPageUseCase
 	SendMailUseCase   *useCases.SendMailUseCase
@@ -49,6 +50,7 @@ func InitContainer() {
 			ListPostsUseCase:  useCases.NewListPostsUseCase(db),
 			GetUserUseCase:    useCases.NewGetUserUseCase(db),
 			CreateUserUseCase: useCases.NewCreateUserUseCase(db),
+			UpdateUserUseCase: useCases.NewUpdateUserUseCase(db),
 			ListUsersUseCase:  useCases.NewListUsersUseCase(db),
 			GetPageUseCase:    useCases.NewGetPageUseCase(),
 			SendMailUseCase:   useCases.NewSendMailUseCase(),
