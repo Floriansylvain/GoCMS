@@ -13,6 +13,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    environment: test
     env:
         ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
         HOST: ${{ secrets.HOST }}
