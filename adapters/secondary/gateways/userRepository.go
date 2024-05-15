@@ -40,8 +40,8 @@ func (u *UserRepository) Get(id uint32) (domain.User, error) {
 }
 
 func (u *UserRepository) Create(user domain.User) (domain.User, error) {
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 14)
-	hashedVerificationCode, _ := bcrypt.GenerateFromPassword([]byte(user.VerificationCode), 14)
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
+	hashedVerificationCode, _ := bcrypt.GenerateFromPassword([]byte(user.VerificationCode), 10)
 
 	creationResult := u.db.Create(&entity.User{
 		Username:         user.Username,
