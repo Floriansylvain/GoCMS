@@ -15,9 +15,15 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ENVIRONMENT: "development"
+      HOST: "http://localhost:42069"
       PORT: "42069"
+      JWT_SECRET: gpehf28ugohfevuwpf98hv9ewvb
       CORS_ALLOWED_ORIGINS: "*"
       DB_FILE: "./gohcms.db"
+      SMTP_EMAIL: floriansylvain@mailo.com
+      SMTP_PASSWORD: bqICDqGtfV1R
+      SMTP_HOST: mail.mailo.com
+      SMTP_PORT: 587
     steps:
     - uses: actions/checkout@v3
 
