@@ -19,3 +19,7 @@ func NewGetPostUseCase(db *gorm.DB) *GetPostUseCase {
 func (g *GetPostUseCase) GetPost(id uint32) (post.Post, error) {
 	return g.postRepository.Get(id)
 }
+
+func (g *GetPostUseCase) GetPostByName(name string) (post.Post, error) {
+	return g.postRepository.GetByName(name)
+}

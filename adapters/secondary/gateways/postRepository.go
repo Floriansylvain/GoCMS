@@ -29,6 +29,18 @@ func (a *PostRepository) Get(id uint32) (domain.Post, error) {
 	return mapPostToDomain(post), nil
 }
 
+func (a *PostRepository) GetByName(name string) (domain.Post, error) {
+	var post entity.Post
+	err := a.db.Model(&entity.Post{
+		Title: name,
+	}).First(&post).Error
+	if err != nil {
+		return domain.Post{}, err
+	}
+
+	return mapPostToDomain(post), nil
+}
+
 func (a *PostRepository) Create(post domain.Post) (domain.Post, error) {
 	creationResult := a.db.Create(&entity.Post{
 		Title: post.Title,
