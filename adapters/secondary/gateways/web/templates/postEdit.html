@@ -6,28 +6,36 @@
 </head>
 <body class="text-dark vh-100 d-flex flex-column">
 {{.Navbar}}
-<div class="container mt-3 text-black-50 d-flex flex-column h-100">
+<form class="container mt-3 text-black-50 d-flex flex-column h-100" action="edit" method="post">
     <div class="d-flex align-items-center justify-content-between">
         <div>
             <h1>Post - edition</h1>
-            <label for="postContent">Edition</label>
+            <label for="postBody">Edition</label>
         </div>
+        {{ if .Alert.Message }}
+        <div class="alert {{ if .Alert.IsError }} alert-danger {{ else }} alert-success {{ end }} alert-dismissible" role="alert">
+            {{ .Alert.Message }}
+            <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="alert"></button>
+        </div>
+        {{ end }}
         <div class="d-flex justify-content-center align-items-center">
-            <button class="btn btn-success d-flex justify-content-center align-items-center gap-1" style="fill: white;">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/></svg>
+            <button class="btn btn-success d-flex justify-content-center align-items-center gap-1" style="fill: white;" type="submit">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
+                    <path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"/>
+                </svg>
                 Save
             </button>
         </div>
     </div>
     <div class="text-black-50 d-flex align-items-center justify-content-center h-100 py-3">
-        <textarea id="postContent" name="postContent">{{.Body}}</textarea>
+        <textarea id="postBody" name="postBody">{{.Body}}</textarea>
     </div>
-</div>
+</form>
 
 <script src="/static/tinymce/js/tinymce/tinymce.min.js"></script>
 <script>
     tinymce.init({
-        selector: '#postContent',
+        selector: '#postBody',
         promotion: false,
         plugins: 'image',
         width: '100%',

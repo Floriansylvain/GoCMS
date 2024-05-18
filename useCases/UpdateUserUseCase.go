@@ -10,10 +10,6 @@ type UpdateUserUseCase struct {
 	userRepository gateways.UserRepository
 }
 
-type UpdateVerificationStatusCommand struct {
-	isVerified bool
-}
-
 func NewUpdateUserUseCase(db *gorm.DB) *UpdateUserUseCase {
 	return &UpdateUserUseCase{
 		userRepository: *gateways.NewUserRepository(db),
