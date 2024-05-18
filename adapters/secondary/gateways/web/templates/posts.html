@@ -1,21 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>GoCMS | Posts</title>
-	{{.Head}}
+    <title>GoCMS | Posts</title>
+    {{.Head}}
+
+    <style>
+        .btn-outline-danger:hover > * {
+            fill: #fff !important;
+            transition: fill ease-in-out 50ms;
+        }
+    </style>
 </head>
 <body class="text-dark">
 {{.Navbar}}
 <div class="container mt-3 text-black-50">
-	<h1>Posts</h1>
-	<p>List of your posts</p>
-	<table class="table table-striped">
-		<thead>
-		</thead>
-		<tbody>
-		</tbody>
-	</table>
+    <h1>Posts</h1>
+    <p>List of your posts</p>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Creation Date</th>
+            <th scope="col">Edition Date</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td colspan="4" class="text-center">
+                <form action="post/create" method="get">
+                    <button class="btn btn-sm btn-link w-100 h-100" type="submit">Create a new post...</button>
+                </form>
+            </td>
+        </tr>
+        {{ range $post := .Posts }}
+        <tr>
+            <td>{{ $post.Title }}</td>
+            <td class="date">{{ $post.CreatedAt }}</td>
+            <td class="date">{{ $post.UpdatedAt }}</td>
+            <td>
+                <a href="/post/{{ $post.Title }}/edit" class="btn btn-secondary btn-sm">
+                    <svg width="12px" height="12px" fill="currentColor">
+                        <use xlink:href="/static/bootstrap-icons.svg#pen"/>
+                    </svg>
+                </a>
+                <a href="/post/{{ $post.Title }}/delete" class="btn btn-outline-danger btn-sm">
+                    <svg width="12px" height="12px" fill="currentColor">
+                        <use xlink:href="/static/bootstrap-icons.svg#trash"/>
+                    </svg>
+                </a>
+            </td>
+        </tr>
+        {{ end }}
+        </tbody>
+    </table>
 </div>
+
+<script>
+    const datesElements = document.querySelectorAll("td.date")
+    datesElements.forEach(date => {
+        date.innerText = new Date(date.innerText).toLocaleDateString(undefined, {
+            year: "2-digit",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+        })
+    })
+</script>
 
 </body>
 </html>

@@ -122,7 +122,10 @@ func NewPageRouter() http.Handler {
 		r.Use(IsVerifiedMiddleware)
 		r.Get("/home", GetHomePage)
 		r.Get("/post", GetPostsPage)
-		r.Get("/post/edit", GetPostEditPage)
+		r.Get("/post/{name}/edit", GetPostEditPage)
+		r.Post("/post/{name}/edit", PostPostEditPage)
+		r.Get("/post/create", GetPostCreatePage)
+		r.Post("/post/create", PostPostCreatePage)
 	})
 
 	return r

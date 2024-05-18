@@ -6,6 +6,9 @@ import (
 
 type IPostRepository interface {
 	Get(id uint32) (post.Post, error)
+	GetByName(name string) (post.Post, error)
 	GetAll() []post.Post
 	Create(post post.Post) (post.Post, error)
+	UpdateBody(id uint32, body string) error
+	Delete(id uint32) error
 }

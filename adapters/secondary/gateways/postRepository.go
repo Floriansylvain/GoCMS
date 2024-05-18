@@ -29,6 +29,16 @@ func (a *PostRepository) Get(id uint32) (domain.Post, error) {
 	return mapPostToDomain(post), nil
 }
 
+func (a *PostRepository) GetByName(name string) (domain.Post, error) {
+	var post entity.Post
+	err := a.db.Model(&entity.Post{}).Where("title = ?", name).First(&post).Error
+	if err != nil {
+		return domain.Post{}, err
+	}
+
+	return mapPostToDomain(post), nil
+}
+
 func (a *PostRepository) Create(post domain.Post) (domain.Post, error) {
 	creationResult := a.db.Create(&entity.Post{
 		Title: post.Title,
@@ -57,6 +67,27 @@ func (a *PostRepository) GetAll() []domain.Post {
 	}
 
 	return domainPosts
+}
+
+func (a *PostRepository) UpdateBody(id uint32, body string) error {
+	var localPost entity.Post
+	err := a.db.Model(&entity.Post{}).First(&localPost, id).Error
+	if err != nil {
+		return err
+	}
+
+	localPost.Body = body
+	err = a.db.Save(&localPost).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *PostRepository) Delete(id uint32) error {
+	//TODO implement me
+	panic("implement me")
 }
 
 var _ gateways.IPostRepository = &PostRepository{}

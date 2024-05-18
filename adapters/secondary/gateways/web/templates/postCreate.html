@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>GoCMS | Create post</title>
+    {{.Head}}
+    <style>
+        form {
+            max-width: 24rem;
+        }
+    </style>
+</head>
+<body class="text-dark">
+{{.Navbar}}
+<div class="container mt-3 text-black-50">
+    <h1>Post - creation</h1>
+    <p>Create a new post</p>
+    <form action="create" method="post" class="d-flex align-items-center flex-column gap-3" id="createPostForm">
+        <div class="form-floating w-100">
+            <input type="text" class="form-control {{ if .PageError.IsError }} is-invalid {{ end }}" id="name"
+                   name="name" placeholder="Chose the post name" value="{{ .Name }}">
+            <label for="name">Name</label>
+            <div class="invalid-feedback">{{ .PageError.Message }}</div>
+        </div>
+        <button id="createPostButton" class="btn btn-primary w-100" disabled type="submit">
+						<span class="createPostFormButtonLoading visually-hidden spinner-border spinner-border-sm"
+                              role="status"></span>
+            <span class="createPostFormButtonDefault">Create</span>
+        </button>
+    </form>
+</div>
+
+<script>
+    const button = document.querySelector("#createPostButton")
+    const inputs = document.querySelectorAll('input')
+    const form = document.querySelector("#createPostForm")
+
+    function formFieldsEmpty() {
+        return Array.from(inputs).some((input) => input.value === "")
+    }
+
+    function setButtonDisabled() {
+        button.disabled = formFieldsEmpty() ? "disabled" : ""
+    }
+
+    function setButtonLoading() {
+        button.classList.add("disabled")
+        button.querySelector(".createPostFormButtonDefault").classList.add("visually-hidden")
+        button.querySelector(".createPostFormButtonLoading").classList.remove("visually-hidden")
+    }
+
+    function onCreatePostFormSubmit(event) {
+        setButtonLoading()
+        event.target.submit()
+    }
+
+    function onInput(event) {
+        if (event.target.tagName === "INPUT") setButtonDisabled()
+    }
+
+    form.addEventListener('submit', onCreatePostFormSubmit)
+    window.addEventListener('input', onInput)
+    setButtonDisabled()
+</script>
+
+</body>
+</html>
