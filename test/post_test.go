@@ -120,6 +120,20 @@ var TestGetAllPostsSuccess = func(t *testing.T) {
 	assert.Equal(t, createdPost.Body, response[0].Body)
 }
 
+var TestDeletePostSuccess = func(t *testing.T) {
+	var createdPost post.Post
+	var postToCreate = post.Post{
+		Title: "Test Title",
+		Body:  "Test Body",
+	}
+	db := GetDb()
+	db.Create(&postToCreate).Scan(&createdPost)
+
+	r, _ := ApiRequest("DELETE", "/post/"+strconv.Itoa(int(createdPost.ID)), nil)
+
+	assert.Equal(t, http.StatusOK, r.StatusCode)
+}
+
 var TestPostCreate = func(t *testing.T) {
 	t.Run("Should return a post with the given title and body", TestCreatePostSuccess)
 	t.Run("Should return an error if the title is missing", TestCreatePostFailTitleMissing)
@@ -134,6 +148,10 @@ var TestPostGetAll = func(t *testing.T) {
 	t.Run("Should return all posts", TestGetAllPostsSuccess)
 }
 
+var TestPostDelete = func(t *testing.T) {
+	t.Run("Should return success", TestDeletePostSuccess)
+}
+
 func TestPost(t *testing.T) {
 	StartServerIfNotAlready()
 	WaitForServer()
@@ -141,4 +159,5 @@ func TestPost(t *testing.T) {
 	t.Run("Create", TestPostCreate)
 	t.Run("Get", TestPostGet)
 	t.Run("GetAll", TestPostGetAll)
+	t.Run("Delete", TestPostDelete)
 }

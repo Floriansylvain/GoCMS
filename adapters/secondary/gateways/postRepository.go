@@ -86,8 +86,7 @@ func (a *PostRepository) UpdateBody(id uint32, body string) error {
 }
 
 func (a *PostRepository) Delete(id uint32) error {
-	//TODO implement me
-	panic("implement me")
+	return a.db.Delete(&entity.Post{}, id).Error
 }
 
 var _ gateways.IPostRepository = &PostRepository{}

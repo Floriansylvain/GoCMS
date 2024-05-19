@@ -44,16 +44,38 @@
                         <use xlink:href="/static/bootstrap-icons.svg#pen"/>
                     </svg>
                 </a>
-                <a href="/post/{{ $post.Title }}/delete" class="btn btn-outline-danger btn-sm">
-                    <svg width="12px" height="12px" fill="currentColor">
+                <a href="/post/{{ $post.Title }}/delete" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                   data-bs-target="#{{ $post.ID }}">
+                    <svg width=" 12px" height="12px" fill="currentColor">
                         <use xlink:href="/static/bootstrap-icons.svg#trash"/>
                     </svg>
                 </a>
+                <div class="modal fade" id="{{ $post.ID }}" tabindex="-1" aria-labelledby="{{ $post.ID }}Label"
+                     aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="{{ $post.ID }}Label">Delete post</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>You are about to delete the post <b>« {{ $post.Title }} »</b>, this is definitive, are you sure?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel
+                                </button>
+                                <a href="/post/{{$post.ID}}/delete" class="btn btn-danger">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </td>
         </tr>
         {{ end }}
         </tbody>
     </table>
+
 </div>
 
 <script>

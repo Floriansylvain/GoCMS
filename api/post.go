@@ -64,10 +64,26 @@ func listPosts(w http.ResponseWriter, _ *http.Request) {
 	_, _ = w.Write(postsJson)
 }
 
+func deletePost(w http.ResponseWriter, r *http.Request) {
+	idParam := chi.URLParam(r, "id")
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+
+	err = Container.DeletePostUseCase.DeletePost(uint32(id))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+	}
+
+	_, _ = w.Write([]byte("post deleted"))
+}
+
 func NewPostRouter() http.Handler {
 	r := chi.NewRouter()
 	r.Get("/{id}", getPost)
 	r.Post("/", postPost)
 	r.Get("/", listPosts)
+	r.Delete("/{id}", deletePost)
 	return r
 }
