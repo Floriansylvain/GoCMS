@@ -13,10 +13,12 @@ type PostPost struct {
 	Body  string `json:"body" validate:"required,max=10000"`
 }
 
+const idUint32ErrorMessage = "The server expects the ID to be in the format of an unsigned 32-bit integer (uint32)."
+
 func getPost(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseUint(chi.URLParam(r, "id"), 10, 32)
 	if err != nil {
-		http.Error(w, "The server expects the ID to be in the format of an unsigned 32-bit integer (uint32).", http.StatusBadRequest)
+		http.Error(w, idUint32ErrorMessage, http.StatusBadRequest)
 		return
 	}
 
@@ -65,10 +67,9 @@ func listPosts(w http.ResponseWriter, _ *http.Request) {
 }
 
 func deletePost(w http.ResponseWriter, r *http.Request) {
-	idParam := chi.URLParam(r, "id")
-	id, err := strconv.Atoi(idParam)
+	id, err := strconv.ParseUint(chi.URLParam(r, "id"), 10, 32)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, idUint32ErrorMessage, http.StatusBadRequest)
 	}
 
 	err = Container.DeletePostUseCase.DeletePost(uint32(id))

@@ -7,10 +7,9 @@ import (
 )
 
 func GetPostDeletePage(w http.ResponseWriter, r *http.Request) {
-	postId := chi.URLParam(r, "id")
-	id, err := strconv.Atoi(postId)
+	id, err := strconv.ParseUint(chi.URLParam(r, "id"), 10, 32)
 	if err != nil {
-		http.Error(w, http.StatusText(400), http.StatusBadRequest)
+		http.Error(w, idUint32ErrorMessage, http.StatusBadRequest)
 		return
 	}
 
