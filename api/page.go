@@ -81,6 +81,7 @@ func StaticFileServerWithContentType(fsys http.FileSystem) http.Handler {
 		path := r.URL.Path
 		if ext := filepath.Ext(path); ext != "" {
 			if ct, ok := contentTypes[ext]; ok {
+				w.Header().Set("Cache-Control", "public, max-age=31536000")
 				w.Header().Set("Content-Type", ct)
 			}
 		}
