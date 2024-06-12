@@ -4,7 +4,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"html/template"
 	"net/http"
-	"net/url"
+	"strconv"
 )
 
 type PostEditPageAlert struct {
@@ -24,8 +24,9 @@ func getPostEditPageTemplate(body string, alert PostEditPageAlert) []byte {
 }
 
 func PostPostEditPage(w http.ResponseWriter, r *http.Request) {
-	postName := chi.URLParam(r, "name")
-	if len(postName) == 0 {
+	postID := chi.URLParam(r, "id")
+	postIDint, err := strconv.Atoi(postID)
+	if err != nil {
 		_, _ = w.Write(getPostEditPageTemplate("", PostEditPageAlert{
 			IsError: true,
 			Message: "Could not find the requested post.",
@@ -36,9 +37,8 @@ func PostPostEditPage(w http.ResponseWriter, r *http.Request) {
 	_ = r.ParseForm()
 	postBody := r.FormValue("postBody")
 
-	parsedName, _ := url.PathUnescape(postName)
-	post, _ := Container.GetPostUseCase.GetPostByName(parsedName)
-	err := Container.UpdatePostUseCase.UpdateBody(post.ID, postBody)
+	post, _ := Container.GetPostUseCase.GetPost(uint32(postIDint))
+	err = Container.UpdatePostUseCase.UpdateBody(post.ID, postBody)
 	if err != nil {
 		_, _ = w.Write(getPostEditPageTemplate(postBody, PostEditPageAlert{
 			IsError: true,
@@ -54,13 +54,15 @@ func PostPostEditPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetPostEditPage(w http.ResponseWriter, r *http.Request) {
-	postName := chi.URLParam(r, "name")
-	if len(postName) == 0 {
+	postID := chi.URLParam(r, "id")
+	postIDint, err := strconv.Atoi(postID)
+	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	parsedName, _ := url.PathUnescape(postName)
-	post, _ := Container.GetPostUseCase.GetPostByName(parsedName)
+
+	post, _ := Container.GetPostUseCase.GetPost(uint32(postIDint))
+
 	_, _ = w.Write(getPostEditPageTemplate(post.Body, PostEditPageAlert{
 		IsError: false,
 		Message: "",

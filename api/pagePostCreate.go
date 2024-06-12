@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"net/http"
 	"regexp"
+	"strconv"
 )
 
 type PostCreatePageError struct {
@@ -47,7 +48,7 @@ func PostPostCreatePage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/post/"+post.Title+"/edit", http.StatusSeeOther)
+	http.Redirect(w, r, "/post/"+strconv.Itoa(int(post.ID))+"/edit", http.StatusSeeOther)
 }
 
 func GetPostCreatePage(w http.ResponseWriter, _ *http.Request) {
