@@ -4,6 +4,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"html/template"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 )
@@ -74,6 +75,12 @@ func GetLogout(w http.ResponseWriter, r *http.Request) {
 func StaticFileServerWithContentType(fsys http.FileSystem) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		path := r.URL.Path
+		filePath := filepath.Join("api/static", r.URL.Path)
+		fileInfo, err := os.Stat(filePath)
+		if err == nil && fileInfo.IsDir() {
+			http.Error(w, "Folder direct access is disabled.", http.StatusForbidden)
+			return
+		}
 		if ext := filepath.Ext(path); ext != "" {
 			if ct, ok := contentTypes[ext]; ok {
 				w.Header().Set("Cache-Control", "public, max-age=31536000")
