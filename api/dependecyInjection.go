@@ -11,18 +11,20 @@ import (
 )
 
 type UseCases struct {
-	CreatePostUseCase *useCases.CreatePostUseCase
-	GetPostUseCase    *useCases.GetPostUseCase
-	ListPostsUseCase  *useCases.ListPostsUseCase
-	UpdatePostUseCase *useCases.UpdatePostUseCase
-	DeletePostUseCase *useCases.DeletePostUseCase
-	GetUserUseCase    *useCases.GetUserUseCase
-	CreateUserUseCase *useCases.CreateUserUseCase
-	UpdateUserUseCase *useCases.UpdateUserUseCase
-	DeleteUserUseCase *useCases.DeleteUserUseCase
-	ListUsersUseCase  *useCases.ListUsersUseCase
-	GetPageUseCase    *useCases.GetPageUseCase
-	SendMailUseCase   *useCases.SendMailUseCase
+	CreatePostUseCase  *useCases.CreatePostUseCase
+	GetPostUseCase     *useCases.GetPostUseCase
+	ListPostsUseCase   *useCases.ListPostsUseCase
+	UpdatePostUseCase  *useCases.UpdatePostUseCase
+	DeletePostUseCase  *useCases.DeletePostUseCase
+	GetUserUseCase     *useCases.GetUserUseCase
+	CreateUserUseCase  *useCases.CreateUserUseCase
+	UpdateUserUseCase  *useCases.UpdateUserUseCase
+	DeleteUserUseCase  *useCases.DeleteUserUseCase
+	ListUsersUseCase   *useCases.ListUsersUseCase
+	GetPageUseCase     *useCases.GetPageUseCase
+	SendMailUseCase    *useCases.SendMailUseCase
+	CreateImageUseCase *useCases.CreateImageUseCase
+	DeleteImageUseCase *useCases.DeleteImageUseCase
 }
 
 var Container *UseCases
@@ -48,18 +50,20 @@ func InitContainer() {
 
 	_ = digContainer.Provide(func(db *gorm.DB) *UseCases {
 		return &UseCases{
-			CreatePostUseCase: useCases.NewCreatePostUseCase(db),
-			GetPostUseCase:    useCases.NewGetPostUseCase(db),
-			ListPostsUseCase:  useCases.NewListPostsUseCase(db),
-			UpdatePostUseCase: useCases.NewUpdatePostUseCase(db),
-			DeletePostUseCase: useCases.NewDeletePostUseCase(db),
-			GetUserUseCase:    useCases.NewGetUserUseCase(db),
-			CreateUserUseCase: useCases.NewCreateUserUseCase(db),
-			UpdateUserUseCase: useCases.NewUpdateUserUseCase(db),
-			DeleteUserUseCase: useCases.NewDeleteUserUseCase(db),
-			ListUsersUseCase:  useCases.NewListUsersUseCase(db),
-			GetPageUseCase:    useCases.NewGetPageUseCase(),
-			SendMailUseCase:   useCases.NewSendMailUseCase(),
+			CreatePostUseCase:  useCases.NewCreatePostUseCase(db),
+			GetPostUseCase:     useCases.NewGetPostUseCase(db),
+			ListPostsUseCase:   useCases.NewListPostsUseCase(db),
+			UpdatePostUseCase:  useCases.NewUpdatePostUseCase(db),
+			DeletePostUseCase:  useCases.NewDeletePostUseCase(db),
+			GetUserUseCase:     useCases.NewGetUserUseCase(db),
+			CreateUserUseCase:  useCases.NewCreateUserUseCase(db),
+			UpdateUserUseCase:  useCases.NewUpdateUserUseCase(db),
+			DeleteUserUseCase:  useCases.NewDeleteUserUseCase(db),
+			ListUsersUseCase:   useCases.NewListUsersUseCase(db),
+			GetPageUseCase:     useCases.NewGetPageUseCase(),
+			SendMailUseCase:    useCases.NewSendMailUseCase(),
+			CreateImageUseCase: useCases.NewCreateImageUseCase(db),
+			DeleteImageUseCase: useCases.NewDeleteImageUseCase(db),
 		}
 	})
 	err := digContainer.Invoke(func(useCases *UseCases) { Container = useCases })

@@ -1,17 +1,12 @@
 package api
 
 import (
-	"embed"
 	"github.com/go-chi/chi/v5"
 	"html/template"
-	"io/fs"
 	"net/http"
 	"path/filepath"
 	"strings"
 )
-
-//go:embed static
-var staticFolder embed.FS
 
 var headTmpl template.HTML
 
@@ -97,11 +92,10 @@ func InitHeadTmpl() {
 func NewPageRouter() http.Handler {
 	r := chi.NewRouter()
 
-	contentStatic := fs.FS(staticFolder)
-
 	InitHeadTmpl()
 
-	r.Handle("/static/*", StaticFileServerWithContentType(http.FS(contentStatic)))
+	fileServer := StaticFileServerWithContentType(http.Dir("api/static"))
+	r.Handle("/static/*", http.StripPrefix("/static/", fileServer))
 
 	r.Get("/", GetLogin)
 	r.Get(LoginRoute, GetLoginPageHandler(EmptyLoginPage))
@@ -128,6 +122,7 @@ func NewPageRouter() http.Handler {
 		r.Get("/post/{id}/delete", GetPostDeletePage)
 		r.Get("/post/create", GetPostCreatePage)
 		r.Post("/post/create", PostPostCreatePage)
+		r.Post("/post/{id}/image/create", postImage)
 	})
 
 	return r

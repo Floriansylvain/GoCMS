@@ -9,6 +9,7 @@ type IPostRepository interface {
 	GetByName(name string) (post.Post, error)
 	GetAll() []post.Post
 	Create(post post.Post) (post.Post, error)
-	UpdateBody(id uint32, body string) error
+	UpdateBody(id uint32, body string) (post.Post, error)
 	Delete(id uint32) error
+	AddImage(postId uint32, imageId uint32) error
 }

@@ -1,13 +1,18 @@
 package post
 
-import "time"
+import (
+	entity "GoCMS/adapters/secondary/gateways/models"
+	domain "GoCMS/domain/image"
+	"time"
+)
 
 type Post struct {
-	ID        uint32    `json:"id"`
-	Title     string    `json:"title"`
-	Body      string    `json:"body"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID        uint32          `json:"id"`
+	Title     string          `json:"title"`
+	Body      string          `json:"body"`
+	Images    []*domain.Image `json:"images"`
+	CreatedAt time.Time       `json:"created_at"`
+	UpdatedAt time.Time       `json:"updated_at"`
 }
 
 func FromApi(
@@ -24,13 +29,26 @@ func FromDb(
 	id uint32,
 	title string,
 	body string,
+	images []*entity.Image,
 	createdAt time.Time,
 	updatedAt time.Time,
 ) Post {
+	domainImages := make([]*domain.Image, len(images))
+	for i, img := range images {
+		domainImage := domain.FromDB(
+			img.ID,
+			img.Path,
+			img.PostID,
+			img.CreatedAt,
+			img.UpdatedAt,
+		)
+		domainImages[i] = &domainImage
+	}
 	return Post{
 		ID:        id,
 		Title:     title,
 		Body:      body,
+		Images:    domainImages,
 		CreatedAt: createdAt,
 		UpdatedAt: updatedAt,
 	}

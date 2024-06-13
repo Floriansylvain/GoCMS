@@ -16,12 +16,12 @@ func NewPostRepository(db *gorm.DB) *PostRepository {
 }
 
 func mapPostToDomain(post entity.Post) domain.Post {
-	return domain.FromDb(post.ID, post.Title, post.Body, post.CreatedAt, post.UpdatedAt)
+	return domain.FromDb(post.ID, post.Title, post.Body, post.Images, post.CreatedAt, post.UpdatedAt)
 }
 
 func (a *PostRepository) Get(id uint32) (domain.Post, error) {
 	var post entity.Post
-	err := a.db.Model(&entity.Post{}).First(&post, id).Error
+	err := a.db.Model(&entity.Post{}).Preload("Images").First(&post, id).Error
 	if err != nil {
 		return domain.Post{}, err
 	}
@@ -69,24 +69,54 @@ func (a *PostRepository) GetAll() []domain.Post {
 	return domainPosts
 }
 
-func (a *PostRepository) UpdateBody(id uint32, body string) error {
+func (a *PostRepository) UpdateBody(id uint32, body string) (domain.Post, error) {
 	var localPost entity.Post
 	err := a.db.Model(&entity.Post{}).First(&localPost, id).Error
 	if err != nil {
-		return err
+		return domain.Post{}, err
 	}
 
 	localPost.Body = body
 	err = a.db.Save(&localPost).Error
 	if err != nil {
-		return err
+		return domain.Post{}, err
 	}
 
-	return nil
+	newPost := domain.FromDb(
+		localPost.ID,
+		localPost.Title,
+		localPost.Body,
+		localPost.Images,
+		localPost.CreatedAt,
+		localPost.UpdatedAt,
+	)
+
+	return newPost, nil
 }
 
 func (a *PostRepository) Delete(id uint32) error {
 	return a.db.Delete(&entity.Post{}, id).Error
+}
+
+func (a *PostRepository) AddImage(postId uint32, imageId uint32) error {
+	var localPost entity.Post
+	err := a.db.Model(&entity.Post{}).First(&localPost, postId).Error
+	if err != nil {
+		return err
+	}
+
+	var localImage entity.Image
+	err = a.db.Model(&entity.Image{}).First(&localImage, imageId).Error
+	if err != nil {
+		return err
+	}
+
+	err = a.db.Model(&localPost).Association("Images").Append(&localImage)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 var _ gateways.IPostRepository = &PostRepository{}

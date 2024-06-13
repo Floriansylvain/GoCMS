@@ -2,6 +2,7 @@ package useCases
 
 import (
 	"GoCMS/adapters/secondary/gateways"
+	"GoCMS/domain/post"
 	"gorm.io/gorm"
 )
 
@@ -15,6 +16,10 @@ func NewUpdatePostUseCase(db *gorm.DB) *UpdatePostUseCase {
 	}
 }
 
-func (g *UpdatePostUseCase) UpdateBody(id uint32, body string) error {
+func (g *UpdatePostUseCase) UpdateBody(id uint32, body string) (post.Post, error) {
 	return g.postRepository.UpdateBody(id, body)
+}
+
+func (g *UpdatePostUseCase) AddImage(postId uint32, imageId uint32) error {
+	return g.postRepository.AddImage(postId, imageId)
 }
