@@ -30,6 +30,9 @@ var EmptyRegisterPage = &RegisterPage{
 
 func GetRegisterPageHandler(registerPage *RegisterPage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !IsLoggedIn(r) && SomeUsersVerified() {
+			http.Redirect(w, r, "/login?failure=There is already a verified account, please login.", http.StatusSeeOther)
+		}
 		if (IsLoggedIn(r) && IsVerified(r)) || SomeUsersVerified() {
 			http.Redirect(w, r, "/home", http.StatusSeeOther)
 			return

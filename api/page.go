@@ -147,6 +147,8 @@ func NewPageRouter() http.Handler {
 		r.Post("/post/create", PostPostCreatePage)
 
 		r.Post("/post/{id}/image/create", postImage)
+
+		r.Get("/integration", GetPageIntegration)
 	})
 
 	return r
