@@ -11,6 +11,7 @@ type Post struct {
 	Title     string
 	Body      string
 	Images    []*Image  `gorm:"many2many:post_images;"`
+	IsOnline  bool      `gorm:"not_null;default:false"`
 	CreatedAt time.Time `gorm:"autoCreateTime"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
 }

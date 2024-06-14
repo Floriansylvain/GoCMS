@@ -11,6 +11,7 @@ type Post struct {
 	Title     string          `json:"title"`
 	Body      string          `json:"body"`
 	Images    []*domain.Image `json:"images"`
+	IsOnline  bool            `json:"is_online"`
 	CreatedAt time.Time       `json:"created_at"`
 	UpdatedAt time.Time       `json:"updated_at"`
 }
@@ -30,6 +31,7 @@ func FromDb(
 	title string,
 	body string,
 	images []*entity.Image,
+	isOnline bool,
 	createdAt time.Time,
 	updatedAt time.Time,
 ) Post {
@@ -49,6 +51,7 @@ func FromDb(
 		Title:     title,
 		Body:      body,
 		Images:    domainImages,
+		IsOnline:  isOnline,
 		CreatedAt: createdAt,
 		UpdatedAt: updatedAt,
 	}

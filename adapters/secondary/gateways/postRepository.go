@@ -16,7 +16,7 @@ func NewPostRepository(db *gorm.DB) *PostRepository {
 }
 
 func mapPostToDomain(post entity.Post) domain.Post {
-	return domain.FromDb(post.ID, post.Title, post.Body, post.Images, post.CreatedAt, post.UpdatedAt)
+	return domain.FromDb(post.ID, post.Title, post.Body, post.Images, post.IsOnline, post.CreatedAt, post.UpdatedAt)
 }
 
 func (a *PostRepository) Get(id uint32) (domain.Post, error) {
@@ -87,11 +87,28 @@ func (a *PostRepository) UpdateBody(id uint32, body string) (domain.Post, error)
 		localPost.Title,
 		localPost.Body,
 		localPost.Images,
+		localPost.IsOnline,
 		localPost.CreatedAt,
 		localPost.UpdatedAt,
 	)
 
 	return newPost, nil
+}
+
+func (a *PostRepository) UpdateIsOnline(id uint32, isOnline bool) (domain.Post, error) {
+	var localPost entity.Post
+	err := a.db.Model(&entity.Post{}).First(&localPost, id).Error
+	if err != nil {
+		return domain.Post{}, err
+	}
+
+	localPost.IsOnline = isOnline
+	err = a.db.Save(&localPost).Error
+	if err != nil {
+		return domain.Post{}, err
+	}
+
+	return mapPostToDomain(localPost), nil
 }
 
 func (a *PostRepository) Delete(id uint32) error {

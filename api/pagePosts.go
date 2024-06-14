@@ -13,6 +13,7 @@ func GetPostsPage(w http.ResponseWriter, _ *http.Request) {
 		formattedPosts = append(formattedPosts, map[string]interface{}{
 			"ID":        post.ID,
 			"Title":     post.Title,
+			"IsOnline":  post.IsOnline,
 			"CreatedAt": post.CreatedAt.Format("2006-01-02 15:04:05"),
 			"UpdatedAt": post.UpdatedAt.Format("2006-01-02 15:04:05"),
 		})
