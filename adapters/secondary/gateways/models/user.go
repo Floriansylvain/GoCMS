@@ -7,13 +7,14 @@ import (
 
 type User struct {
 	gorm.Model
-	ID                     uint32    `gorm:"primaryKey;autoIncrement"`
-	Username               string    `gorm:"unique;not null"`
-	Password               string    `gorm:"not null"`
-	Email                  string    `gorm:"unique;not null"`
-	IsVerified             bool      `gorm:"default=false;not null"`
-	VerificationCode       string    `gorm:"unique;not null"`
-	VerificationExpiration time.Time `gorm:"not null"`
+	ID                     uint32 `gorm:"primaryKey;autoIncrement"`
+	Username               string `gorm:"unique;not null"`
+	Password               string `gorm:"not null"`
+	PasswordResetCode      string `gorm:"unique"`
+	Email                  string `gorm:"unique;not null"`
+	IsVerified             bool   `gorm:"default=false;not null"`
+	VerificationCode       string `gorm:"unique"`
+	VerificationExpiration time.Time
 	CreatedAt              time.Time `gorm:"autoCreateTime"`
 	UpdatedAt              time.Time `gorm:"autoUpdateTime"`
 }

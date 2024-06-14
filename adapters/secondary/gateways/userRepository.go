@@ -22,6 +22,7 @@ func mapUserToDomain(user entity.User) domain.User {
 		user.ID,
 		user.Username,
 		user.Password,
+		user.PasswordResetCode,
 		user.Email,
 		user.IsVerified,
 		user.VerificationCode,
@@ -88,6 +89,16 @@ func (u *UserRepository) GetByUsername(username string) (domain.User, error) {
 	return mapUserToDomain(localUser), nil
 }
 
+func (u *UserRepository) GetByEmail(email string) (domain.User, error) {
+	var localUser entity.User
+	err := u.db.Model(&entity.User{}).Where("email = ?", email).First(&localUser).Error
+	if err != nil {
+		return domain.User{}, err
+	}
+
+	return mapUserToDomain(localUser), nil
+}
+
 func (u *UserRepository) UpdateVerificationStatus(userId uint32, isVerified bool) (domain.User, error) {
 	var localUser entity.User
 	err := u.db.Model(&entity.User{}).First(&localUser, userId).Error
@@ -96,6 +107,40 @@ func (u *UserRepository) UpdateVerificationStatus(userId uint32, isVerified bool
 	}
 
 	localUser.IsVerified = isVerified
+	err = u.db.Save(&localUser).Error
+	if err != nil {
+		return domain.User{}, err
+	}
+
+	return mapUserToDomain(localUser), nil
+}
+
+func (u *UserRepository) UpdatePassword(userId uint32, password string) (domain.User, error) {
+	var localUser entity.User
+	err := u.db.Model(&entity.User{}).First(&localUser, userId).Error
+	if err != nil {
+		return domain.User{}, err
+	}
+
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), 12)
+	localUser.Password = string(hashedPassword)
+	err = u.db.Save(&localUser).Error
+	if err != nil {
+		return domain.User{}, err
+	}
+
+	return mapUserToDomain(localUser), nil
+}
+
+func (u *UserRepository) UpdatePasswordResetCode(userId uint32, code string) (domain.User, error) {
+	var localUser entity.User
+	err := u.db.Model(&entity.User{}).First(&localUser, userId).Error
+	if err != nil {
+		return domain.User{}, err
+	}
+
+	hashedCode, _ := bcrypt.GenerateFromPassword([]byte(code), 12)
+	localUser.PasswordResetCode = string(hashedCode)
 	err = u.db.Save(&localUser).Error
 	if err != nil {
 		return domain.User{}, err

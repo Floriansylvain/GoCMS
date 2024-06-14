@@ -27,6 +27,7 @@ func (g *CreateUserUseCase) CreateUser(createUser CreateUserCommand) (user.User,
 	return g.userRepository.Create(user.FromApi(
 		createUser.Username,
 		createUser.Password,
+		"",
 		createUser.Email,
 		createUser.VerificationCode,
 	))

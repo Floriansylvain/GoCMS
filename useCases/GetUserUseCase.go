@@ -23,3 +23,7 @@ func (g *GetUserUseCase) GetUser(id uint32) (user.User, error) {
 func (g *GetUserUseCase) GetUserByUsername(username string) (user.User, error) {
 	return g.userRepository.GetByUsername(username)
 }
+
+func (g *GetUserUseCase) GetUserByEmail(email string) (user.User, error) {
+	return g.userRepository.GetByEmail(email)
+}

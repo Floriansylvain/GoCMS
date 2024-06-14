@@ -105,30 +105,47 @@ func NewPageRouter() http.Handler {
 	r.Handle("/static/*", http.StripPrefix("/static/", fileServer))
 
 	r.Get("/", GetLogin)
+
 	r.Get(LoginRoute, GetLoginPageHandler(EmptyLoginPage))
 	r.Post(LoginRoute, GetLoginPageHandler(EmptyLoginPage))
+
 	r.Get("/register", GetRegisterPageHandler(EmptyRegisterPage))
 	r.Post("/register", GetRegisterPageHandler(EmptyRegisterPage))
+
 	r.Get("/logout", GetLogout)
+
+	r.Get("/register/reset/request", GetPasswordResetRequest)
+	r.Post("/register/reset/request", PostPasswordResetRequest)
+
+	r.Get("/register/reset/validate", GetPasswordResetValidate)
+	r.Post("/register/reset/validate", PostPasswordResetValidate)
 
 	r.Group(func(r chi.Router) {
 		r.Use(IsLoggedInMiddleware)
 		r.Use(IsNotVerifiedMiddleware)
+
 		r.Get("/register/pending", GetRegisterPendingPage)
 		r.Post("/register/pending", PostRegisterPendingPage)
+
 		r.Get("/register/validate", GetRegisterValidatePage)
 	})
 
 	r.Group(func(r chi.Router) {
 		r.Use(IsLoggedInMiddleware)
 		r.Use(IsVerifiedMiddleware)
+
 		r.Get("/home", GetHomePage)
+
 		r.Get("/post", GetPostsPage)
+
 		r.Get("/post/{id}/edit", GetPostEditPage)
 		r.Post("/post/{id}/edit", PostPostEditPage)
+
 		r.Get("/post/{id}/delete", GetPostDeletePage)
+
 		r.Get("/post/create", GetPostCreatePage)
 		r.Post("/post/create", PostPostCreatePage)
+
 		r.Post("/post/{id}/image/create", postImage)
 	})
 
