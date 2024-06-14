@@ -39,7 +39,8 @@
     tinymce.init({
         selector: '#postBody',
         promotion: false,
-        plugins: 'image',
+        plugins: 'image lists visualblocks',
+        toolbar: 'undo redo | formatselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent | removeformat | image',
         width: '100%',
         height: '100%',
         setup: function (editor) {
