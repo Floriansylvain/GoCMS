@@ -24,7 +24,7 @@ func getPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	localPost, err := Container.GetPostUseCase.GetPost(uint32(id))
-	if err != nil {
+	if err != nil || !localPost.IsOnline {
 		http.Error(w, "The requested resource, identified by its unique ID, could not be found on the server.", http.StatusNotFound)
 		return
 	}
