@@ -2,14 +2,15 @@ package test
 
 import (
 	"GoCMS/adapters/secondary/gateways/models"
-	"GoCMS/api"
+	"GoCMS/api/controllers/auth"
 	"GoCMS/main/server"
-	"github.com/glebarez/sqlite"
-	"gorm.io/gorm"
 	"io"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/glebarez/sqlite"
+	"gorm.io/gorm"
 )
 
 const testDbFile = "test.db"
@@ -45,7 +46,7 @@ func StartServerIfNotAlready() {
 }
 
 func getAuthorizationCookie(userId uint32) *http.Cookie {
-	_, tokenString, err := api.TokenAuth.Encode(map[string]interface{}{"user_id": userId})
+	_, tokenString, err := auth.Token.Encode(map[string]interface{}{"user_id": userId})
 	if err != nil {
 		panic(err)
 	}

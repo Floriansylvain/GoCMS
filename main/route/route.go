@@ -1,15 +1,18 @@
 package route
 
 import (
-	"GoCMS/api"
+	"GoCMS/api/controllers/auth"
+	"GoCMS/api/controllers/pages"
+	"GoCMS/api/controllers/post"
 	"encoding/json"
+	"net/http"
+	"os"
+	"strings"
+
 	"github.com/MadAppGang/httplog"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/jwtauth/v5"
-	"net/http"
-	"os"
-	"strings"
 )
 
 const keyContentType = "Content-Type"
@@ -29,7 +32,7 @@ func HtmlContentTypeMiddleware(next http.Handler) http.Handler {
 }
 
 func InitJwt() {
-	api.TokenAuth = jwtauth.New("HS256", []byte(os.Getenv("JWT_SECRET")), nil)
+	auth.Token = jwtauth.New("HS256", []byte(os.Getenv("JWT_SECRET")), nil)
 }
 
 func GetHelloWorld(w http.ResponseWriter, _ *http.Request) {
@@ -44,11 +47,11 @@ func InitBackendRoutes() *chi.Mux {
 	r.Use(JsonContentTypeMiddleware)
 	r.Get("/", GetHelloWorld)
 	r.Group(func(r chi.Router) {
-		r.Use(jwtauth.Verifier(api.TokenAuth))
-		r.Use(jwtauth.Authenticator(api.TokenAuth))
-		r.Mount("/post", api.NewPostRouter())
+		r.Use(jwtauth.Verifier(auth.Token))
+		r.Use(jwtauth.Authenticator(auth.Token))
+		r.Mount("/post", post.NewPostRouter())
 	})
-	r.Mount("/auth", api.NewAuthRouter())
+	r.Mount("/auth", auth.NewAuthRouter())
 
 	return r
 }
@@ -58,7 +61,7 @@ func InitFrontendRoutes() *chi.Mux {
 
 	r.Use(httplog.LoggerWithName("frontend"))
 	r.Use(HtmlContentTypeMiddleware)
-	r.Mount("/", api.NewPageRouter())
+	r.Mount("/", pages.NewPageRouter())
 
 	return r
 }
