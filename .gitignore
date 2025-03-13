@@ -11,5 +11,7 @@ bin
 # Environment
 .env
 
+# Generated files
 tmp/
 uploadedImages/
+*.exe
