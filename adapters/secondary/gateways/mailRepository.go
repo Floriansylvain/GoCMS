@@ -4,11 +4,12 @@ import (
 	"GoCMS/domain/gateways"
 	"bytes"
 	"embed"
-	"gopkg.in/gomail.v2"
 	"html/template"
 	"log"
 	"os"
 	"strconv"
+
+	"gopkg.in/gomail.v2"
 )
 
 type MailRepository struct{}
@@ -16,7 +17,11 @@ type MailRepository struct{}
 //go:embed mail/templates/*
 var mailTemplateFiles embed.FS
 
-func (m MailRepository) Send(receiverAddress string, templateName string, data interface{}) error {
+func NewMailRepository() *MailRepository {
+	return &MailRepository{}
+}
+
+func (m MailRepository) Send(receiverAddress string, templateName string, data any) error {
 	from := os.Getenv("SMTP_EMAIL")
 	password := os.Getenv("SMTP_PASSWORD")
 	smtpHost := os.Getenv("SMTP_HOST")

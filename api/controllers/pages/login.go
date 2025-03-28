@@ -35,7 +35,7 @@ func GetLoginPageHandler(loginPage *LoginPage) http.HandlerFunc {
 		}
 		success, _ := url.QueryUnescape(r.URL.Query().Get("success"))
 		failure, _ := url.QueryUnescape(r.URL.Query().Get("failure"))
-		bs, _ := api.Container.GetPageUseCase.GetPage("login", map[string]interface{}{
+		bs, _ := api.Container.GetPageUseCase.GetPage("login", map[string]any{
 			"PageError": loginPage.PageError,
 			"Username":  loginPage.Username,
 			"Head":      headTmpl,

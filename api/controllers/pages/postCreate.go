@@ -16,7 +16,7 @@ type PostCreatePageError struct {
 
 func GetPostCreatePageTemplate(postName string, errorMessage string) ([]byte, error) {
 	navbarTmpl, _ := api.Container.GetPageUseCase.GetPage("componentNavbar", nil)
-	return api.Container.GetPageUseCase.GetPage("postCreate", map[string]interface{}{
+	return api.Container.GetPageUseCase.GetPage("postCreate", map[string]any{
 		"Navbar": template.HTML(navbarTmpl),
 		"Head":   headTmpl,
 		"PageError": PostCreatePageError{

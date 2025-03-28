@@ -1,19 +1,17 @@
 package useCases
 
 import (
-	"GoCMS/adapters/secondary/gateways"
+	"GoCMS/domain/gateways"
 )
 
 type GetPageUseCase struct {
-	pageRepository gateways.PageRepository
+	pageRepository gateways.IPageRepository
 }
 
-func NewGetPageUseCase() *GetPageUseCase {
-	return &GetPageUseCase{
-		pageRepository: *gateways.NewPageRepository(),
-	}
+func NewGetPageUseCase(pageRepository gateways.IPageRepository) *GetPageUseCase {
+	return &GetPageUseCase{pageRepository}
 }
 
-func (g *GetPageUseCase) GetPage(name string, data interface{}) ([]byte, error) {
+func (g *GetPageUseCase) GetPage(name string, data any) ([]byte, error) {
 	return g.pageRepository.Get(name, data)
 }

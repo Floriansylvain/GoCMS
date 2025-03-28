@@ -1,19 +1,16 @@
 package useCases
 
 import (
-	"GoCMS/adapters/secondary/gateways"
+	"GoCMS/domain/gateways"
 	"GoCMS/domain/post"
-	"gorm.io/gorm"
 )
 
 type UpdatePostUseCase struct {
-	postRepository gateways.PostRepository
+	postRepository gateways.IPostRepository
 }
 
-func NewUpdatePostUseCase(db *gorm.DB) *UpdatePostUseCase {
-	return &UpdatePostUseCase{
-		postRepository: *gateways.NewPostRepository(db),
-	}
+func NewUpdatePostUseCase(postRepository gateways.IPostRepository) *UpdatePostUseCase {
+	return &UpdatePostUseCase{postRepository}
 }
 
 func (g *UpdatePostUseCase) UpdateBody(id uint32, body string) (post.Post, error) {

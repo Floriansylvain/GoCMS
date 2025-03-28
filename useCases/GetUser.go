@@ -1,19 +1,16 @@
 package useCases
 
 import (
-	"GoCMS/adapters/secondary/gateways"
+	"GoCMS/domain/gateways"
 	"GoCMS/domain/user"
-	"gorm.io/gorm"
 )
 
 type GetUserUseCase struct {
-	userRepository gateways.UserRepository
+	userRepository gateways.IUserRepository
 }
 
-func NewGetUserUseCase(db *gorm.DB) *GetUserUseCase {
-	return &GetUserUseCase{
-		userRepository: *gateways.NewUserRepository(db),
-	}
+func NewGetUserUseCase(userRepository gateways.IUserRepository) *GetUserUseCase {
+	return &GetUserUseCase{userRepository}
 }
 
 func (g *GetUserUseCase) GetUser(id uint32) (user.User, error) {

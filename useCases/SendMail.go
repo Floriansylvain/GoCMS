@@ -1,17 +1,17 @@
 package useCases
 
 import (
-	"GoCMS/adapters/secondary/gateways"
+	"GoCMS/domain/gateways"
 )
 
 type SendMailUseCase struct {
-	mailRepository gateways.MailRepository
+	mailRepository gateways.IMailRepository
 }
 
-func NewSendMailUseCase() *SendMailUseCase {
-	return &SendMailUseCase{}
+func NewSendMailUseCase(mailRepository gateways.IMailRepository) *SendMailUseCase {
+	return &SendMailUseCase{mailRepository}
 }
 
-func (g *SendMailUseCase) SendMail(receiverAddress string, templateName string, data interface{}) error {
+func (g *SendMailUseCase) SendMail(receiverAddress string, templateName string, data any) error {
 	return g.mailRepository.Send(receiverAddress, templateName, data)
 }

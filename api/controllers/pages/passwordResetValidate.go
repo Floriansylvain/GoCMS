@@ -16,7 +16,7 @@ func GetPasswordResetValidate(w http.ResponseWriter, r *http.Request) {
 	if failure != "" {
 		pageError = NewPageError(failure)
 	}
-	template, _ := api.Container.GetPageUseCase.GetPage("passwordResetValidate", map[string]interface{}{
+	template, _ := api.Container.GetPageUseCase.GetPage("passwordResetValidate", map[string]any{
 		"Head":  headTmpl,
 		"Error": pageError,
 		"Email": r.URL.Query().Get("email"),

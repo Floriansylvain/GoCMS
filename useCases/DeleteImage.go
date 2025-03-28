@@ -1,18 +1,15 @@
 package useCases
 
 import (
-	"GoCMS/adapters/secondary/gateways"
-	"gorm.io/gorm"
+	"GoCMS/domain/gateways"
 )
 
 type DeleteImageUseCase struct {
-	imageRepository gateways.ImageRepository
+	imageRepository gateways.IImageRepository
 }
 
-func NewDeleteImageUseCase(db *gorm.DB) *DeleteImageUseCase {
-	return &DeleteImageUseCase{
-		imageRepository: *gateways.NewImageRepository(db),
-	}
+func NewDeleteImageUseCase(imageRepository gateways.IImageRepository) *DeleteImageUseCase {
+	return &DeleteImageUseCase{imageRepository}
 }
 
 func (g *DeleteImageUseCase) DeleteImage(imageId uint32) error {

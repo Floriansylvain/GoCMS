@@ -18,7 +18,7 @@ func GetPasswordResetRequest(w http.ResponseWriter, r *http.Request) {
 	success := r.URL.Query().Get("success")
 	email := r.URL.Query().Get("email")
 
-	bs, _ := api.Container.GetPageUseCase.GetPage("passwordResetRequest", map[string]interface{}{
+	bs, _ := api.Container.GetPageUseCase.GetPage("passwordResetRequest", map[string]any{
 		"Head":    headTmpl,
 		"Email":   email,
 		"Success": success,

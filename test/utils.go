@@ -46,7 +46,7 @@ func StartServerIfNotAlready() {
 }
 
 func getAuthorizationCookie(userId uint32) *http.Cookie {
-	_, tokenString, err := auth.Token.Encode(map[string]interface{}{"user_id": userId})
+	_, tokenString, err := auth.Token.Encode(map[string]any{"user_id": userId})
 	if err != nil {
 		panic(err)
 	}

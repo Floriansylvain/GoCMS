@@ -9,9 +9,9 @@ import (
 func GetPostsPage(w http.ResponseWriter, _ *http.Request) {
 	posts := api.Container.ListPostsUseCase.ListPosts()
 
-	var formattedPosts []map[string]interface{}
+	var formattedPosts []map[string]any
 	for _, post := range posts {
-		formattedPosts = append(formattedPosts, map[string]interface{}{
+		formattedPosts = append(formattedPosts, map[string]any{
 			"ID":        post.ID,
 			"Title":     post.Title,
 			"IsOnline":  post.IsOnline,
@@ -21,7 +21,7 @@ func GetPostsPage(w http.ResponseWriter, _ *http.Request) {
 	}
 
 	navbarTmpl, _ := api.Container.GetPageUseCase.GetPage("componentNavbar", nil)
-	postsTmpl, _ := api.Container.GetPageUseCase.GetPage("posts", map[string]interface{}{
+	postsTmpl, _ := api.Container.GetPageUseCase.GetPage("posts", map[string]any{
 		"Navbar": template.HTML(navbarTmpl),
 		"Head":   headTmpl,
 		"Posts":  formattedPosts,

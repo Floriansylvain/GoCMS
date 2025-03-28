@@ -1,19 +1,16 @@
 package useCases
 
 import (
-	"GoCMS/adapters/secondary/gateways"
+	"GoCMS/domain/gateways"
 	"GoCMS/domain/post"
-	"gorm.io/gorm"
 )
 
 type ListPostsUseCase struct {
-	postRepository gateways.PostRepository
+	postRepository gateways.IPostRepository
 }
 
-func NewListPostsUseCase(db *gorm.DB) *ListPostsUseCase {
-	return &ListPostsUseCase{
-		postRepository: *gateways.NewPostRepository(db),
-	}
+func NewListPostsUseCase(postRepository gateways.IPostRepository) *ListPostsUseCase {
+	return &ListPostsUseCase{postRepository}
 }
 
 func (g *ListPostsUseCase) ListPosts() []post.Post {

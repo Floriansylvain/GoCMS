@@ -1,13 +1,12 @@
 package useCases
 
 import (
-	"GoCMS/adapters/secondary/gateways"
+	"GoCMS/domain/gateways"
 	"GoCMS/domain/post"
-	"gorm.io/gorm"
 )
 
 type CreatePostUseCase struct {
-	postRepository gateways.PostRepository
+	postRepository gateways.IPostRepository
 }
 
 type CreatePostCommand struct {
@@ -15,10 +14,8 @@ type CreatePostCommand struct {
 	Body  string
 }
 
-func NewCreatePostUseCase(db *gorm.DB) *CreatePostUseCase {
-	return &CreatePostUseCase{
-		postRepository: *gateways.NewPostRepository(db),
-	}
+func NewCreatePostUseCase(postRepository gateways.IPostRepository) *CreatePostUseCase {
+	return &CreatePostUseCase{postRepository}
 }
 
 func (g *CreatePostUseCase) CreatePost(createPost CreatePostCommand) (post.Post, error) {

@@ -33,7 +33,7 @@ func PostImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newJson := map[string]interface{}{"location": newImage.Path}
+	newJson := map[string]any{"location": newImage.Path}
 	newJsonBytes, _ := json.Marshal(newJson)
 
 	_, _ = w.Write(newJsonBytes)

@@ -44,7 +44,7 @@ func GetRegisterPageHandler(registerPage *RegisterPage) http.HandlerFunc {
 			PostRegisterPage(w, r)
 			return
 		}
-		bs, err := api.Container.GetPageUseCase.GetPage("register", map[string]interface{}{
+		bs, err := api.Container.GetPageUseCase.GetPage("register", map[string]any{
 			"PageError": registerPage.PageError,
 			"Username":  registerPage.Username,
 			"Email":     registerPage.Email,

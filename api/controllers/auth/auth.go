@@ -34,7 +34,7 @@ const LogsErrorMessage = "Access to the requested resource is forbidden due to i
 const BodyErrorMessage = "The request cannot be processed due to a mismatch in the format of the body."
 
 func SetJwtCookie(w *http.ResponseWriter, userId uint32) error {
-	_, tokenString, err := Token.Encode(map[string]interface{}{"user_id": userId})
+	_, tokenString, err := Token.Encode(map[string]any{"user_id": userId})
 	if err != nil {
 		return err
 	}
@@ -138,7 +138,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 	_ = SetJwtCookie(&w, dbUser.ID)
 
-	message, _ := json.Marshal(map[string]interface{}{"message": "User logged in! HTTPonly jwt cookie created"})
+	message, _ := json.Marshal(map[string]any{"message": "User logged in! HTTPonly jwt cookie created"})
 	_, _ = w.Write(message)
 }
 
@@ -170,7 +170,7 @@ func register(w http.ResponseWriter, r *http.Request) {
 
 	_ = SetJwtCookie(&w, createdUser.ID)
 
-	message, _ := json.Marshal(map[string]interface{}{"message": "User registered! HTTPonly jwt cookie created"})
+	message, _ := json.Marshal(map[string]any{"message": "User registered! HTTPonly jwt cookie created"})
 	_, _ = w.Write(message)
 }
 
@@ -188,7 +188,7 @@ func RemoveJwtCookie(w http.ResponseWriter) {
 
 func logout(w http.ResponseWriter, _ *http.Request) {
 	RemoveJwtCookie(w)
-	message, _ := json.Marshal(map[string]interface{}{"message": "User logged out! HTTPonly jwt cookie deleted"})
+	message, _ := json.Marshal(map[string]any{"message": "User logged out! HTTPonly jwt cookie deleted"})
 	_, _ = w.Write(message)
 }
 

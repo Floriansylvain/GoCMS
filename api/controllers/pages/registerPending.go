@@ -29,7 +29,7 @@ func PostRegisterPendingPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetRegisterPendingPage(w http.ResponseWriter, _ *http.Request) {
-	registerPendingTmpl, _ := api.Container.GetPageUseCase.GetPage("registerPending", map[string]interface{}{
+	registerPendingTmpl, _ := api.Container.GetPageUseCase.GetPage("registerPending", map[string]any{
 		"Head": headTmpl,
 	})
 	_, _ = w.Write(registerPendingTmpl)

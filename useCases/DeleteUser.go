@@ -1,18 +1,15 @@
 package useCases
 
 import (
-	"GoCMS/adapters/secondary/gateways"
-	"gorm.io/gorm"
+	"GoCMS/domain/gateways"
 )
 
 type DeleteUserUseCase struct {
-	userRepository gateways.UserRepository
+	userRepository gateways.IUserRepository
 }
 
-func NewDeleteUserUseCase(db *gorm.DB) *DeleteUserUseCase {
-	return &DeleteUserUseCase{
-		userRepository: *gateways.NewUserRepository(db),
-	}
+func NewDeleteUserUseCase(userRepository gateways.IUserRepository) *DeleteUserUseCase {
+	return &DeleteUserUseCase{userRepository}
 }
 
 func (g *DeleteUserUseCase) DeleteUser(userId uint32) error {

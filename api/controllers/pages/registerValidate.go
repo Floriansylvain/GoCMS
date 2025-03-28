@@ -38,7 +38,7 @@ func GetRegisterValidatePage(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	registerValidateTmpl, _ := api.Container.GetPageUseCase.GetPage("registerValidate", map[string]interface{}{
+	registerValidateTmpl, _ := api.Container.GetPageUseCase.GetPage("registerValidate", map[string]any{
 		"Head":      headTmpl,
 		"PageError": NewPageError(errorMessage),
 	})

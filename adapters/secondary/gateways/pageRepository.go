@@ -16,7 +16,7 @@ func NewPageRepository() *PageRepository {
 	return &PageRepository{}
 }
 
-func (p *PageRepository) Get(name string, data interface{}) ([]byte, error) {
+func (p *PageRepository) Get(name string, data any) ([]byte, error) {
 	var processedHTML bytes.Buffer
 	tmpl, err := template.ParseFS(webTemplateFiles, "web/templates/"+name+".html")
 	if err != nil {

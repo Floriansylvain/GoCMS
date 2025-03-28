@@ -18,7 +18,7 @@ type PostEditPageAlert struct {
 
 func getPostEditPageTemplate(post post.Post, alert PostEditPageAlert) []byte {
 	navbarTmpl, _ := api.Container.GetPageUseCase.GetPage("componentNavbar", nil)
-	postTmpl, _ := api.Container.GetPageUseCase.GetPage("postEdit", map[string]interface{}{
+	postTmpl, _ := api.Container.GetPageUseCase.GetPage("postEdit", map[string]any{
 		"Navbar":  template.HTML(navbarTmpl),
 		"Head":    headTmpl,
 		"Post":    post,

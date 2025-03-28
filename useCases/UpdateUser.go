@@ -1,19 +1,16 @@
 package useCases
 
 import (
-	"GoCMS/adapters/secondary/gateways"
+	"GoCMS/domain/gateways"
 	"GoCMS/domain/user"
-	"gorm.io/gorm"
 )
 
 type UpdateUserUseCase struct {
-	userRepository gateways.UserRepository
+	userRepository gateways.IUserRepository
 }
 
-func NewUpdateUserUseCase(db *gorm.DB) *UpdateUserUseCase {
-	return &UpdateUserUseCase{
-		userRepository: *gateways.NewUserRepository(db),
-	}
+func NewUpdateUserUseCase(userRepository gateways.IUserRepository) *UpdateUserUseCase {
+	return &UpdateUserUseCase{userRepository}
 }
 
 func (g *UpdateUserUseCase) UpdateVerificationStatus(userId uint32, isVerified bool) (user.User, error) {
