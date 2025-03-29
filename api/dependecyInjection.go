@@ -3,6 +3,7 @@ package api
 import (
 	"GoCMS/adapters/secondary/gateways"
 	"GoCMS/adapters/secondary/gateways/models"
+	domainGateways "GoCMS/domain/gateways"
 	"GoCMS/useCases"
 	"fmt"
 	"os"
@@ -20,6 +21,11 @@ type UseCaseDefinition struct {
 	FieldName   string
 }
 
+type RepositoryDefinition struct {
+	Constructor interface{}
+	Interface   interface{}
+}
+
 var useCaseDefinitions = []UseCaseDefinition{
 	{useCases.NewCreatePostUseCase, "CreatePostUseCase"},
 	{useCases.NewGetPostUseCase, "GetPostUseCase"},
@@ -35,6 +41,14 @@ var useCaseDefinitions = []UseCaseDefinition{
 	{useCases.NewSendMailUseCase, "SendMailUseCase"},
 	{useCases.NewCreateImageUseCase, "CreateImageUseCase"},
 	{useCases.NewDeleteImageUseCase, "DeleteImageUseCase"},
+}
+
+var repositoryDefinitions = []RepositoryDefinition{
+	{gateways.NewPostRepository, new(domainGateways.IPostRepository)},
+	{gateways.NewUserRepository, new(domainGateways.IUserRepository)},
+	{gateways.NewImageRepository, new(domainGateways.IImageRepository)},
+	{gateways.NewMailRepository, new(domainGateways.IMailRepository)},
+	{gateways.NewPageRepository, new(domainGateways.IPageRepository)},
 }
 
 type UseCases struct {
@@ -89,22 +103,10 @@ func InitContainer() {
 		}
 	}
 
-	if err := digContainer.Provide(func(values ...any) *UseCases {
-		container := &UseCases{}
-		containerValue := reflect.ValueOf(container).Elem()
+	constructorType := buildConstructorType()
+	constructor := reflect.MakeFunc(constructorType, buildUseCasesInstance)
 
-		for i, value := range values {
-			fieldName := useCaseDefinitions[i].FieldName
-			field := containerValue.FieldByName(fieldName)
-			if field.IsValid() && field.CanSet() {
-				field.Set(reflect.ValueOf(value))
-			} else {
-				panic(fmt.Sprintf("Failed to set field %s", fieldName))
-			}
-		}
-
-		return container
-	}, dig.As(new(*UseCases))); err != nil {
+	if err := digContainer.Provide(constructor.Interface()); err != nil {
 		panic("Failed to provide container constructor: " + err.Error())
 	}
 
@@ -113,18 +115,38 @@ func InitContainer() {
 	}
 }
 
-func provideRepositories(container *dig.Container) {
-	repositories := []any{
-		gateways.NewPostRepository,
-		gateways.NewUserRepository,
-		gateways.NewImageRepository,
-		gateways.NewMailRepository,
-		gateways.NewPageRepository,
+func buildConstructorType() reflect.Type {
+	var paramTypes []reflect.Type
+	for _, def := range useCaseDefinitions {
+		constructorType := reflect.TypeOf(def.Constructor)
+		returnType := constructorType.Out(0)
+		paramTypes = append(paramTypes, returnType)
 	}
 
-	for _, repo := range repositories {
-		if err := container.Provide(repo); err != nil {
-			funcName := runtime.FuncForPC(reflect.ValueOf(repo).Pointer()).Name()
+	return reflect.FuncOf(paramTypes, []reflect.Type{reflect.TypeOf(&UseCases{})}, false)
+}
+
+func buildUseCasesInstance(args []reflect.Value) []reflect.Value {
+	container := &UseCases{}
+	containerValue := reflect.ValueOf(container).Elem()
+
+	for i, arg := range args {
+		fieldName := useCaseDefinitions[i].FieldName
+		field := containerValue.FieldByName(fieldName)
+		if field.IsValid() && field.CanSet() {
+			field.Set(arg)
+		} else {
+			panic(fmt.Sprintf("Failed to set field %s", fieldName))
+		}
+	}
+
+	return []reflect.Value{reflect.ValueOf(container)}
+}
+
+func provideRepositories(container *dig.Container) {
+	for _, def := range repositoryDefinitions {
+		if err := container.Provide(def.Constructor, dig.As(def.Interface)); err != nil {
+			funcName := runtime.FuncForPC(reflect.ValueOf(def.Constructor).Pointer()).Name()
 			panic(fmt.Sprintf("Failed to provide repository %s: %v", funcName, err))
 		}
 	}
